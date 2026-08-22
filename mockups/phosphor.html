@@ -1149,6 +1149,20 @@ termInput.addEventListener('keydown', function(e){
 document.getElementById('terminal').addEventListener('click', function(){ termInput.focus(); });
 
 /* ============ doom easter egg (lazy js-dos, fully self-hosted) ============ */
+/* audio containment: trap AudioContexts spawned by the emulator so we can
+   force-silence them on exit (js-dos exit() can leave audio running) */
+let doomAudioLive = false;
+const doomAudioCtxs = [];
+(function(){
+  const NativeAC = window.AudioContext || window.webkitAudioContext;
+  if(!NativeAC) return;
+  const WrappedAC = function(){
+    const ctx = new NativeAC();
+    if(doomAudioLive) doomAudioCtxs.push(ctx);
+    return ctx;
+  };
+  try{ WrappedAC.prototype = NativeAC.prototype; window.AudioContext = WrappedAC; }catch(_){}
+})();
 const JS_DOS_BASE = new URL('jsdos/', document.baseURI).href;
 const DOOM_BUNDLE = 'doom.jsdos';
 const DOS_BOOT_HTML = '<div class="dos-boot"><div class="big">INICIANDO DOOM.EXE</div>' +
@@ -1189,6 +1203,7 @@ async function openDos(){
   if(lenis) lenis.stop();
   if(dosCtrl) return;
   dosLoading = true;
+  doomAudioLive = true;
   dosStage.innerHTML = DOS_BOOT_HTML;
   try{
     await Promise.all([
@@ -1211,15 +1226,20 @@ async function openDos(){
       '<div style="color:#5f6a64">' + esc(String(err && err.message || err)) + '</div></div>';
   }finally{ dosLoading = false; }
 }
-function closeDos(){
+async function closeDos(){
   dosOverlay.hidden = true;
   if(lenis) lenis.start();
-  if(!dosCtrl) return;
-  try{ dosCtrl.exit && dosCtrl.exit(); }catch(_){}
-  try{ dosCtrl.pause && dosCtrl.pause(); }catch(_){}
+  const ctrl = dosCtrl;
   dosCtrl = null;
-  const player = dosStage.querySelector('.dos-player');
-  if(player) player.remove();
+  if(ctrl){
+    try{ ctrl.pause && await ctrl.pause(); }catch(_){}
+    try{ ctrl.exit && await ctrl.exit(); }catch(_){}
+  }
+  /* belt and suspenders: force-silence any emulator audio context */
+  doomAudioLive = false;
+  for(const ctx of doomAudioCtxs){ try{ ctx.suspend(); }catch(_){} }
+  doomAudioCtxs.length = 0;
+  dosStage.innerHTML = '';
 }
 document.getElementById('dosClose').addEventListener('click', closeDos);
 window.addEventListener('keydown', function(e){
