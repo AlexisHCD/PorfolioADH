@@ -135,9 +135,22 @@ button{font:inherit;background:none;border:none;color:inherit;cursor:pointer}
 :root[data-theme="light"] .theme-btn .icon-sun{display:block}
 .nav-cta{
   font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--accent);
-  border:1px solid var(--accent-line);padding:9px 16px;border-radius:9px;transition:background .25s,color .25s;
+  padding:10px 17px;border-radius:9px;position:relative;isolation:isolate;overflow:hidden;
+  transition:color .3s;
 }
-.nav-cta:hover{background:var(--accent);color:var(--accent-contrast)}
+/* border beam (magicui-style, pure css): rotating conic gradient ring */
+.nav-cta::before{
+  content:'';position:absolute;inset:-120%;z-index:-2;
+  background:conic-gradient(from 0deg,transparent 0 78%,var(--accent) 90%,#b4ffe1 95%,transparent 100%);
+  animation:beam 3.2s linear infinite;
+}
+.nav-cta::after{
+  content:'';position:absolute;inset:2px;border-radius:7px;background:var(--ink-2);z-index:-1;
+  transition:background .3s;
+}
+.nav-cta:hover{color:var(--accent-contrast)}
+.nav-cta:hover::after{background:var(--accent)}
+@keyframes beam{to{transform:rotate(1turn)}}
 @media(max-width:860px){.nav-links{display:none}}
 
 /* ============ hero ============ */
@@ -344,6 +357,31 @@ button{font:inherit;background:none;border:none;color:inherit;cursor:pointer}
 .now-row:last-child{border-bottom:none}
 .now-row .d{width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0}
 .now-row span{color:var(--muted)}
+/* social links card */
+.social-row{
+  display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--line);
+  font-family:var(--mono);font-size:12px;letter-spacing:.02em;
+}
+.social-row:last-child{border-bottom:none}
+.social-row svg{width:16px;height:16px;fill:var(--muted);transition:fill .25s;flex-shrink:0}
+.social-row span{color:var(--muted);transition:color .25s}
+.social-row b{margin-left:auto;color:var(--muted);font-weight:400;transition:color .25s,transform .3s}
+.social-row:hover svg{fill:var(--accent)}
+.social-row:hover span,.social-row:hover b{color:var(--accent)}
+.social-row:hover b{transform:translate(2px,-2px)}
+
+/* ============ tech stack section ============ */
+.stack-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:54px}
+.stack-note{margin-top:18px;font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.1em}
+.stack-note b{color:var(--accent);font-weight:500}
+@media(max-width:1000px){.stack-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:620px){.stack-grid{grid-template-columns:1fr}}
+
+/* ============ roadmap progress summary ============ */
+.tl-summary{margin-top:14px;max-width:760px}
+.summary-bar{height:10px;border-radius:6px;background:var(--track);overflow:hidden}
+.summary-bar span{display:block;height:100%;width:0%;background:var(--accent);border-radius:6px;box-shadow:0 0 16px var(--accent-glow)}
+.summary-pct{font-family:var(--display);font-size:26px;font-weight:700;color:var(--accent);line-height:1}
 
 /* ============ activity ============ */
 .panel{background:var(--ink-2);border:1px solid var(--line);border-radius:20px;padding:26px;transition:border-color .35s,background .35s}
@@ -460,7 +498,7 @@ footer .p{color:var(--accent)}
 
 /* ============ reduced motion ============ */
 @media(prefers-reduced-motion:reduce){
-  .grain,.marquee-track,.scroll-hint .arrow,.caret,.chart-end-pulse,.term-status{animation:none!important}
+  .grain,.marquee-track,.scroll-hint .arrow,.caret,.chart-end-pulse,.term-status,.nav-cta::before{animation:none!important}
   *{transition-duration:.01ms!important}
 }
 </style>
@@ -484,16 +522,17 @@ footer .p{color:var(--accent)}
   <a class="nav-logo" href="#top" data-hover>alex@v2<span class="p">:~$</span></a>
   <div class="nav-links">
     <a href="#sobre-mi" data-hover><b>01.</b>sobre-mi</a>
-    <a href="#actividad" data-hover><b>02.</b>actividad</a>
-    <a href="#proyectos" data-hover><b>03.</b>proyectos</a>
-    <a href="#roadmap" data-hover><b>04.</b>roadmap</a>
-    <a href="#contacto" data-hover><b>05.</b>contacto</a>
+    <a href="#stack" data-hover><b>02.</b>stack</a>
+    <a href="#actividad" data-hover><b>03.</b>actividad</a>
+    <a href="#proyectos" data-hover><b>04.</b>proyectos</a>
+    <a href="#roadmap" data-hover><b>05.</b>roadmap</a>
+    <a href="#contacto" data-hover><b>06.</b>contacto</a>
   </div>
   <div class="nav-right">
     <button class="theme-btn" id="themeBtn" data-hover data-magnetic aria-label="cambiar tema día/noche" title="prender la luz / apagarla">
       <span class="icon-moon">☾</span><span class="icon-sun">☀</span>
     </button>
-    <a class="nav-cta" href="#contacto" data-hover data-magnetic>cv.pdf ↓</a>
+    <a class="nav-cta" href="cv-alexis-hernandez.pdf" download="CV-Alexis-Hernandez.pdf" data-hover data-magnetic>cv.pdf ↓</a>
   </div>
 </nav>
 
@@ -516,7 +555,7 @@ footer .p{color:var(--accent)}
       <p class="hero-sub"><span class="p">&gt;</span> <span id="heroScramble">programación &amp; análisis de sistemas</span><span class="caret"></span></p>
       <div class="hero-chips">
         <span class="readout"><i>◉</i>MISIÓN: FULLSTACK DEV</span>
-        <span class="readout"><i>◉</i>ESTADO: 2° AÑO · S3/6</span>
+        <span class="readout"><i>◉</i>ESTADO: 4° SEMESTRE · S4/5</span>
         <span class="readout"><i>◉</i>BASE: SAN ANTONIO, CL</span>
       </div>
       <div class="hero-ctas">
@@ -577,17 +616,20 @@ footer .p{color:var(--accent)}
         <div class="card span-2" data-reveal>
           <div class="card-tag"><span>// ESTUDIO</span><i>en curso</i></div>
           <div class="card-title">Instituto Profesional AIEP</div>
-          <div class="card-sub">Programación y Análisis de Sistemas — San Antonio</div>
-          <div class="progress"><span data-progress="50"></span></div>
-          <div class="progress-label"><span>SEMESTRE 3 / 6</span><b>2° AÑO</b></div>
+          <div class="card-sub">Técnico en Programación y Análisis de Sistemas — San Antonio · 120 SCT</div>
+          <div class="progress"><span data-progress="70"></span></div>
+          <div class="progress-label"><span>SEMESTRE 4 / 5</span><b>2° AÑO</b></div>
         </div>
         <div class="card" data-reveal>
-          <div class="card-tag"><span>// STACK</span></div>
-          <div class="chips">
-            <span class="chip">C#</span><span class="chip">.NET</span><span class="chip">Python</span>
-            <span class="chip">JavaScript</span><span class="chip">SQL</span><span class="chip">React</span>
-            <span class="chip">Git</span>
-          </div>
+          <div class="card-tag"><span>// REDES</span><i>conecta</i></div>
+          <a class="social-row" href="https://github.com/AlexisHCD" target="_blank" rel="noopener" data-hover>
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+            <span>github.com/AlexisHCD</span><b>↗</b>
+          </a>
+          <a class="social-row" href="https://www.linkedin.com/in/alexis-hern%C3%A1ndez-2b3017367" target="_blank" rel="noopener" data-hover>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.55V9h3.57v11.45z"/></svg>
+            <span>in/alexis-hernández</span><b>↗</b>
+          </a>
         </div>
         <div class="card" data-reveal>
           <div class="card-tag"><span>// AHORA</span><i>live</i></div>
@@ -608,10 +650,52 @@ footer .p{color:var(--accent)}
     </div>
   </section>
 
-  <!-- 02 activity -->
-  <section class="section" id="actividad">
+  <!-- 02 tech stack -->
+  <section class="section" id="stack">
     <div class="sec-head" data-reveal>
       <span class="sec-tag">// 02</span>
+      <h2 class="sec-title">Tech Stack</h2>
+      <span class="sec-line"></span>
+    </div>
+    <p class="sec-desc" data-reveal>Tecnologías de mi malla en AIEP y de proyectos propios — lo que uso día a día para construir.</p>
+
+    <div class="stack-grid">
+      <div class="panel" data-reveal>
+        <div class="panel-head"><div class="panel-title"><b>$</b> lenguajes</div></div>
+        <div class="chips">
+          <span class="chip">C#</span><span class="chip">Python</span><span class="chip">JavaScript</span>
+          <span class="chip">SQL</span><span class="chip">HTML5</span><span class="chip">CSS3</span><span class="chip">Dart</span>
+        </div>
+      </div>
+      <div class="panel" data-reveal>
+        <div class="panel-head"><div class="panel-title"><b>$</b> frameworks &amp; web</div></div>
+        <div class="chips">
+          <span class="chip">.NET</span><span class="chip">React</span><span class="chip">Next.js</span>
+          <span class="chip">Flutter</span><span class="chip">Tailwind CSS</span>
+        </div>
+      </div>
+      <div class="panel" data-reveal>
+        <div class="panel-head"><div class="panel-title"><b>$</b> datos</div></div>
+        <div class="chips">
+          <span class="chip">MySQL</span><span class="chip">PostgreSQL</span><span class="chip">Oracle</span>
+          <span class="chip">Modelado de datos</span><span class="chip">SQL</span>
+        </div>
+      </div>
+      <div class="panel" data-reveal>
+        <div class="panel-head"><div class="panel-title"><b>$</b> herramientas &amp; os</div></div>
+        <div class="chips">
+          <span class="chip">Git</span><span class="chip">GitHub</span><span class="chip">VS Code</span>
+          <span class="chip">Visual Studio</span><span class="chip">Linux · Ubuntu/Mint</span><span class="chip">Office 365</span>
+        </div>
+      </div>
+    </div>
+    <p class="stack-note" data-reveal>// certificaciones de la malla en camino: <b>aws</b> · <b>cisco</b> · <b>oracle</b></p>
+  </section>
+
+  <!-- 03 activity -->
+  <section class="section" id="actividad">
+    <div class="sec-head" data-reveal>
+      <span class="sec-tag">// 03</span>
       <h2 class="sec-title">Actividad</h2>
       <span class="sec-line"></span>
     </div>
@@ -663,10 +747,10 @@ footer .p{color:var(--accent)}
     </div>
   </section>
 
-  <!-- 03 projects -->
+  <!-- 04 projects -->
   <section class="section" id="proyectos">
     <div class="sec-head" data-reveal>
-      <span class="sec-tag">// 03</span>
+      <span class="sec-tag">// 04</span>
       <h2 class="sec-title">Proyectos</h2>
       <span class="sec-line"></span>
     </div>
@@ -708,14 +792,14 @@ footer .p{color:var(--accent)}
     </div>
   </section>
 
-  <!-- 04 roadmap -->
+  <!-- 05 roadmap -->
   <section class="section" id="roadmap">
     <div class="sec-head" data-reveal>
-      <span class="sec-tag">// 04</span>
+      <span class="sec-tag">// 05</span>
       <h2 class="sec-title">Roadmap</h2>
       <span class="sec-line"></span>
     </div>
-    <p class="sec-desc" data-reveal>Mi trayectoria académica en Programación y Análisis de Sistemas — Instituto Profesional AIEP.</p>
+    <p class="sec-desc" data-reveal>Técnico de Nivel Superior en Programación y Análisis de Sistemas — 5 semestres · 120 SCT · Instituto Profesional AIEP.</p>
 
     <div class="tl" id="timeline">
       <div class="tl-line"><span class="tl-progress" id="tlProgress"></span></div>
@@ -724,36 +808,75 @@ footer .p{color:var(--accent)}
         <span class="tl-node"><i>✓</i></span>
         <div class="tl-when"><span>SEMESTRE 01 · 2025</span><span class="tl-badge">COMPLETADO</span></div>
         <div class="tl-title">Fundamentos</div>
-        <div class="tl-courses"><span class="chip">Fundamentos de Programación</span><span class="chip">Introducción a SQL &amp; Análisis</span></div>
+        <div class="tl-courses">
+          <span class="chip">Fundamentos de Programación Computacional</span>
+          <span class="chip">Matemática para la Ed. Superior</span>
+          <span class="chip">Herramientas para la Empleabilidad</span>
+          <span class="chip">Habilidades para la Comunicación</span>
+        </div>
       </div>
 
       <div class="tl-item done" data-tl>
         <span class="tl-node"><i>✓</i></span>
         <div class="tl-when"><span>SEMESTRE 02 · 2025</span><span class="tl-badge">COMPLETADO</span></div>
-        <div class="tl-title">Desarrollo</div>
-        <div class="tl-courses"><span class="chip">Taller C# .NET</span><span class="chip">Desarrollo Web</span><span class="chip">Metodologías Ágiles</span><span class="chip">Prog. Segura</span></div>
+        <div class="tl-title">Datos &amp; Métodos</div>
+        <div class="tl-courses">
+          <span class="chip">Bases de Datos Relacionales · Oracle</span>
+          <span class="chip">Taller de Bases de Datos</span>
+          <span class="chip">Metodologías de Desarrollo</span>
+          <span class="chip">Programación Segura</span>
+          <span class="chip">Herramientas de IA</span>
+          <span class="chip">Requerimientos y Modelos de Negocio</span>
+        </div>
+      </div>
+
+      <div class="tl-item done" data-tl>
+        <span class="tl-node"><i>✓</i></span>
+        <div class="tl-when"><span>SEMESTRE 03 · 2026</span><span class="tl-badge">COMPLETADO</span></div>
+        <div class="tl-title">Sistemas &amp; Web</div>
+        <div class="tl-courses">
+          <span class="chip">Taller de Aplicaciones para Internet</span>
+          <span class="chip">Taller de Análisis de Sistemas</span>
+          <span class="chip">Modelamiento de Procesos de Negocios</span>
+          <span class="chip">Sostenibilidad Organizacional</span>
+          <span class="chip">Inglés Inicial I</span>
+          <span class="chip">Cert. Especialidad I · AWS</span>
+        </div>
       </div>
 
       <div class="tl-item current" data-tl>
         <span class="tl-node"><i>●</i></span>
-        <div class="tl-when"><span>SEMESTRE 03 · 2026</span><span class="tl-badge">EN CURSO</span></div>
-        <div class="tl-title">Aplicaciones</div>
-        <div class="tl-courses"><span class="chip">Taller Aplicaciones Web</span><span class="chip">Taller Apps Móviles</span><span class="chip">Testing &amp; QA</span></div>
+        <div class="tl-when"><span>SEMESTRE 04 · 2026</span><span class="tl-badge">EN CURSO</span></div>
+        <div class="tl-title">Móviles &amp; Calidad</div>
+        <div class="tl-courses">
+          <span class="chip">Taller de Aplicaciones Móviles</span>
+          <span class="chip">Taller de Testing y Calidad de Software</span>
+          <span class="chip">Taller de Proyecto de Especialidad</span>
+          <span class="chip">Taller de Marca Personal</span>
+          <span class="chip">Inglés Inicial II</span>
+          <span class="chip">Cert. Especialidad II · CISCO</span>
+        </div>
       </div>
 
       <div class="tl-item" data-tl>
         <span class="tl-node"><i>◇</i></span>
-        <div class="tl-when"><span>SEMESTRE 04 · 2026</span><span class="tl-badge">PRÓXIMO</span></div>
-        <div class="tl-title">Especialización</div>
-        <div class="tl-courses"><span class="chip">cursos por confirmar…</span></div>
+        <div class="tl-when"><span>SEMESTRE 05 · 2027</span><span class="tl-badge">PRÓXIMO PASO</span></div>
+        <div class="tl-title">Práctica Profesional</div>
+        <div class="tl-courses">
+          <span class="chip">Práctica Laboral</span>
+          <span class="chip">Proceso de Titulación</span>
+          <span class="chip">→ Técnico de Nivel Superior en Programación y Análisis de Sistemas</span>
+        </div>
       </div>
+    </div>
 
-      <div class="tl-item" data-tl>
-        <span class="tl-node"><i>◇</i></span>
-        <div class="tl-when"><span>SEMESTRES 05-06 · 2027</span><span class="tl-badge">TITULACIÓN</span></div>
-        <div class="tl-title">Analista Programador</div>
-        <div class="tl-courses"><span class="chip">práctica profesional</span><span class="chip">proyecto de título</span></div>
+    <div class="panel tl-summary" data-reveal>
+      <div class="panel-head" style="margin-bottom:16px">
+        <div class="panel-title"><b>$</b> career --progress</div>
+        <span class="summary-pct"><span data-count="70">0</span>%</span>
       </div>
+      <div class="summary-bar"><span data-progress="70"></span></div>
+      <div class="progress-label"><span>3/5 SEMESTRES · PRÁCTICA PENDIENTE</span><b>TÉCNICO EN 2027</b></div>
     </div>
   </section>
 
@@ -775,7 +898,7 @@ footer .p{color:var(--accent)}
 <footer>
   <span>© 2026 ALEXIS HERNÁNDEZ CAMUS — SAN ANTONIO, CL</span>
   <span>hecho a mano <span class="p">//</span> gsap + lenis + terminal</span>
-  <span>v2.0 · mockup-02 · phosphor</span>
+  <span>v2.0 · mockup-03 · phosphor</span>
 </footer>
 
 <!-- doom easter egg — macOS window with native wasm doom inside -->
@@ -972,9 +1095,20 @@ if(window.gsap && !reduced){
     gsap.to(el, { width: el.dataset.progress + '%', duration: 1.4, ease: 'power3.inOut',
       scrollTrigger: { trigger: el, start: 'top 92%' } });
   });
+  /* animated number counters (career progress %) */
+  document.querySelectorAll('[data-count]').forEach(function(el){
+    const target = parseInt(el.dataset.count, 10) || 0;
+    const obj = { v: 0 };
+    gsap.to(obj, { v: target, duration: 1.6, ease: 'power3.inOut',
+      scrollTrigger: { trigger: el, start: 'top 92%' },
+      onUpdate: function(){ el.textContent = Math.round(obj.v); } });
+  });
 }
 document.querySelectorAll('[data-progress]').forEach(function(el){
   if(reduced) el.style.width = el.dataset.progress + '%';
+});
+document.querySelectorAll('[data-count]').forEach(function(el){
+  if(reduced) el.textContent = el.dataset.count;
 });
 
 /* heatmap (demo) */
@@ -1104,12 +1238,13 @@ const COMMANDS = {
     termPrint('  <span class="t-p">doom.exe</span>    <span class="t-ok">??? — algo clásico</span>', 't-out');
   },
   whoami: function(){
-    termPrint('alexis hernández camus · 2° año programación y análisis de sistemas', 't-out');
+    termPrint('alexis hernández camus · 4° semestre — técnico en programación y análisis de sistemas', 't-out');
     termPrint('futuro fullstack developer / analista · san antonio, chile', 't-out');
   },
   stack: function(){
-    termPrint('c# · .net · python · javascript · sql', 't-out');
-    termPrint('react · flutter · mysql · postgresql · git · linux', 't-out');
+    termPrint('c# · python · javascript · sql · html/css · dart', 't-out');
+    termPrint('.net · react · next.js · flutter · tailwind', 't-out');
+    termPrint('mysql · postgresql · oracle · git · linux', 't-out');
   },
   proyectos: function(){
     termPrint('<span class="t-p">01</span> gestor de alumnos (C# .NET + mysql) → github.com/AlexisHCD/RGIVCodice', 't-out');
@@ -1118,9 +1253,10 @@ const COMMANDS = {
     termPrint('<span class="t-p">04</span> este portfolio v2.0 → en construcción', 't-out');
   },
   roadmap: function(){
-    termPrint('<span class="t-ok">✓✓</span> 2025 — fundamentos · desarrollo (c#, web, sql, ágil)', 't-out');
-    termPrint('<span class="t-ok">●</span> 2026 — aplicaciones (web, móvil, testing) <span class="t-err">[en curso]</span>', 't-out');
-    termPrint('<span class="t-p">◇◇</span> 2027 — especialización → título analista programador', 't-out');
+    termPrint('<span class="t-ok">✓✓✓</span> 2025-26 — fundamentos · bases de datos · sistemas &amp; web', 't-out');
+    termPrint('<span class="t-ok">●</span> 2026 — 4° sem: apps móviles · testing y calidad <span class="t-err">[en curso]</span>', 't-out');
+    termPrint('<span class="t-p">◇</span> 2027 — práctica laboral → técnico en programación y análisis', 't-out');
+    termPrint('progreso de carrera: 3/5 semestres — ≈70%', 't-ok');
   },
   contacto: function(){
     termPrint('email: adhcamus@proton.me · github: @AlexisHCD', 't-out');
