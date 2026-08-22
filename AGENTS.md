@@ -15,11 +15,13 @@ Deploy: Vercel (static). Site content in **Spanish**; code, comments and convent
 
 ## Locked design decisions (do not relitigate)
 - Concept **PHOSPHOR**: ink-black night theme (default) + blue/white day theme via `data-theme` attr + View Transitions circular reveal + WebAudio synth click on toggle.
-- Interactive terminal in hero (macOS-style window, **classic black body, white text, green `#00ff00` prompt**, centered title "Terminal").
+- Window chrome is **Arch Linux style** (flat dark `.archbar`, arch triangle logo in #1793d1, `[–][□][×]` bracket buttons) — the user explicitly moved away from macOS traffic lights. Used by: hero terminal, DOOM window, certificate viewer. Prompt: `[guest@arch ~]$`.
+- Interactive terminal in hero (classic black body, white text, green `#00ff00` prompt).
 - Background = halftone dots + technical ruler + registration marks (explicitly NO generic grid — user rejected it as "AI slop").
 - Custom cursors = native-style tinted SVG data-URIs (green at night, blue in day). No JS-follow cursor (user rejected: laggy).
 - Mono-charts style (amicro.vercel.app/mono-charts): hand-rolled animated SVG, no chart library.
-- `doom.exe` easter egg: opens a **draggable 800×600 macOS window** (windowed only, no fullscreen) with quit-confirm popup; ESC never closes directly (game gets ESC for its classic menu).
+- Certificates = circular badges (dashed seal ring + rotating conic beam ring, 3D tilt on hover) in the stack section; click opens an arch-frame viewer (drag, clip-path circle reveal from the badge, typewriter ledger text on the left, cert image right with hover zoom). Cert images in `mockups/certs/` (real certificates: AIEP HPI mar-2026, Coursera×Google Intro to AI jul-2026, verify MLVDDQHX5RF1).
+- `doom.exe` easter egg: opens a **draggable 800×600 arch window** (windowed only, no fullscreen) with quit-confirm popup; ESC never closes directly (game gets ESC for its classic menu).
 
 ## DOOM easter egg — hard rules
 - The game ALWAYS runs in a **same-origin iframe** (`mockups/doom-web/doom1/doom1.html`, webprboom/PrBoom WASM, GPL — keep the credit visible). Closing = removing the iframe (destroys realm: no zombie audio/instances — this was a real bug, never run an emulator inline again).

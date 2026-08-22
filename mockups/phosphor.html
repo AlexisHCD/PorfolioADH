@@ -222,24 +222,32 @@ button{font:inherit;background:none;border:none;color:inherit;cursor:pointer}
 .scroll-hint .arrow{color:var(--accent);animation:bounce 1.6s ease-in-out infinite}
 @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
 
-/* ============ terminal (macOS window, classic black) ============ */
+/* ============ terminal (arch linux window, classic black) ============ */
 .term{
   background:#000;border:1px solid rgba(255,255,255,.14);border-radius:12px;overflow:hidden;
   box-shadow:0 30px 90px rgba(0,0,0,.55),0 0 0 .5px rgba(0,0,0,.4);
   font-family:var(--mono),'SF Mono',Menlo,monospace;color:#fff;will-change:transform;
 }
 :root[data-theme="light"] .term{box-shadow:0 24px 60px rgba(16,35,61,.35),0 0 0 .5px rgba(0,0,0,.12)}
-.term-bar{
-  display:flex;align-items:center;gap:6px;position:relative;padding:9px 12px;
-  background:linear-gradient(#3a3a3c,#2a2a2c);border-bottom:1px solid rgba(0,0,0,.55);
+/* arch linux window chrome — shared by terminal, doom and certificates */
+.archbar{
+  display:flex;align-items:center;gap:9px;padding:9px 13px;flex-shrink:0;
+  background:#131518;border-bottom:1px solid rgba(255,255,255,.07);
+  user-select:none;-webkit-user-select:none;touch-action:none;
 }
-.td{width:12px;height:12px;border-radius:50%;border:1px solid rgba(0,0,0,.35);flex-shrink:0}
-.td-r{background:#ff5f57}.td-y{background:#febc2e}.td-g{background:#28c840}
-.term-title{
-  position:absolute;left:50%;transform:translateX(-50%);
-  font-size:12px;color:#a0a0a0;letter-spacing:.02em;white-space:nowrap;
+.arch-logo{width:13px;height:13px;flex-shrink:0}
+.arch-title{
+  font-family:var(--mono);font-size:11.5px;color:#9aa4ad;letter-spacing:.03em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
-.term-live{margin-left:auto;font-size:9px;color:#28c840;letter-spacing:.12em}
+.arch-title b{color:#41a6e6;font-weight:500}
+.arch-btns{margin-left:auto;display:flex;gap:9px;font-family:var(--mono);font-size:11px;color:#5f6a72}
+.arch-x{
+  margin-left:auto;font-family:var(--mono);font-size:11px;color:#ff6b6b;
+  background:none;border:none;cursor:pointer;padding:0;transition:color .2s;
+}
+.arch-x:hover{color:#ffa09a}
+.term-live{font-size:9px;color:#28c840;letter-spacing:.12em}
 .term-body{
   height:min(46vh,380px);overflow-y:auto;padding:16px 16px 10px;
   font-size:12.5px;line-height:1.75;color:#fff;background:#000;
@@ -276,19 +284,9 @@ button{font:inherit;background:none;border:none;color:inherit;cursor:pointer}
   box-shadow:0 40px 120px rgba(0,0,0,.75),0 0 0 .5px rgba(0,0,0,.5);
   display:flex;flex-direction:column;position:relative;
 }
-.doom-titlebar{
-  display:flex;align-items:center;gap:6px;position:relative;padding:9px 12px;flex-shrink:0;
-  background:linear-gradient(#3a3a3c,#2a2a2c);border-bottom:1px solid rgba(0,0,0,.55);
-  user-select:none;-webkit-user-select:none;touch-action:none;
-}
-.doom-title{position:absolute;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:12px;color:#a0a0a0;white-space:nowrap;pointer-events:none}
-.doom-esc{margin-left:auto;font-family:var(--mono);font-size:9.5px;color:#98989d;letter-spacing:.08em;pointer-events:none}
-.win-light{background:none;border:none;padding:0;display:flex;cursor:default}
-.win-close{background:none;border:none;padding:0;display:grid;place-items:center;position:relative;cursor:pointer}
-.win-close:hover::after{
-  content:'✕';position:absolute;font-size:8px;color:#5c130e;font-weight:700;line-height:1;
-}
-.td.dim{opacity:.5}
+.doom-titlebar{cursor:grab}
+.doom-titlebar:active{cursor:grabbing}
+.doom-esc{font-family:var(--mono);font-size:9.5px;color:#98989d;letter-spacing:.08em;pointer-events:none;margin-right:10px}
 .doom-body{flex:1;position:relative;min-height:0;background:#000}
 .doom-body iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
 /* quit confirm popup */
@@ -382,6 +380,83 @@ button{font:inherit;background:none;border:none;color:inherit;cursor:pointer}
 .summary-bar{height:10px;border-radius:6px;background:var(--track);overflow:hidden}
 .summary-bar span{display:block;height:100%;width:0%;background:var(--accent);border-radius:6px;box-shadow:0 0 16px var(--accent-glow)}
 .summary-pct{font-family:var(--display);font-size:26px;font-weight:700;color:var(--accent);line-height:1}
+
+/* ============ certificate badges (chapas) ============ */
+.certs-row{display:flex;gap:clamp(28px,4vw,72px);margin-top:44px;flex-wrap:wrap}
+.cert-badge-wrap{display:flex;flex-direction:column;align-items:center;gap:14px}
+.cert-badge{
+  position:relative;width:134px;height:134px;border-radius:50%;
+  background:var(--ink-2);border:1px solid var(--line);cursor:pointer;
+  display:grid;place-items:center;will-change:transform;
+  transition:box-shadow .4s;
+}
+.cert-badge:hover{box-shadow:0 0 44px var(--accent-glow)}
+.badge-seal{
+  position:absolute;inset:7px;border-radius:50%;
+  border:1.5px dashed var(--line);pointer-events:none;
+  transition:transform 1.4s cubic-bezier(.2,.8,.2,1),border-color .4s;
+}
+.cert-badge:hover .badge-seal{transform:rotate(135deg);border-color:var(--accent-line)}
+.badge-beam{
+  position:absolute;inset:-1.5px;border-radius:50%;pointer-events:none;
+  background:conic-gradient(from 0deg,transparent 0 72%,var(--accent) 88%,#b4ffe1 94%,transparent 100%);
+  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2.5px));
+  mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2.5px));
+  animation:beam 7s linear infinite;
+}
+.cert-badge:hover .badge-beam{animation-duration:1.6s}
+.badge-core{display:flex;flex-direction:column;align-items:center;gap:3px;pointer-events:none}
+.badge-core .g{font-family:var(--mono);font-size:30px;color:var(--text);transition:color .3s;line-height:1}
+.cert-badge:hover .badge-core .g{color:var(--accent)}
+.badge-core .y{font-family:var(--mono);font-size:8.5px;letter-spacing:.3em;color:var(--muted)}
+.badge-label{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--muted);
+  text-align:center;max-width:220px;transition:color .3s;line-height:1.7;
+}
+.cert-badge-wrap:hover .badge-label{color:var(--text)}
+
+/* ============ certificate viewer (arch frame) ============ */
+#certOverlay{
+  position:fixed;inset:0;z-index:10002;background:rgba(0,0,0,.55);
+  display:flex;align-items:center;justify-content:center;padding:18px;
+}
+#certOverlay[hidden]{display:none}
+.cert-win{
+  width:min(980px,95vw);height:min(560px,84svh);
+  background:#0b0d0f;border:1px solid rgba(255,255,255,.15);border-radius:10px;
+  overflow:hidden;display:flex;flex-direction:column;
+  box-shadow:0 40px 120px rgba(0,0,0,.8);will-change:clip-path;
+}
+.cert-titlebar{cursor:grab}
+.cert-titlebar:active{cursor:grabbing}
+.cert-body{flex:1;display:grid;grid-template-columns:1fr 1.25fr;min-height:0}
+.cert-left{padding:26px 30px;overflow-y:auto;border-right:1px solid rgba(255,255,255,.08)}
+.cert-left::-webkit-scrollbar{width:8px}
+.cert-left::-webkit-scrollbar-thumb{background:#22262a;border-radius:4px}
+.cert-pre{
+  font-family:var(--mono);font-size:12.5px;line-height:2.05;color:#d2dbd5;
+  white-space:pre-wrap;word-break:break-word;
+}
+.cert-pre::after{
+  content:'';display:inline-block;width:8px;height:14px;background:var(--accent);
+  vertical-align:text-bottom;margin-left:2px;animation:blink 1s steps(2) infinite;
+}
+.cert-right{
+  position:relative;background:#000;display:flex;align-items:center;justify-content:center;
+  padding:18px;min-height:0;overflow:hidden;
+}
+.cert-right img{
+  max-width:100%;max-height:100%;object-fit:contain;
+  border:1px solid rgba(255,255,255,.12);border-radius:6px;
+  box-shadow:0 18px 50px rgba(0,0,0,.55);
+  transition:transform .6s cubic-bezier(.2,.8,.2,1);
+}
+.cert-right:hover img{transform:scale(1.4)}
+@media(max-width:760px){
+  .cert-body{grid-template-columns:1fr;grid-template-rows:42% 58%}
+  .cert-left{border-right:none;border-bottom:1px solid rgba(255,255,255,.08);padding:18px 20px;overflow:hidden}
+  .cert-pre{font-size:11px;line-height:1.9}
+}
 
 /* ============ activity ============ */
 .panel{background:var(--ink-2);border:1px solid var(--line);border-radius:20px;padding:26px;transition:border-color .35s,background .35s}
@@ -565,15 +640,16 @@ footer .p{color:var(--accent)}
     </div>
 
     <div class="term" id="terminal" data-reveal>
-      <div class="term-bar">
-        <span class="td td-r"></span><span class="td td-y"></span><span class="td td-g"></span>
-        <span class="term-title">Terminal</span>
-        <span class="term-live">● LIVE</span>
+      <div class="term-bar archbar">
+        <svg class="arch-logo" viewBox="0 0 16 16" aria-hidden="true"><path fill="#1793d1" d="M8 .6 14.9 15h-4.7L8 10.4 5.8 15H1.1L8 .6z"/></svg>
+        <span class="arch-title"><b>alex@archlinux</b>: ~/historia — zsh</span>
+        <span class="term-live">● live</span>
+        <span class="arch-btns" aria-hidden="true"><span>[–]</span><span>[□]</span><span>[×]</span></span>
       </div>
       <div class="term-body" id="termBody">
         <div id="termLines"></div>
         <div class="term-input-row" id="termInputRow" hidden>
-          <span class="term-prompt">guest@alexis:~$</span>
+          <span class="term-prompt">[guest@arch ~]$</span>
           <input class="term-input" id="termInput" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="terminal — escribe un comando">
         </div>
       </div>
@@ -690,6 +766,25 @@ footer .p{color:var(--accent)}
       </div>
     </div>
     <p class="stack-note" data-reveal>// certificaciones de la malla en camino: <b>aws</b> · <b>cisco</b> · <b>oracle</b></p>
+
+    <div class="certs-row">
+      <div class="cert-badge-wrap" data-reveal>
+        <button class="cert-badge" data-cert="aiep" data-hover aria-label="ver certificado AIEP — Herramientas para la Innovación">
+          <span class="badge-beam"></span>
+          <span class="badge-seal"></span>
+          <span class="badge-core"><span class="g">✦</span><span class="y">AIEP · 2026</span></span>
+        </button>
+        <span class="badge-label">// herramientas para la innovación</span>
+      </div>
+      <div class="cert-badge-wrap" data-reveal>
+        <button class="cert-badge" data-cert="coursera" data-hover aria-label="ver certificado Coursera — Introduction to AI">
+          <span class="badge-beam"></span>
+          <span class="badge-seal"></span>
+          <span class="badge-core"><span class="g">◈</span><span class="y">GOOGLE · 2026</span></span>
+        </button>
+        <span class="badge-label">// introduction to ai — coursera</span>
+      </div>
+    </div>
   </section>
 
   <!-- 03 activity -->
@@ -904,12 +999,11 @@ footer .p{color:var(--accent)}
 <!-- doom easter egg — macOS window with native wasm doom inside -->
 <div id="dosOverlay" hidden role="dialog" aria-label="DOOM — ventana">
   <div class="doom-win" id="doomWin">
-    <div class="doom-titlebar" id="doomTitlebar">
-      <button class="win-close" id="doomCloseX" data-hover aria-label="cerrar doom"><span class="td td-r"></span></button>
-      <span class="win-light"><span class="td td-y dim"></span></span>
-      <span class="win-light"><span class="td td-g dim"></span></span>
-      <span class="doom-title">alex — doom — doom.exe — 80×24</span>
-      <span class="doom-esc">esc: menú del juego</span>
+    <div class="doom-titlebar archbar" id="doomTitlebar">
+      <svg class="arch-logo" viewBox="0 0 16 16" aria-hidden="true"><path fill="#1793d1" d="M8 .6 14.9 15h-4.7L8 10.4 5.8 15H1.1L8 .6z"/></svg>
+      <span class="arch-title"><b>alex@archlinux</b>: ~/doom — doom.exe</span>
+      <span class="doom-esc">esc: menú</span>
+      <button class="arch-x" id="doomCloseX" data-hover aria-label="cerrar doom">[×]</button>
     </div>
     <div class="doom-body" id="dosFrameWrap"></div>
     <div class="doom-quit" id="doomQuit" hidden>
@@ -921,6 +1015,21 @@ footer .p{color:var(--accent)}
           <button class="quit-no" id="quitNo" data-hover>seguir jugando</button>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- certificates viewer — arch frame -->
+<div id="certOverlay" hidden role="dialog" aria-label="visor de certificados">
+  <div class="cert-win" id="certWin">
+    <div class="archbar cert-titlebar" id="certTitlebar">
+      <svg class="arch-logo" viewBox="0 0 16 16" aria-hidden="true"><path fill="#1793d1" d="M8 .6 14.9 15h-4.7L8 10.4 5.8 15H1.1L8 .6z"/></svg>
+      <span class="arch-title"><b>alex@archlinux</b>: ~/certificados/<span id="certFile">archivo.pdf</span> — zathura</span>
+      <button class="arch-x" id="certClose" data-hover aria-label="cerrar certificado">[×]</button>
+    </div>
+    <div class="cert-body">
+      <div class="cert-left"><pre class="cert-pre" id="certText"></pre></div>
+      <div class="cert-right"><img id="certImg" alt="certificado" draggable="false"></div>
     </div>
   </div>
 </div>
@@ -1232,6 +1341,7 @@ const COMMANDS = {
     termPrint('  <span class="t-p">proyectos</span>   mi trabajo', 't-out');
     termPrint('  <span class="t-p">roadmap</span>     trayectoria académica', 't-out');
     termPrint('  <span class="t-p">contacto</span>    cómo ubicarme', 't-out');
+    termPrint('  <span class="t-p">certificados</span> mis chapas verificadas', 't-out');
     termPrint('  <span class="t-p">neofetch</span>    info del sistema', 't-out');
     termPrint('  <span class="t-p">theme</span>       día ⇄ noche', 't-out');
     termPrint('  <span class="t-p">clear</span>       limpiar pantalla', 't-out');
@@ -1262,6 +1372,11 @@ const COMMANDS = {
     termPrint('email: adhcamus@proton.me · github: @AlexisHCD', 't-out');
     termPrint('linkedin: /in/alexis-hernández · x: @Mkeled', 't-out');
   },
+  certificados: function(){
+    termPrint('[1] aiep — herramientas para la innovación · marzo 2026', 't-out');
+    termPrint('[2] coursera × google — introduction to ai · julio 2026', 't-out');
+    termPrint('click en las chapas de la sección <span class="t-p">stack</span> para verlas', 't-out');
+  },
   neofetch: function(){
     termPrint('    ▄▄▄▄▄▄▄      <span class="t-p">alex@phosphor</span>', 't-out');
     termPrint('  ▄█▀        ▀█▄  ─────────────────', 't-out');
@@ -1285,7 +1400,7 @@ const COMMANDS = {
 async function runCommand(raw){
   const input = raw.trim();
   if(!input) return;
-  termPrint('<span class="t-p">guest@alexis:~$</span> ' + esc(input), 't-cmd');
+  termPrint('<span class="t-p">[guest@arch ~]$</span> ' + esc(input), 't-cmd');
   histCmd.push(input); histIdx = histCmd.length;
   const [cmd, ...args] = input.toLowerCase().split(/\s+/);
   if(cmd === 'doom' || cmd === 'doom.exe'){
@@ -1379,14 +1494,13 @@ window.addEventListener('keydown', function(e){
   else hideQuit();
 });
 
-/* draggable window (desktop pointers only) */
-if(finePointer){
-  const bar = document.getElementById('doomTitlebar');
+/* draggable windows (desktop pointers only) */
+function makeDraggable(bar, win){
   let dragging = false, sx = 0, sy = 0, ox = 0, oy = 0;
   bar.addEventListener('pointerdown', function(e){
-    if(e.target.closest('.win-close')) return;
+    if(e.target.closest('.arch-x')) return;
     dragging = true;
-    const m = /translate\(([-\d.]+)px,\s*([-\d.]+)px\)/.exec(doomWin.style.transform || '');
+    const m = /translate\(([-\d.]+)px,\s*([-\d.]+)px\)/.exec(win.style.transform || '');
     ox = m ? parseFloat(m[1]) : 0;
     oy = m ? parseFloat(m[2]) : 0;
     sx = e.clientX; sy = e.clientY;
@@ -1394,10 +1508,136 @@ if(finePointer){
   });
   bar.addEventListener('pointermove', function(e){
     if(!dragging) return;
-    doomWin.style.transform = 'translate(' + (ox + e.clientX - sx) + 'px,' + (oy + e.clientY - sy) + 'px)';
+    win.style.transform = 'translate(' + (ox + e.clientX - sx) + 'px,' + (oy + e.clientY - sy) + 'px)';
   });
   bar.addEventListener('pointerup', function(){ dragging = false; });
   bar.addEventListener('pointercancel', function(){ dragging = false; });
+}
+if(finePointer){
+  makeDraggable(document.getElementById('doomTitlebar'), document.getElementById('doomWin'));
+  makeDraggable(document.getElementById('certTitlebar'), document.getElementById('certWin'));
+}
+
+/* ============ certificates — badges + arch-frame viewer ============ */
+const CERTS = {
+  aiep: {
+    file: 'cert_aiep_hpi.pdf',
+    img: 'certs/cert-aiep.png',
+    lines: [
+      '$ verify --cert aiep_hpi',
+      'institución .... aiep · univ. andrés bello',
+      'certificado .... herramientas para la innovación',
+      'otorgado a ..... alexis demian hernández camus',
+      'fecha .......... santiago, 16 marzo 2026',
+      'programa ....... técnico en prog. y análisis de sistemas'
+    ]
+  },
+  coursera: {
+    file: 'cert_coursera_google.pdf',
+    img: 'certs/cert-coursera.png',
+    lines: [
+      '$ verify --cert coursera_mlvd',
+      'plataforma ..... coursera',
+      'curso .......... introduction to ai',
+      'autorizado por . google',
+      'otorgado a ..... alexis demian hernández',
+      'fecha .......... 2 julio 2026',
+      'verificación ... coursera.org/verify/MLVDDQHX5RF1'
+    ]
+  }
+};
+const certOverlay = document.getElementById('certOverlay');
+const certWin = document.getElementById('certWin');
+const certText = document.getElementById('certText');
+let certOpen = false, certTypeToken = 0;
+
+async function typeCert(id){
+  const data = CERTS[id];
+  const token = ++certTypeToken;
+  certText.textContent = '';
+  for(const line of data.lines){
+    if(token !== certTypeToken) return;
+    if(reduced){
+      certText.textContent += line + '\n';
+      await sleep(30);
+      continue;
+    }
+    for(const ch of line){
+      if(token !== certTypeToken) return;
+      certText.textContent += ch;
+      await sleep(13);
+    }
+    certText.textContent += '\n';
+    await sleep(150);
+  }
+  if(token === certTypeToken) certText.textContent += '\nestado ......... \u2713 verificado\n';
+}
+
+function openCert(id, origin){
+  const data = CERTS[id];
+  if(!data || certOpen) return;
+  certOpen = true;
+  document.getElementById('certImg').src = data.img;
+  document.getElementById('certFile').textContent = data.file;
+  certOverlay.hidden = false;
+  if(lenis) lenis.stop();
+  if(window.gsap && !reduced){
+    const wr = certWin.getBoundingClientRect();
+    const br = origin.getBoundingClientRect();
+    const x = br.left + br.width / 2 - wr.left;
+    const y = br.top + br.height / 2 - wr.top;
+    const r = Math.hypot(Math.max(x, wr.width - x), Math.max(y, wr.height - y)) + 40;
+    certWin.style.clipPath = 'circle(0px at ' + x + 'px ' + y + 'px)';
+    gsap.fromTo(certOverlay, { autoAlpha: 0 }, { autoAlpha: 1, duration: .3 });
+    gsap.to(certWin, {
+      clipPath: 'circle(' + r + 'px at ' + x + 'px ' + y + 'px)',
+      duration: .75, ease: 'power3.out',
+      onComplete: function(){ typeCert(id); }
+    });
+  } else {
+    certWin.style.clipPath = '';
+    typeCert(id);
+  }
+}
+
+function closeCert(){
+  if(!certOpen) return;
+  certOpen = false;
+  certTypeToken++;
+  const done = function(){
+    certOverlay.hidden = true;
+    certWin.style.clipPath = '';
+    if(lenis) lenis.start();
+  };
+  if(window.gsap && !reduced){
+    gsap.to(certOverlay, { autoAlpha: 0, duration: .28, onComplete: done });
+  } else { done(); }
+}
+
+document.querySelectorAll('.cert-badge').forEach(function(b){
+  b.addEventListener('click', function(){ openCert(b.dataset.cert, b); });
+});
+document.getElementById('certClose').addEventListener('click', closeCert);
+certOverlay.addEventListener('click', function(e){
+  if(e.target === certOverlay) closeCert();
+});
+window.addEventListener('keydown', function(e){
+  if(e.key === 'Escape' && !certOverlay.hidden) closeCert();
+});
+
+/* badge 3d tilt (desktop) */
+if(finePointer && !reduced && window.gsap){
+  document.querySelectorAll('.cert-badge').forEach(function(b){
+    b.addEventListener('mousemove', function(e){
+      const r = b.getBoundingClientRect();
+      const dx = (e.clientX - r.left) / r.width - .5;
+      const dy = (e.clientY - r.top) / r.height - .5;
+      gsap.to(b, { rotateY: dx * 16, rotateX: -dy * 16, transformPerspective: 520, duration: .35, ease: 'power2.out' });
+    });
+    b.addEventListener('mouseleave', function(){
+      gsap.to(b, { rotateX: 0, rotateY: 0, duration: 1, ease: 'elastic.out(1,.4)' });
+    });
+  });
 }
 
 /* ============ copy email ============ */
