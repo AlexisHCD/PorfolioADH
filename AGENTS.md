@@ -15,7 +15,9 @@ Deploy: Vercel (static). Site content in **Spanish**; code, comments and convent
 
 ## Locked design decisions (do not relitigate)
 - Concept **PHOSPHOR**: ink-black night theme (default) + blue/white day theme via `data-theme` attr + View Transitions circular reveal + WebAudio synth click on toggle.
-- Window chrome is **Arch Linux style** (flat dark `.archbar`, arch triangle logo in #1793d1, `[–][□][×]` bracket buttons) — the user explicitly moved away from macOS traffic lights. Used by: hero terminal, DOOM window, certificate viewer. Prompt: `[guest@arch ~]$`.
+- Window chrome is **Arch Linux + Kitty + gruvbox pastel** (user's exact reference: Kitty terminal, Demox-numix-gruvbox theme, Awesome WM). Palette: bg `#1d2021`, bar `#3c3836`, fg `#ebdbb2`, green `#b8bb26`, teal `#83a598`, purple `#d3869b`, yellow `#fabd2f`, orange `#fe8019`, red `#fb4934`. Shared `.archbar` (arch triangle `#83a598`, `[–][□][×]` bracket buttons) across hero terminal, DOOM window and certificate viewer. Prompt: `[guest@arch ~]$`. Hero terminal has an awesome-wm style sysbar (battery/volume/ram/disk/cpu/temp mini SVG widgets; battery real via getBattery, others animated random-walk).
+- Certificates = their own section **`// 06 certificados`** (between roadmap and contact) with circular badges (dashed seal ring + rotating conic beam ring, 3D tilt on hover); click opens the gruvbox arch-frame viewer (drag, clip-path circle reveal from the badge, typewriter ledger left, cert image right with hover zoom). Cert images in `mockups/certs/` (AIEP HPI mar-2026, Coursera×Google Intro to AI jul-2026, verify MLVDDQHX5RF1).
+- DOOM iframe gets CSS injected on load (same-origin): hides the emscripten "powered by" logo, dims `#controls`. Credit lives in the page footer (id Software + webprboom GPL).
 - Interactive terminal in hero (classic black body, white text, green `#00ff00` prompt).
 - Background = halftone dots + technical ruler + registration marks (explicitly NO generic grid — user rejected it as "AI slop").
 - Custom cursors = native-style tinted SVG data-URIs (green at night, blue in day). No JS-follow cursor (user rejected: laggy).

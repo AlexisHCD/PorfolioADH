@@ -222,55 +222,62 @@ button{font:inherit;background:none;border:none;color:inherit;cursor:pointer}
 .scroll-hint .arrow{color:var(--accent);animation:bounce 1.6s ease-in-out infinite}
 @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
 
-/* ============ terminal (arch linux window, classic black) ============ */
+/* ============ terminal (kitty + gruvbox pastel on arch) ============ */
 .term{
-  background:#000;border:1px solid rgba(255,255,255,.14);border-radius:12px;overflow:hidden;
+  background:#1d2021;border:1px solid #504945;border-radius:10px;overflow:hidden;
   box-shadow:0 30px 90px rgba(0,0,0,.55),0 0 0 .5px rgba(0,0,0,.4);
-  font-family:var(--mono),'SF Mono',Menlo,monospace;color:#fff;will-change:transform;
+  font-family:var(--mono),'SF Mono',Menlo,monospace;color:#ebdbb2;will-change:transform;
 }
 :root[data-theme="light"] .term{box-shadow:0 24px 60px rgba(16,35,61,.35),0 0 0 .5px rgba(0,0,0,.12)}
-/* arch linux window chrome — shared by terminal, doom and certificates */
+/* arch linux window chrome (kitty gruvbox) — shared by terminal, doom and certs */
 .archbar{
   display:flex;align-items:center;gap:9px;padding:9px 13px;flex-shrink:0;
-  background:#131518;border-bottom:1px solid rgba(255,255,255,.07);
+  background:#3c3836;border-bottom:1px solid #1d2021;
   user-select:none;-webkit-user-select:none;touch-action:none;
 }
 .arch-logo{width:13px;height:13px;flex-shrink:0}
 .arch-title{
-  font-family:var(--mono);font-size:11.5px;color:#9aa4ad;letter-spacing:.03em;
+  font-family:var(--mono);font-size:11.5px;color:#bdae93;letter-spacing:.03em;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
-.arch-title b{color:#41a6e6;font-weight:500}
-.arch-btns{margin-left:auto;display:flex;gap:9px;font-family:var(--mono);font-size:11px;color:#5f6a72}
+.arch-title b{color:#83a598;font-weight:500}
+.arch-btns{margin-left:auto;display:flex;gap:9px;font-family:var(--mono);font-size:11px;color:#928374}
 .arch-x{
-  margin-left:auto;font-family:var(--mono);font-size:11px;color:#ff6b6b;
+  margin-left:auto;font-family:var(--mono);font-size:11px;color:#fb4934;
   background:none;border:none;cursor:pointer;padding:0;transition:color .2s;
 }
-.arch-x:hover{color:#ffa09a}
-.term-live{font-size:9px;color:#28c840;letter-spacing:.12em}
+.arch-x:hover{color:#ff7b6b}
+.term-live{font-size:9px;color:#8ec07c;letter-spacing:.12em}
+/* awesome-wm style system widgets (hero terminal only) */
+.sysbar{
+  margin-left:auto;display:flex;gap:11px;align-items:center;
+  font-family:var(--mono);font-size:9.5px;color:#bdae93;
+}
+.sys{display:flex;align-items:center;gap:3px;white-space:nowrap}
+.sys svg{width:11px;height:11px;display:block;flex-shrink:0}
 .term-body{
   height:min(46vh,380px);overflow-y:auto;padding:16px 16px 10px;
-  font-size:12.5px;line-height:1.75;color:#fff;background:#000;
+  font-size:12.5px;line-height:1.75;color:#ebdbb2;background:transparent;
 }
 .term-body::-webkit-scrollbar{width:8px}
-.term-body::-webkit-scrollbar-thumb{background:#3a3a3c;border-radius:4px}
+.term-body::-webkit-scrollbar-thumb{background:#504945;border-radius:4px}
 .t-line{white-space:pre-wrap;word-break:break-word}
-.t-cmd{color:#fff}
-.t-p{color:#00ff00}
-.t-out{color:#d0d0d0}
-.t-ok{color:#00ff00}
-.t-err{color:#ff5f56}
+.t-cmd{color:#ebdbb2}
+.t-p{color:#b8bb26}
+.t-out{color:#bdae93}
+.t-ok{color:#b8bb26}
+.t-err{color:#fb4934}
 .term-input-row{display:flex;gap:8px;align-items:baseline;margin-top:2px}
-.term-prompt{color:#00ff00;white-space:nowrap;font-weight:500}
+.term-prompt{color:#b8bb26;white-space:nowrap;font-weight:500}
 .term-input{
-  flex:1;background:transparent;border:none;outline:none;color:#fff;
-  font-family:inherit;font-size:12.5px;caret-color:#00ff00;padding:0;
+  flex:1;background:transparent;border:none;outline:none;color:#ebdbb2;
+  font-family:inherit;font-size:12.5px;caret-color:#b8bb26;padding:0;
 }
 .term-hint{
-  font-size:10px;color:#98989d;letter-spacing:.1em;padding:8px 14px;
-  border-top:1px solid rgba(255,255,255,.09);background:#1c1c1e;
+  font-size:10px;color:#928374;letter-spacing:.1em;padding:8px 14px;
+  border-top:1px solid #1d2021;background:#2c2a29;
 }
-.term-hint b{color:#00ff00;font-weight:500}
+.term-hint b{color:#b8bb26;font-weight:500}
 
 /* ============ doom window (macOS console style, 800x600) ============ */
 #dosOverlay{
@@ -280,13 +287,13 @@ button{font:inherit;background:none;border:none;color:inherit;cursor:pointer}
 #dosOverlay[hidden]{display:none}
 .doom-win{
   width:min(800px,94vw);height:min(600px,78svh);
-  background:#000;border:1px solid rgba(255,255,255,.16);border-radius:12px;overflow:hidden;
+  background:#000;border:1px solid #504945;border-radius:10px;overflow:hidden;
   box-shadow:0 40px 120px rgba(0,0,0,.75),0 0 0 .5px rgba(0,0,0,.5);
   display:flex;flex-direction:column;position:relative;
 }
 .doom-titlebar{cursor:grab}
 .doom-titlebar:active{cursor:grabbing}
-.doom-esc{font-family:var(--mono);font-size:9.5px;color:#98989d;letter-spacing:.08em;pointer-events:none;margin-right:10px}
+.doom-esc{font-family:var(--mono);font-size:9.5px;color:#928374;letter-spacing:.08em;pointer-events:none;margin-right:10px}
 .doom-body{flex:1;position:relative;min-height:0;background:#000}
 .doom-body iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
 /* quit confirm popup */
@@ -415,6 +422,10 @@ button{font:inherit;background:none;border:none;color:inherit;cursor:pointer}
 }
 .cert-badge-wrap:hover .badge-label{color:var(--text)}
 
+/* ============ certificates section ============ */
+#certificados .certs-row{justify-content:center;margin-top:64px}
+#certificados .cert-badge{width:152px;height:152px}
+
 /* ============ certificate viewer (arch frame) ============ */
 #certOverlay{
   position:fixed;inset:0;z-index:10002;background:rgba(0,0,0,.55);
@@ -423,22 +434,22 @@ button{font:inherit;background:none;border:none;color:inherit;cursor:pointer}
 #certOverlay[hidden]{display:none}
 .cert-win{
   width:min(980px,95vw);height:min(560px,84svh);
-  background:#0b0d0f;border:1px solid rgba(255,255,255,.15);border-radius:10px;
+  background:#1d2021;border:1px solid #504945;border-radius:10px;
   overflow:hidden;display:flex;flex-direction:column;
   box-shadow:0 40px 120px rgba(0,0,0,.8);will-change:clip-path;
 }
 .cert-titlebar{cursor:grab}
 .cert-titlebar:active{cursor:grabbing}
 .cert-body{flex:1;display:grid;grid-template-columns:1fr 1.25fr;min-height:0}
-.cert-left{padding:26px 30px;overflow-y:auto;border-right:1px solid rgba(255,255,255,.08)}
+.cert-left{padding:26px 30px;overflow-y:auto;border-right:1px solid #3c3836}
 .cert-left::-webkit-scrollbar{width:8px}
-.cert-left::-webkit-scrollbar-thumb{background:#22262a;border-radius:4px}
+.cert-left::-webkit-scrollbar-thumb{background:#504945;border-radius:4px}
 .cert-pre{
-  font-family:var(--mono);font-size:12.5px;line-height:2.05;color:#d2dbd5;
+  font-family:var(--mono);font-size:12.5px;line-height:2.05;color:#ebdbb2;
   white-space:pre-wrap;word-break:break-word;
 }
 .cert-pre::after{
-  content:'';display:inline-block;width:8px;height:14px;background:var(--accent);
+  content:'';display:inline-block;width:8px;height:14px;background:#b8bb26;
   vertical-align:text-bottom;margin-left:2px;animation:blink 1s steps(2) infinite;
 }
 .cert-right{
@@ -601,7 +612,8 @@ footer .p{color:var(--accent)}
     <a href="#actividad" data-hover><b>03.</b>actividad</a>
     <a href="#proyectos" data-hover><b>04.</b>proyectos</a>
     <a href="#roadmap" data-hover><b>05.</b>roadmap</a>
-    <a href="#contacto" data-hover><b>06.</b>contacto</a>
+    <a href="#certificados" data-hover><b>06.</b>certificados</a>
+    <a href="#contacto" data-hover><b>07.</b>contacto</a>
   </div>
   <div class="nav-right">
     <button class="theme-btn" id="themeBtn" data-hover data-magnetic aria-label="cambiar tema día/noche" title="prender la luz / apagarla">
@@ -641,9 +653,35 @@ footer .p{color:var(--accent)}
 
     <div class="term" id="terminal" data-reveal>
       <div class="term-bar archbar">
-        <svg class="arch-logo" viewBox="0 0 16 16" aria-hidden="true"><path fill="#1793d1" d="M8 .6 14.9 15h-4.7L8 10.4 5.8 15H1.1L8 .6z"/></svg>
-        <span class="arch-title"><b>alex@archlinux</b>: ~/historia — zsh</span>
+        <svg class="arch-logo" viewBox="0 0 16 16" aria-hidden="true"><path fill="#83a598" d="M8 .6 14.9 15h-4.7L8 10.4 5.8 15H1.1L8 .6z"/></svg>
+        <span class="arch-title"><b>alex@archlinux</b>: ~/historia — kitty</span>
         <span class="term-live">● live</span>
+        <div class="sysbar" aria-hidden="true" title="awesome wm · demox-numix-gruvbox">
+          <span class="sys">
+            <svg viewBox="0 0 12 12"><rect x="1" y="3.5" width="8.5" height="5" rx="1" fill="none" stroke="#b8bb26" stroke-width="1.2"/><rect x="10.2" y="5" width="1.1" height="2" rx=".5" fill="#b8bb26"/><rect x="2.4" y="4.8" width="4.4" height="2.4" rx=".5" fill="#b8bb26"/></svg>
+            <span id="sysBatt">87%</span>
+          </span>
+          <span class="sys">
+            <svg viewBox="0 0 12 12"><path d="M1 4.5h2L6 2v8L3 7.5H1z" fill="#83a598"/><path d="M7.5 4a2.7 2.7 0 0 1 0 4" stroke="#83a598" fill="none" stroke-width="1.1" stroke-linecap="round"/></svg>
+            <span>67</span>
+          </span>
+          <span class="sys">
+            <svg viewBox="0 0 12 12"><rect x="3" y="3" width="6" height="6" rx="1" fill="none" stroke="#d3869b" stroke-width="1.1"/><path d="M4.5 3V1.4M7.5 3V1.4M4.5 10.6V9M7.5 10.6V9M3 4.5H1.4M3 7.5H1.4M10.6 4.5H9M10.6 7.5H9" stroke="#d3869b" stroke-width="1" stroke-linecap="round"/></svg>
+            <span id="sysRam">42%</span>
+          </span>
+          <span class="sys">
+            <svg viewBox="0 0 12 12"><ellipse cx="6" cy="3.1" rx="4" ry="1.6" fill="none" stroke="#fabd2f" stroke-width="1"/><path d="M2 3.1v5.7c0 .9 1.8 1.6 4 1.6s4-.7 4-1.6V3.1" fill="none" stroke="#fabd2f" stroke-width="1"/></svg>
+            <span>61%</span>
+          </span>
+          <span class="sys">
+            <svg viewBox="0 0 12 12"><rect x="2.5" y="2.5" width="7" height="7" rx="1" fill="none" stroke="#fe8019" stroke-width="1.1"/><rect x="5" y="5" width="2" height="2" fill="#fe8019"/></svg>
+            <span id="sysCpu">14%</span>
+          </span>
+          <span class="sys">
+            <svg viewBox="0 0 12 12"><path d="M5.2 2.6a1.3 1.3 0 0 1 2.6 0v3.9a2.4 2.4 0 1 1-2.6 0z" fill="none" stroke="#fb4934" stroke-width="1"/><circle cx="6.5" cy="8.2" r="1.1" fill="#fb4934"/></svg>
+            <span id="sysTemp">52°</span>
+          </span>
+        </div>
         <span class="arch-btns" aria-hidden="true"><span>[–]</span><span>[□]</span><span>[×]</span></span>
       </div>
       <div class="term-body" id="termBody">
@@ -766,25 +804,6 @@ footer .p{color:var(--accent)}
       </div>
     </div>
     <p class="stack-note" data-reveal>// certificaciones de la malla en camino: <b>aws</b> · <b>cisco</b> · <b>oracle</b></p>
-
-    <div class="certs-row">
-      <div class="cert-badge-wrap" data-reveal>
-        <button class="cert-badge" data-cert="aiep" data-hover aria-label="ver certificado AIEP — Herramientas para la Innovación">
-          <span class="badge-beam"></span>
-          <span class="badge-seal"></span>
-          <span class="badge-core"><span class="g">✦</span><span class="y">AIEP · 2026</span></span>
-        </button>
-        <span class="badge-label">// herramientas para la innovación</span>
-      </div>
-      <div class="cert-badge-wrap" data-reveal>
-        <button class="cert-badge" data-cert="coursera" data-hover aria-label="ver certificado Coursera — Introduction to AI">
-          <span class="badge-beam"></span>
-          <span class="badge-seal"></span>
-          <span class="badge-core"><span class="g">◈</span><span class="y">GOOGLE · 2026</span></span>
-        </button>
-        <span class="badge-label">// introduction to ai — coursera</span>
-      </div>
-    </div>
   </section>
 
   <!-- 03 activity -->
@@ -975,7 +994,36 @@ footer .p{color:var(--accent)}
     </div>
   </section>
 
-  <!-- 05 contact -->
+  <!-- 06 certificates -->
+  <section class="section" id="certificados">
+    <div class="sec-head" data-reveal>
+      <span class="sec-tag">// 06</span>
+      <h2 class="sec-title">Certificados</h2>
+      <span class="sec-line"></span>
+    </div>
+    <p class="sec-desc" data-reveal>Formalización de lo aprendido — chapas verificables. Click para inspeccionarlas.</p>
+
+    <div class="certs-row">
+      <div class="cert-badge-wrap" data-reveal>
+        <button class="cert-badge" data-cert="aiep" data-hover aria-label="ver certificado AIEP — Herramientas para la Innovación">
+          <span class="badge-beam"></span>
+          <span class="badge-seal"></span>
+          <span class="badge-core"><span class="g">✦</span><span class="y">AIEP · 2026</span></span>
+        </button>
+        <span class="badge-label">// herramientas para la innovación</span>
+      </div>
+      <div class="cert-badge-wrap" data-reveal>
+        <button class="cert-badge" data-cert="coursera" data-hover aria-label="ver certificado Coursera — Introduction to AI">
+          <span class="badge-beam"></span>
+          <span class="badge-seal"></span>
+          <span class="badge-core"><span class="g">◈</span><span class="y">GOOGLE · 2026</span></span>
+        </button>
+        <span class="badge-label">// introduction to ai — coursera</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 contact -->
   <section class="section contact" id="contacto">
     <h2 class="contact-title" data-reveal>¿Hablamos<span class="p">?</span></h2>
     <p class="contact-sub" data-reveal>Abierto a prácticas profesionales, proyectos y colaboraciones. Escríbeme y conversamos.</p>
@@ -992,15 +1040,15 @@ footer .p{color:var(--accent)}
 
 <footer>
   <span>© 2026 ALEXIS HERNÁNDEZ CAMUS — SAN ANTONIO, CL</span>
-  <span>hecho a mano <span class="p">//</span> gsap + lenis + terminal</span>
-  <span>v2.0 · mockup-03 · phosphor</span>
+  <span>hecho a mano <span class="p">//</span> gsap + lenis + terminal · DOOM © id software, puerto <a href="https://github.com/raz0red/webprboom" target="_blank" rel="noopener" style="color:inherit">webprboom</a> (GPL)</span>
+  <span>v2.0 · mockup-04 · phosphor</span>
 </footer>
 
 <!-- doom easter egg — macOS window with native wasm doom inside -->
 <div id="dosOverlay" hidden role="dialog" aria-label="DOOM — ventana">
   <div class="doom-win" id="doomWin">
     <div class="doom-titlebar archbar" id="doomTitlebar">
-      <svg class="arch-logo" viewBox="0 0 16 16" aria-hidden="true"><path fill="#1793d1" d="M8 .6 14.9 15h-4.7L8 10.4 5.8 15H1.1L8 .6z"/></svg>
+      <svg class="arch-logo" viewBox="0 0 16 16" aria-hidden="true"><path fill="#83a598" d="M8 .6 14.9 15h-4.7L8 10.4 5.8 15H1.1L8 .6z"/></svg>
       <span class="arch-title"><b>alex@archlinux</b>: ~/doom — doom.exe</span>
       <span class="doom-esc">esc: menú</span>
       <button class="arch-x" id="doomCloseX" data-hover aria-label="cerrar doom">[×]</button>
@@ -1023,7 +1071,7 @@ footer .p{color:var(--accent)}
 <div id="certOverlay" hidden role="dialog" aria-label="visor de certificados">
   <div class="cert-win" id="certWin">
     <div class="archbar cert-titlebar" id="certTitlebar">
-      <svg class="arch-logo" viewBox="0 0 16 16" aria-hidden="true"><path fill="#1793d1" d="M8 .6 14.9 15h-4.7L8 10.4 5.8 15H1.1L8 .6z"/></svg>
+      <svg class="arch-logo" viewBox="0 0 16 16" aria-hidden="true"><path fill="#83a598" d="M8 .6 14.9 15h-4.7L8 10.4 5.8 15H1.1L8 .6z"/></svg>
       <span class="arch-title"><b>alex@archlinux</b>: ~/certificados/<span id="certFile">archivo.pdf</span> — zathura</span>
       <button class="arch-x" id="certClose" data-hover aria-label="cerrar certificado">[×]</button>
     </div>
@@ -1459,7 +1507,18 @@ function openDoom(){
   const frame = document.createElement('iframe');
   frame.src = DOOM_URL;
   frame.title = 'DOOM — prboom wasm';
-  frame.addEventListener('load', function(){ try{ frame.contentWindow.focus(); }catch(_){} });
+  frame.addEventListener('load', function(){
+    /* same-origin iframe: hide the "powered by emscripten" logo and keep
+       the small controls row dimmed until hovered */
+    try{
+      const doc = frame.contentDocument;
+      const st = doc.createElement('style');
+      st.textContent = 'a[href="http://emscripten.org"]{display:none!important}' +
+        '#controls{opacity:.45;font-size:10px}#controls:hover{opacity:1}';
+      doc.head.appendChild(st);
+    }catch(_){}
+    try{ frame.contentWindow.focus(); }catch(_){}
+  });
   dosFrameWrap.appendChild(frame);
   doomFrame = frame;
 }
@@ -1639,6 +1698,32 @@ if(finePointer && !reduced && window.gsap){
     });
   });
 }
+
+/* awesome-wm style system widgets (battery is real when available) */
+(function sysbar(){
+  const ram = document.getElementById('sysRam');
+  const cpu = document.getElementById('sysCpu');
+  const temp = document.getElementById('sysTemp');
+  const batt = document.getElementById('sysBatt');
+  let r = 42, c = 14, t = 52;
+  function tick(){
+    r = Math.max(28, Math.min(71, r + (Math.random() * 8 - 4)));
+    c = Math.max(6, Math.min(48, c + (Math.random() * 10 - 5)));
+    t = Math.max(44, Math.min(67, t + (Math.random() * 4 - 2)));
+    if(ram) ram.textContent = Math.round(r) + '%';
+    if(cpu) cpu.textContent = Math.round(c) + '%';
+    if(temp) temp.textContent = Math.round(t) + '°';
+  }
+  tick();
+  setInterval(tick, 2200);
+  if(navigator.getBattery){
+    navigator.getBattery().then(function(b){
+      function up(){ if(batt) batt.textContent = Math.round(b.level * 100) + '%'; }
+      up();
+      b.addEventListener('levelchange', up);
+    }).catch(function(){});
+  }
+})();
 
 /* ============ copy email ============ */
 const copyBtn = document.getElementById('copyEmail');
