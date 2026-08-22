@@ -251,39 +251,54 @@ button{font:inherit;background:none;border:none;color:inherit;cursor:pointer}
 }
 .term-hint b{color:#00ff00;font-weight:500}
 
-/* ============ doom overlay (fullscreen native wasm) ============ */
-#dosOverlay{position:fixed;inset:0;z-index:10001;background:#000}
+/* ============ doom window (macOS console style, 800x600) ============ */
+#dosOverlay{
+  position:fixed;inset:0;z-index:10001;background:rgba(0,0,0,.45);
+  display:flex;align-items:center;justify-content:center;
+}
 #dosOverlay[hidden]{display:none}
-.dos-frame-wrap{position:absolute;inset:0}
-.dos-frame-wrap iframe{width:100%;height:100%;border:0;display:block;background:#000}
-.dos-bar{
-  position:absolute;top:0;left:0;right:0;z-index:2;display:flex;align-items:center;
-  justify-content:space-between;gap:12px;padding:10px 14px;pointer-events:none;
-  background:linear-gradient(rgba(0,0,0,.85),rgba(0,0,0,.45) 60%,transparent);
-  font-family:var(--mono);
+.doom-win{
+  width:min(800px,94vw);height:min(600px,78svh);
+  background:#000;border:1px solid rgba(255,255,255,.16);border-radius:12px;overflow:hidden;
+  box-shadow:0 40px 120px rgba(0,0,0,.75),0 0 0 .5px rgba(0,0,0,.5);
+  display:flex;flex-direction:column;position:relative;
 }
-.dos-title{font-size:11px;letter-spacing:.1em;color:#9aa8a0}
-.dos-title b{color:var(--accent);font-weight:500}
-.dos-actions{display:flex;gap:8px;pointer-events:auto}
-.dos-pill{
-  font-family:var(--mono);font-size:11px;letter-spacing:.06em;border-radius:8px;padding:6px 12px;
-  border:1px solid rgba(255,255,255,.22);color:#e8e8e3;background:rgba(0,0,0,.5);
-  backdrop-filter:blur(8px);transition:border-color .2s,color .2s;
+.doom-titlebar{
+  display:flex;align-items:center;gap:6px;position:relative;padding:9px 12px;flex-shrink:0;
+  background:linear-gradient(#3a3a3c,#2a2a2c);border-bottom:1px solid rgba(0,0,0,.55);
+  user-select:none;-webkit-user-select:none;touch-action:none;
 }
-.dos-pill:hover{border-color:var(--accent-line);color:var(--accent)}
-.dos-close{
-  font-family:var(--mono);font-size:11px;letter-spacing:.06em;border-radius:8px;padding:6px 12px;
-  border:1px solid rgba(255,107,107,.4);color:#ff6b6b;background:rgba(0,0,0,.5);
-  backdrop-filter:blur(8px);transition:background .2s,color .2s;
+.doom-title{position:absolute;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:12px;color:#a0a0a0;white-space:nowrap;pointer-events:none}
+.doom-esc{margin-left:auto;font-family:var(--mono);font-size:9.5px;color:#98989d;letter-spacing:.08em;pointer-events:none}
+.win-light{background:none;border:none;padding:0;display:flex;cursor:default}
+.win-close{background:none;border:none;padding:0;display:grid;place-items:center;position:relative;cursor:pointer}
+.win-close:hover::after{
+  content:'✕';position:absolute;font-size:8px;color:#5c130e;font-weight:700;line-height:1;
 }
-.dos-close:hover{background:#ff6b6b;color:#000}
-.dos-hint{
-  position:absolute;bottom:14px;left:50%;transform:translateX(-50%);z-index:2;pointer-events:none;
-  font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:#8b8b85;
-  background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.12);border-radius:99px;padding:7px 14px;
-  animation:hintFade 8s forwards;white-space:nowrap;
+.td.dim{opacity:.5}
+.doom-body{flex:1;position:relative;min-height:0;background:#000}
+.doom-body iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
+/* quit confirm popup */
+.doom-quit{position:absolute;inset:0;z-index:3;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.55)}
+.doom-quit[hidden]{display:none}
+.quit-card{
+  background:#1c1c1e;border:1px solid rgba(255,255,255,.14);border-radius:14px;
+  padding:26px 32px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.6);font-family:var(--mono);
 }
-@keyframes hintFade{0%,70%{opacity:1}100%{opacity:0}}
+.quit-title{font-size:15px;color:#fff;font-weight:700;letter-spacing:.02em}
+.quit-sub{font-size:11px;color:#98989d;margin-top:8px;letter-spacing:.06em}
+.quit-actions{display:flex;gap:10px;margin-top:22px;justify-content:center}
+.quit-yes{
+  font-family:var(--mono);font-size:12px;padding:10px 18px;border-radius:9px;
+  background:#ff5f57;color:#2b0603;border:none;cursor:pointer;letter-spacing:.06em;transition:background .2s;
+}
+.quit-yes:hover{background:#ff7b74}
+.quit-no{
+  font-family:var(--mono);font-size:12px;padding:10px 18px;border-radius:9px;
+  background:transparent;color:#e8e8e3;border:1px solid rgba(255,255,255,.2);cursor:pointer;
+  letter-spacing:.06em;transition:border-color .2s,color .2s;
+}
+.quit-no:hover{border-color:var(--accent-line);color:var(--accent)}
 
 /* ============ marquee ============ */
 .marquee{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:20px 0;overflow:hidden;background:var(--ink);transition:background-color .45s}
@@ -763,17 +778,28 @@ footer .p{color:var(--accent)}
   <span>v2.0 · mockup-02 · phosphor</span>
 </footer>
 
-<!-- doom easter egg — native wasm fullscreen -->
-<div id="dosOverlay" hidden role="dialog" aria-label="DOOM — sesión wasm">
-  <div class="dos-frame-wrap" id="dosFrameWrap"></div>
-  <div class="dos-bar">
-    <span class="dos-title"><b>D:\DOOM\DOOM.EXE</b> — prboom · wasm nativo (webprboom, GPL)</span>
-    <span class="dos-actions">
-      <button class="dos-pill" id="dosFs" data-hover>[ ⛶ pantalla completa ]</button>
-      <button class="dos-close" id="dosClose" data-hover>[ ✕ salir ]</button>
-    </span>
+<!-- doom easter egg — macOS window with native wasm doom inside -->
+<div id="dosOverlay" hidden role="dialog" aria-label="DOOM — ventana">
+  <div class="doom-win" id="doomWin">
+    <div class="doom-titlebar" id="doomTitlebar">
+      <button class="win-close" id="doomCloseX" data-hover aria-label="cerrar doom"><span class="td td-r"></span></button>
+      <span class="win-light"><span class="td td-y dim"></span></span>
+      <span class="win-light"><span class="td td-g dim"></span></span>
+      <span class="doom-title">alex — doom — doom.exe — 80×24</span>
+      <span class="doom-esc">esc: menú del juego</span>
+    </div>
+    <div class="doom-body" id="dosFrameWrap"></div>
+    <div class="doom-quit" id="doomQuit" hidden>
+      <div class="quit-card">
+        <p class="quit-title">¿Salir del juego?</p>
+        <p class="quit-sub">la sesión de doom.exe terminará</p>
+        <div class="quit-actions">
+          <button class="quit-yes" id="quitYes" data-hover>salir</button>
+          <button class="quit-no" id="quitNo" data-hover>seguir jugando</button>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="dos-hint">ESC libera el mouse · doble-click para capturarlo · [✕ salir] cierra la sesión</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
@@ -1127,7 +1153,7 @@ async function runCommand(raw){
   histCmd.push(input); histIdx = histCmd.length;
   const [cmd, ...args] = input.toLowerCase().split(/\s+/);
   if(cmd === 'doom' || cmd === 'doom.exe'){
-    if(doomOpen){ termPrint('ya hay una sesión de doom corriendo — ciérrala con [✕ salir]', 't-err'); return; }
+    if(doomOpen){ termPrint('ya hay una sesión de doom corriendo — ciérrala con el botón rojo ●', 't-err'); return; }
     await doomSequence();
     return;
   }
@@ -1152,21 +1178,23 @@ termInput.addEventListener('keydown', function(e){
 });
 document.getElementById('terminal').addEventListener('click', function(){ termInput.focus(); });
 
-/* ============ doom easter egg — native wasm fullscreen (webprboom, GPL) ============
-   Runs in a same-origin iframe: removing the frame on close destroys the
-   whole JS realm (workers + AudioContexts) — no zombie instances, no
-   leftover audio, guaranteed. */
+/* ============ doom easter egg — macOS window with native wasm (webprboom, GPL) ============
+   The game runs in a same-origin iframe inside a fake macOS console
+   window. Removing the frame on close destroys the whole JS realm
+   (workers + AudioContexts) — no zombie instances, no leftover audio. */
 const DOOM_URL = 'doom-web/doom1/doom1.html';
 const dosOverlay = document.getElementById('dosOverlay');
 const dosFrameWrap = document.getElementById('dosFrameWrap');
-let doomOpen = false;
+const doomWin = document.getElementById('doomWin');
+const doomQuit = document.getElementById('doomQuit');
+let doomOpen = false, doomFrame = null;
 
 async function doomSequence(){
   termPrint('montando D:\\DOOM ................. ok', 't-out');
   await sleep(250);
   termPrint('cargando DOOM.WAD ............... ok', 't-out');
   await sleep(250);
-  termPrint('arrancando prboom-wasm<span class="t-ok"> ████ 100%</span>', 't-out');
+  termPrint('abriendo ventana<span class="t-ok"> ████ 100%</span>', 't-out');
   await sleep(300);
   openDoom();
 }
@@ -1175,35 +1203,66 @@ function openDoom(){
   if(doomOpen) return;
   doomOpen = true;
   dosOverlay.hidden = false;
+  doomWin.style.transform = '';
   if(lenis) lenis.stop();
   const frame = document.createElement('iframe');
   frame.src = DOOM_URL;
   frame.title = 'DOOM — prboom wasm';
+  frame.addEventListener('load', function(){ try{ frame.contentWindow.focus(); }catch(_){} });
   dosFrameWrap.appendChild(frame);
+  doomFrame = frame;
 }
 
 function closeDoom(){
   if(!doomOpen) return;
   doomOpen = false;
+  doomQuit.hidden = true;
   dosOverlay.hidden = true;
-  if(document.fullscreenElement){
-    document.exitFullscreen().catch(function(){});
-  }
   dosFrameWrap.innerHTML = '';
+  doomFrame = null;
   if(lenis) lenis.start();
 }
 
-document.getElementById('dosClose').addEventListener('click', closeDoom);
-document.getElementById('dosFs').addEventListener('click', function(){
-  if(!document.fullscreenElement){
-    dosOverlay.requestFullscreen().catch(function(){});
-  } else {
-    document.exitFullscreen().catch(function(){});
-  }
-});
+function showQuit(){
+  doomQuit.hidden = false;
+  document.getElementById('quitNo').focus();
+}
+function hideQuit(){
+  doomQuit.hidden = true;
+  if(doomFrame){ try{ doomFrame.contentWindow.focus(); }catch(_){} }
+}
+document.getElementById('doomCloseX').addEventListener('click', showQuit);
+document.getElementById('quitYes').addEventListener('click', closeDoom);
+document.getElementById('quitNo').addEventListener('click', hideQuit);
 window.addEventListener('keydown', function(e){
-  if(e.key === 'Escape' && !dosOverlay.hidden) closeDoom();
+  if(dosOverlay.hidden || e.key !== 'Escape') return;
+  /* with focus inside the game, ESC is handled by DOOM itself (classic
+     menu). This listener only fires when focus sits outside the iframe:
+     show the quit dialog instead of closing abruptly. */
+  if(doomQuit.hidden) showQuit();
+  else hideQuit();
 });
+
+/* draggable window (desktop pointers only) */
+if(finePointer){
+  const bar = document.getElementById('doomTitlebar');
+  let dragging = false, sx = 0, sy = 0, ox = 0, oy = 0;
+  bar.addEventListener('pointerdown', function(e){
+    if(e.target.closest('.win-close')) return;
+    dragging = true;
+    const m = /translate\(([-\d.]+)px,\s*([-\d.]+)px\)/.exec(doomWin.style.transform || '');
+    ox = m ? parseFloat(m[1]) : 0;
+    oy = m ? parseFloat(m[2]) : 0;
+    sx = e.clientX; sy = e.clientY;
+    bar.setPointerCapture(e.pointerId);
+  });
+  bar.addEventListener('pointermove', function(e){
+    if(!dragging) return;
+    doomWin.style.transform = 'translate(' + (ox + e.clientX - sx) + 'px,' + (oy + e.clientY - sy) + 'px)';
+  });
+  bar.addEventListener('pointerup', function(){ dragging = false; });
+  bar.addEventListener('pointercancel', function(){ dragging = false; });
+}
 
 /* ============ copy email ============ */
 const copyBtn = document.getElementById('copyEmail');
