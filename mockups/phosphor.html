@@ -14,8 +14,6 @@
   --display:'Space Grotesk',sans-serif;
   --body:'Inter',sans-serif;
   --mono:'JetBrains Mono',monospace;
-  /* terminal stays dark in both themes */
-  --t-bg:#0b0d0f;--t-bar:#121518;--t-text:#d2dbd5;--t-muted:#6f7a72;
 }
 :root[data-theme="dark"]{
   --ink:#0a0a0b;--ink-2:#101012;--ink-3:#17171b;
@@ -59,7 +57,6 @@ body{
 a{color:inherit;text-decoration:none}
 button{font:inherit;background:none;border:none;color:inherit;cursor:pointer}
 :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
-@media(pointer:fine){body.cursor-on,body.cursor-on a,body.cursor-on button{cursor:none}}
 
 /* view transition theme reveal */
 ::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
@@ -79,23 +76,24 @@ button{font:inherit;background:none;border:none;color:inherit;cursor:pointer}
   background:repeating-linear-gradient(0deg,rgba(255,255,255,.012) 0 1px,transparent 1px 4px);
   transition:opacity .45s;
 }
-/* precision crosshair cursor */
-.cursor{position:fixed;top:0;left:0;width:22px;height:22px;margin:-11px 0 0 -11px;pointer-events:none;z-index:9999;display:none;opacity:.9}
-body.cursor-on .cursor{display:block}
-.cursor::before{
-  content:'';position:absolute;inset:0;transition:transform .18s cubic-bezier(.3,1.4,.5,1),rotate .2s;
-  background:
-    linear-gradient(var(--accent),var(--accent)) 50% 0/1px 6px no-repeat,
-    linear-gradient(var(--accent),var(--accent)) 50% 100%/1px 6px no-repeat,
-    linear-gradient(var(--accent),var(--accent)) 0 50%/6px 1px no-repeat,
-    linear-gradient(var(--accent),var(--accent)) 100% 50%/6px 1px no-repeat;
+/* native-style cursors tinted per theme (arrow / hand / ibeam) */
+:root[data-theme="dark"] body{
+  cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><path d='M5.5,3L5.5,19L10,14.8L12.7,20.6L15.3,19.4L12.6,13.6L18.5,13.2Z' fill='%2300ff9c' stroke='rgba(3,20,12,.85)' stroke-width='1.3' stroke-linejoin='round'/></svg>") 3 3, default;
 }
-.cursor::after{
-  content:'';position:absolute;left:50%;top:50%;width:2px;height:2px;margin:-1px 0 0 -1px;
-  background:var(--accent);border-radius:50%;
+:root[data-theme="light"] body{
+  cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><path d='M5.5,3L5.5,19L10,14.8L12.7,20.6L15.3,19.4L12.6,13.6L18.5,13.2Z' fill='%231d6ef2' stroke='rgba(255,255,255,.9)' stroke-width='1.3' stroke-linejoin='round'/></svg>") 3 3, default;
 }
-.cursor.is-hover::before{transform:scale(1.6) rotate(90deg)}
-.cursor.is-hidden{opacity:0}
+:root[data-theme="dark"] a,:root[data-theme="dark"] button,:root[data-theme="dark"] label,
+:root[data-theme="dark"] [data-hover],:root[data-theme="dark"] .chip,:root[data-theme="dark"] .hm-cell{
+  cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><path d='M9,2.5a1.35,1.35,0,0,1,2.7,0v6.1h.5a1.2,1.2,0,0,1,1.2,1.2v.6h.6a1.1,1.1,0,0,1,1.1,1.1v3c0,3-2.3,5.4-5.3,5.4h-.8a4.7,4.7,0,0,1-4.7-4.7V10a1.35,1.35,0,0,1,2.7,0v1.1h.9Z' fill='%2300ff9c' stroke='rgba(3,20,12,.85)' stroke-width='1.2' stroke-linejoin='round'/></svg>") 10 3, pointer;
+}
+:root[data-theme="light"] a,:root[data-theme="light"] button,:root[data-theme="light"] label,
+:root[data-theme="light"] [data-hover],:root[data-theme="light"] .chip,:root[data-theme="light"] .hm-cell{
+  cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><path d='M9,2.5a1.35,1.35,0,0,1,2.7,0v6.1h.5a1.2,1.2,0,0,1,1.2,1.2v.6h.6a1.1,1.1,0,0,1,1.1,1.1v3c0,3-2.3,5.4-5.3,5.4h-.8a4.7,4.7,0,0,1-4.7-4.7V10a1.35,1.35,0,0,1,2.7,0v1.1h.9Z' fill='%231d6ef2' stroke='rgba(255,255,255,.9)' stroke-width='1.2' stroke-linejoin='round'/></svg>") 10 3, pointer;
+}
+.term-body,.term-input,input{
+  cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><path d='M7.5,2.5H16.5V4.5H13.3V19.5H16.5V21.5H7.5V19.5H10.7V4.5H7.5Z' fill='%2300ff9c' stroke='rgba(3,20,12,.7)' stroke-width='1.1' stroke-linejoin='round'/></svg>") 12 12, text;
+}
 .mockup-tag{
   position:fixed;left:16px;bottom:16px;z-index:9991;font-family:var(--mono);font-size:10px;
   letter-spacing:.12em;color:var(--muted);border:1px solid var(--line);padding:6px 10px;border-radius:6px;
@@ -211,43 +209,47 @@ body.cursor-on .cursor{display:block}
 .scroll-hint .arrow{color:var(--accent);animation:bounce 1.6s ease-in-out infinite}
 @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
 
-/* ============ terminal ============ */
+/* ============ terminal (macOS window — always light for contrast) ============ */
 .term{
-  background:var(--t-bg);border:1px solid var(--line);border-radius:14px;overflow:hidden;
-  box-shadow:0 24px 70px rgba(0,0,0,.45);will-change:transform;
+  background:#fcfcfd;border:1px solid rgba(0,0,0,.16);border-radius:12px;overflow:hidden;
+  box-shadow:0 30px 90px rgba(0,0,0,.5),0 0 0 .5px rgba(0,0,0,.08);
+  font-family:var(--mono),'SF Mono',Menlo,monospace;color:#1d1d1f;will-change:transform;
 }
-:root[data-theme="light"] .term{box-shadow:0 24px 60px rgba(15,26,40,.25)}
+:root[data-theme="light"] .term{box-shadow:0 24px 60px rgba(16,35,61,.25),0 0 0 .5px rgba(0,0,0,.06)}
 .term-bar{
-  display:flex;align-items:center;gap:8px;background:var(--t-bar);
-  padding:10px 14px;border-bottom:1px solid rgba(232,232,227,.06);
+  display:flex;align-items:center;gap:6px;position:relative;padding:9px 12px;
+  background:linear-gradient(#f6f6f7,#e9e9ec);border-bottom:1px solid rgba(0,0,0,.13);
 }
-.term-dot{width:10px;height:10px;border-radius:50%;background:#2a2f2c}
-.term-dot.lit{background:var(--accent);box-shadow:0 0 8px var(--hm4-glow)}
-.term-title{font-family:var(--mono);font-size:11px;color:var(--t-muted);margin-left:8px;letter-spacing:.04em;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.term-status{font-family:var(--mono);font-size:10px;color:var(--accent);letter-spacing:.14em}
+.td{width:12px;height:12px;border-radius:50%;border:1px solid rgba(0,0,0,.12);flex-shrink:0}
+.td-r{background:#ff5f57}.td-y{background:#febc2e}.td-g{background:#28c840}
+.term-title{
+  position:absolute;left:50%;transform:translateX(-50%);
+  font-size:11.5px;color:#7d7d82;letter-spacing:.02em;white-space:nowrap;
+}
+.term-live{margin-left:auto;font-size:9px;color:#28c840;letter-spacing:.12em}
 .term-body{
-  height:min(46vh,380px);overflow-y:auto;padding:18px 18px 10px;font-family:var(--mono);
-  font-size:12.5px;line-height:1.75;color:var(--t-text);cursor:text;
+  height:min(46vh,380px);overflow-y:auto;padding:16px 16px 10px;
+  font-size:12.5px;line-height:1.75;color:#1d1d1f;background:#fcfcfd;
 }
 .term-body::-webkit-scrollbar{width:8px}
-.term-body::-webkit-scrollbar-thumb{background:#22262a;border-radius:4px}
+.term-body::-webkit-scrollbar-thumb{background:#d4d4d8;border-radius:4px}
 .t-line{white-space:pre-wrap;word-break:break-word}
-.t-cmd{color:var(--t-text)}
-.t-p{color:var(--accent)}
-.t-out{color:var(--t-muted)}
-.t-ok{color:var(--accent)}
-.t-err{color:#ff6b6b}
+.t-cmd{color:#1d1d1f}
+.t-p{color:#00875a}
+.t-out{color:#57575e}
+.t-ok{color:#00875a}
+.t-err{color:#e5484d}
 .term-input-row{display:flex;gap:8px;align-items:baseline;margin-top:2px}
-.term-prompt{color:var(--accent);white-space:nowrap;font-weight:500}
+.term-prompt{color:#00875a;white-space:nowrap;font-weight:500}
 .term-input{
-  flex:1;background:transparent;border:none;outline:none;color:var(--t-text);
-  font-family:var(--mono);font-size:12.5px;caret-color:var(--accent);padding:0;
+  flex:1;background:transparent;border:none;outline:none;color:#1d1d1f;
+  font-family:inherit;font-size:12.5px;caret-color:#00875a;padding:0;
 }
 .term-hint{
-  font-family:var(--mono);font-size:10px;color:var(--t-muted);letter-spacing:.1em;
-  padding:9px 14px;border-top:1px solid rgba(232,232,227,.06);background:var(--t-bar);
+  font-size:10px;color:#86868b;letter-spacing:.1em;padding:8px 14px;
+  border-top:1px solid rgba(0,0,0,.1);background:#f2f2f4;
 }
-.term-hint b{color:var(--accent);font-weight:500}
+.term-hint b{color:#00875a;font-weight:500}
 
 /* ============ doom overlay ============ */
 #dosOverlay{
@@ -453,7 +455,6 @@ footer .p{color:var(--accent)}
 
 <div class="grain"></div>
 <div class="scanlines"></div>
-<div class="cursor" id="cursor"></div>
 <div class="mockup-tag">MOCKUP <b>//</b> datos demo — contenido se actualiza luego</div>
 
 <div id="loader">
@@ -512,9 +513,9 @@ footer .p{color:var(--accent)}
 
     <div class="term" id="terminal" data-reveal>
       <div class="term-bar">
-        <span class="term-dot lit"></span><span class="term-dot"></span><span class="term-dot"></span>
-        <span class="term-title">alex@v2: ~/historia — bash · 80×24</span>
-        <span class="term-status">● LIVE</span>
+        <span class="td td-r"></span><span class="td td-y"></span><span class="td td-g"></span>
+        <span class="term-title">alex — ~/historia — -zsh — 80×24</span>
+        <span class="term-live">● LIVE</span>
       </div>
       <div class="term-body" id="termBody">
         <div id="termLines"></div>
@@ -523,7 +524,7 @@ footer .p{color:var(--accent)}
           <input class="term-input" id="termInput" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="terminal — escribe un comando">
         </div>
       </div>
-      <div class="term-hint">tip: escribe <b>help</b> — hay un easter egg escondido <b>◍</b></div>
+      <div class="term-hint">tip: escribe <b>help</b></div>
     </div>
   </div>
 
@@ -770,13 +771,7 @@ footer .p{color:var(--accent)}
       <span class="dos-title"><b>D:\DOOM\DOOM.EXE</b> — sesión MS-DOS emulada</span>
       <button class="dos-close" id="dosClose" data-hover>[ ✕ salir ]</button>
     </div>
-    <div class="dos-stage" id="dosStage">
-      <div class="dos-boot">
-        <div class="big">INICIANDO DOOM.EXE</div>
-        <div>montando entorno DOS (js-dos wasm)… <span class="spin">▌</span></div>
-        <div class="dos-boot-note" id="dosNote">primer arranque: descarga ~15-25 MB</div>
-      </div>
-    </div>
+    <div class="dos-stage" id="dosStage"></div>
     <div class="dos-foot">click en la pantalla para capturar teclado y mouse · [✕ salir] o ESC para volver</div>
   </div>
 </div>
@@ -886,9 +881,10 @@ function hideLoader(){
   if(loaded) return;
   loaded = true;
   clearInterval(wordTimer);
-  if(window.gsap && !reduced){
-    gsap.to(loader, { yPercent: -100, duration: .9, ease: 'expo.inOut', onComplete: function(){ loader.style.display = 'none'; } });
-  } else { loader.style.display = 'none'; }
+  /* CSS-driven so it completes even if rAF is throttled (background tab) */
+  loader.style.transition = 'transform .9s cubic-bezier(.7,0,.2,1)';
+  requestAnimationFrame(function(){ loader.style.transform = 'translateY(-100%)'; });
+  setTimeout(function(){ loader.style.display = 'none'; }, 1000);
   heroIntro();
 }
 setTimeout(hideLoader, 1650);
@@ -1012,27 +1008,6 @@ if(finePointer && !reduced && window.gsap){
     el.addEventListener('mouseleave', function(){
       gsap.to(el, { x: 0, y: 0, duration: .8, ease: 'elastic.out(1,.35)' });
     });
-  });
-}
-
-/* precision cursor — instant follow */
-if(finePointer && !reduced){
-  document.body.classList.add('cursor-on');
-  const cursor = document.getElementById('cursor');
-  let cx = innerWidth / 2, cy = innerHeight / 2, tx = cx, ty = cy;
-  window.addEventListener('mousemove', function(e){
-    tx = e.clientX; ty = e.clientY;
-    cursor.classList.remove('is-hidden');
-  });
-  document.documentElement.addEventListener('mouseleave', function(){ cursor.classList.add('is-hidden'); });
-  (function follow(){
-    cx += (tx - cx) * .55; cy += (ty - cy) * .55;
-    cursor.style.transform = 'translate(' + cx + 'px,' + cy + 'px)';
-    requestAnimationFrame(follow);
-  })();
-  document.querySelectorAll('a, button, [data-hover], .chip, .hm-cell').forEach(function(el){
-    el.addEventListener('mouseenter', function(){ cursor.classList.add('is-hover'); });
-    el.addEventListener('mouseleave', function(){ cursor.classList.remove('is-hover'); });
   });
 }
 
@@ -1173,12 +1148,13 @@ termInput.addEventListener('keydown', function(e){
 });
 document.getElementById('terminal').addEventListener('click', function(){ termInput.focus(); });
 
-/* ============ doom easter egg (lazy js-dos) ============ */
-const JS_DOS_BASE = 'https://js-dos.com/v7/build/releases/latest/js-dos/';
-const DOOM_BUNDLE = 'https://cdn.dos.zone/custom/dos/doom.jsdos';
+/* ============ doom easter egg (lazy js-dos, fully self-hosted) ============ */
+const JS_DOS_BASE = new URL('jsdos/', document.baseURI).href;
+const DOOM_BUNDLE = 'doom.jsdos';
+const DOS_BOOT_HTML = '<div class="dos-boot"><div class="big">INICIANDO DOOM.EXE</div>' +
+  '<div>montando entorno DOS (js-dos wasm)… <span class="spin">▌</span></div></div>';
 const dosOverlay = document.getElementById('dosOverlay');
 const dosStage = document.getElementById('dosStage');
-const dosNote = document.getElementById('dosNote');
 let dosCtrl = null, dosLoading = false;
 
 function loadCss(href){
@@ -1213,7 +1189,7 @@ async function openDos(){
   if(lenis) lenis.stop();
   if(dosCtrl) return;
   dosLoading = true;
-  const boot = dosStage.querySelector('.dos-boot');
+  dosStage.innerHTML = DOS_BOOT_HTML;
   try{
     await Promise.all([
       loadCss(JS_DOS_BASE + 'js-dos.css'),
@@ -1221,22 +1197,18 @@ async function openDos(){
     ]);
     if(window.emulators) window.emulators.pathPrefix = JS_DOS_BASE;
     if(!window.Dos) throw new Error('Dos global missing');
+    dosStage.innerHTML = '';
     const el = document.createElement('div');
     el.className = 'dos-player';
-    if(boot) boot.remove();
     dosStage.appendChild(el);
-    dosNote.textContent = 'descargando DOOM shareware…';
     let ctrl = window.Dos(el);
     ctrl = (ctrl && typeof ctrl.then === 'function') ? await ctrl : ctrl;
     dosCtrl = ctrl;
     await ctrl.run(DOOM_BUNDLE);
   }catch(err){
-    if(boot){
-      boot.innerHTML = '<div class="big" style="color:#ff6b6b">ERROR DE ARRANQUE</div>' +
-        '<div>no se pudo cargar el entorno DOS (¿sin conexión?).</div>' +
-        '<div>en el portfolio real el bundle irá self-hosted — 100% confiable.</div>' +
-        '<div style="color:#5f6a64">' + esc(String(err && err.message || err)) + '</div>';
-    }
+    dosStage.innerHTML = '<div class="dos-boot"><div class="big" style="color:#ff6b6b">ERROR DE ARRANQUE</div>' +
+      '<div>no se pudo iniciar el entorno DOS — reintenta con doom.exe</div>' +
+      '<div style="color:#5f6a64">' + esc(String(err && err.message || err)) + '</div></div>';
   }finally{ dosLoading = false; }
 }
 function closeDos(){
