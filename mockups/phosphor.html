@@ -117,7 +117,8 @@ button{font:inherit;background:none;border:none;color:inherit;cursor:pointer}
   border-bottom:1px solid transparent;
 }
 .nav.is-scrolled{background:var(--glass);backdrop-filter:blur(14px);border-bottom-color:var(--line);padding:12px clamp(20px,4vw,44px)}
-.nav-logo{font-family:var(--mono);font-size:13px;font-weight:500}
+.nav-logo{font-family:var(--mono);font-size:15.5px;font-weight:700;letter-spacing:.01em;transition:color .25s}
+.nav-logo:hover{color:var(--accent)}
 .nav-logo .p{color:var(--accent)}
 .nav-links{display:flex;gap:26px}
 .nav-links a{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;color:var(--muted);transition:color .25s}
@@ -392,14 +393,14 @@ button{font:inherit;background:none;border:none;color:inherit;cursor:pointer}
 .certs-row{display:flex;gap:clamp(28px,4vw,72px);margin-top:44px;flex-wrap:wrap}
 .cert-badge-wrap{display:flex;flex-direction:column;align-items:center;gap:14px}
 .cert-badge{
-  position:relative;width:134px;height:134px;border-radius:50%;
+  position:relative;width:150px;height:150px;border-radius:50%;
   background:var(--ink-2);border:1px solid var(--line);cursor:pointer;
   display:grid;place-items:center;will-change:transform;
   transition:box-shadow .4s;
 }
 .cert-badge:hover{box-shadow:0 0 44px var(--accent-glow)}
 .badge-seal{
-  position:absolute;inset:7px;border-radius:50%;
+  position:absolute;inset:8px;border-radius:50%;
   border:1.5px dashed var(--line);pointer-events:none;
   transition:transform 1.4s cubic-bezier(.2,.8,.2,1),border-color .4s;
 }
@@ -412,19 +413,32 @@ button{font:inherit;background:none;border:none;color:inherit;cursor:pointer}
   animation:beam 7s linear infinite;
 }
 .cert-badge:hover .badge-beam{animation-duration:1.6s}
-.badge-core{display:flex;flex-direction:column;align-items:center;gap:3px;pointer-events:none}
-.badge-core .g{font-family:var(--mono);font-size:30px;color:var(--text);transition:color .3s;line-height:1}
+/* curved seal text */
+.badge-arc{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.arc-text{
+  font-family:var(--mono);font-size:8.5px;letter-spacing:.24em;
+  fill:var(--muted);transition:fill .3s;
+}
+.cert-badge:hover .arc-text{fill:var(--accent)}
+.badge-core{display:flex;flex-direction:column;align-items:center;gap:5px;pointer-events:none}
+.badge-core .g{font-family:var(--mono);font-size:15px;color:var(--muted);transition:color .3s;line-height:1}
 .cert-badge:hover .badge-core .g{color:var(--accent)}
-.badge-core .y{font-family:var(--mono);font-size:8.5px;letter-spacing:.3em;color:var(--muted)}
+.badge-core .org{
+  font-family:var(--mono);font-size:21px;font-weight:700;letter-spacing:.1em;
+  color:var(--text);line-height:1;transition:color .3s;
+}
+.cert-badge:hover .badge-core .org{color:var(--accent)}
+.badge-core .y{font-family:var(--mono);font-size:9.5px;letter-spacing:.34em;color:var(--muted)}
 .badge-label{
   font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--muted);
-  text-align:center;max-width:220px;transition:color .3s;line-height:1.7;
+  text-align:center;max-width:240px;transition:color .3s;line-height:1.7;
 }
 .cert-badge-wrap:hover .badge-label{color:var(--text)}
 
 /* ============ certificates section ============ */
-#certificados .certs-row{justify-content:center;margin-top:64px}
-#certificados .cert-badge{width:152px;height:152px}
+#certificados .certs-row{justify-content:center;margin-top:64px;gap:clamp(40px,6vw,96px)}
+#certificados .cert-badge{width:176px;height:176px}
+#certificados .arc-text{font-size:9px}
 
 /* ============ certificate viewer (arch frame) ============ */
 #certOverlay{
@@ -605,7 +619,7 @@ footer .p{color:var(--accent)}
 </div>
 
 <nav class="nav" id="nav">
-  <a class="nav-logo" href="#top" data-hover>alex@v2<span class="p">:~$</span></a>
+  <a class="nav-logo" href="#top" data-hover>Sysop<span class="p">@alexdev</span>:~$</a>
   <div class="nav-links">
     <a href="#sobre-mi" data-hover><b>01.</b>sobre-mi</a>
     <a href="#stack" data-hover><b>02.</b>stack</a>
@@ -659,7 +673,7 @@ footer .p{color:var(--accent)}
         <div class="sysbar" aria-hidden="true" title="awesome wm · demox-numix-gruvbox">
           <span class="sys">
             <svg viewBox="0 0 12 12"><rect x="1" y="3.5" width="8.5" height="5" rx="1" fill="none" stroke="#b8bb26" stroke-width="1.2"/><rect x="10.2" y="5" width="1.1" height="2" rx=".5" fill="#b8bb26"/><rect x="2.4" y="4.8" width="4.4" height="2.4" rx=".5" fill="#b8bb26"/></svg>
-            <span id="sysBatt">87%</span>
+            <span id="sysBatt">100%</span>
           </span>
           <span class="sys">
             <svg viewBox="0 0 12 12"><path d="M1 4.5h2L6 2v8L3 7.5H1z" fill="#83a598"/><path d="M7.5 4a2.7 2.7 0 0 1 0 4" stroke="#83a598" fill="none" stroke-width="1.1" stroke-linecap="round"/></svg>
@@ -700,7 +714,7 @@ footer .p{color:var(--accent)}
 
 <div class="marquee" aria-hidden="true">
   <div class="marquee-track" id="marqueeTrack">
-    <span>INTELIGENCIA ARTIFICIAL <b>//</b> TECNOLOGÍA <b>//</b> CIENCIA <b>//</b> HISTORIA <b>//</b> OPEN SOURCE <b>//</b> DESARROLLO WEB <b>//</b> ANÁLISIS DE SISTEMAS <b>//</b> TERMINAL <b>//</b>&nbsp;</span>
+    <span>INTELIGENCIA ARTIFICIAL <b>//</b> TECNOLOGÍA <b>//</b> LINUX <b>//</b> OPEN SOURCE <b>//</b> DESARROLLO WEB <b>//</b> ANÁLISIS DE SISTEMAS <b>//</b> TERMINAL <b>//</b> FULLSTACK <b>//</b>&nbsp;</span>
   </div>
 </div>
 
@@ -720,7 +734,7 @@ footer .p{color:var(--accent)}
           Me apasiona entender cómo funcionan las cosas y construir soluciones que simplifiquen la vida de las personas.
         </p>
         <p data-reveal>
-          Soy una persona curiosa por naturaleza: siempre leyendo artículos de tecnología, ciencia e historia,
+          Soy una persona curiosa por naturaleza: siempre leyendo artículos de tecnología,
           siguiendo el acontecer internacional y explorando GitHub en busca de librerías y proyectos
           interesantes para probar e inspirarme.
         </p>
@@ -758,7 +772,7 @@ footer .p{color:var(--accent)}
         </div>
         <div class="card" data-reveal>
           <div class="card-tag"><span>// INTERESES</span></div>
-          <div class="card-sub">Informática · IA · Tech · Ciencia · Historia · Open Source</div>
+          <div class="card-sub">Informática · IA · Tech · Open Source · Linux</div>
         </div>
       </div>
     </div>
@@ -778,14 +792,15 @@ footer .p{color:var(--accent)}
         <div class="panel-head"><div class="panel-title"><b>$</b> lenguajes</div></div>
         <div class="chips">
           <span class="chip">C#</span><span class="chip">Python</span><span class="chip">JavaScript</span>
-          <span class="chip">SQL</span><span class="chip">HTML5</span><span class="chip">CSS3</span><span class="chip">Dart</span>
+          <span class="chip">PHP</span><span class="chip">Ruby</span><span class="chip">SQL</span>
+          <span class="chip">HTML5</span><span class="chip">CSS3</span><span class="chip">Dart</span>
         </div>
       </div>
       <div class="panel" data-reveal>
         <div class="panel-head"><div class="panel-title"><b>$</b> frameworks &amp; web</div></div>
         <div class="chips">
           <span class="chip">.NET</span><span class="chip">React</span><span class="chip">Next.js</span>
-          <span class="chip">Flutter</span><span class="chip">Tailwind CSS</span>
+          <span class="chip">Ruby on Rails</span><span class="chip">Flutter</span><span class="chip">Tailwind CSS</span>
         </div>
       </div>
       <div class="panel" data-reveal>
@@ -895,9 +910,17 @@ footer .p{color:var(--accent)}
         <div class="chips"><span class="chip">Python</span><span class="chip">Linux</span></div>
         <div class="proj-meta"><span class="proj-repo">github/AlexisHCD/RB6_lite_Manager · ★ 1</span><span class="proj-arrow">↗</span></div>
       </a>
-      <a class="proj span-2" href="#top" data-reveal data-hover>
+      <a class="proj" href="https://github.com/AlexisHCD/Blackstone" target="_blank" rel="noopener" data-reveal data-hover>
         <span class="proj-ghost">04</span>
-        <div class="proj-index">// 04 — EN CONSTRUCCIÓN</div>
+        <div class="proj-index">// 04 — ESTUDIO</div>
+        <div class="proj-title">Blackstone</div>
+        <p class="proj-desc">Proyecto de estudio: página web fullstack construida con PHP y Ruby on Rails.</p>
+        <div class="chips"><span class="chip">PHP</span><span class="chip">Ruby on Rails</span><span class="chip">Fullstack</span></div>
+        <div class="proj-meta"><span class="proj-repo">github/AlexisHCD/Blackstone · privado</span><span class="proj-arrow">↗</span></div>
+      </a>
+      <a class="proj" href="#top" data-reveal data-hover>
+        <span class="proj-ghost">05</span>
+        <div class="proj-index">// 05 — EN CONSTRUCCIÓN</div>
         <div class="proj-title">Portfolio v2.0 · Phosphor</div>
         <p class="proj-desc">Este sitio: rework completo de mi portfolio con React, GSAP y Lenis — tipografía cinética, terminal interactiva, charts monocromáticos y scroll narrativo.</p>
         <div class="chips"><span class="chip">React</span><span class="chip">GSAP</span><span class="chip">Tailwind</span></div>
@@ -1008,7 +1031,15 @@ footer .p{color:var(--accent)}
         <button class="cert-badge" data-cert="aiep" data-hover aria-label="ver certificado AIEP — Herramientas para la Innovación">
           <span class="badge-beam"></span>
           <span class="badge-seal"></span>
-          <span class="badge-core"><span class="g">✦</span><span class="y">AIEP · 2026</span></span>
+          <svg class="badge-arc" viewBox="0 0 120 120" aria-hidden="true">
+            <defs><path id="arc-aiep" d="M60 60 m-45 0 a45 45 0 1 1 90 0" fill="none"/></defs>
+            <text class="arc-text"><textPath href="#arc-aiep" startOffset="50%" text-anchor="middle">· CERTIFICADO VERIFICADO ·</textPath></text>
+          </svg>
+          <span class="badge-core">
+            <span class="g">✦</span>
+            <span class="org">AIEP</span>
+            <span class="y">2026</span>
+          </span>
         </button>
         <span class="badge-label">// herramientas para la innovación</span>
       </div>
@@ -1016,7 +1047,15 @@ footer .p{color:var(--accent)}
         <button class="cert-badge" data-cert="coursera" data-hover aria-label="ver certificado Coursera — Introduction to AI">
           <span class="badge-beam"></span>
           <span class="badge-seal"></span>
-          <span class="badge-core"><span class="g">◈</span><span class="y">GOOGLE · 2026</span></span>
+          <svg class="badge-arc" viewBox="0 0 120 120" aria-hidden="true">
+            <defs><path id="arc-coursera" d="M60 60 m-45 0 a45 45 0 1 1 90 0" fill="none"/></defs>
+            <text class="arc-text"><textPath href="#arc-coursera" startOffset="50%" text-anchor="middle">· COURSERA × GOOGLE ·</textPath></text>
+          </svg>
+          <span class="badge-core">
+            <span class="g">◈</span>
+            <span class="org">GOOGLE</span>
+            <span class="y">2026</span>
+          </span>
         </button>
         <span class="badge-label">// introduction to ai — coursera</span>
       </div>
@@ -1400,8 +1439,8 @@ const COMMANDS = {
     termPrint('futuro fullstack developer / analista · san antonio, chile', 't-out');
   },
   stack: function(){
-    termPrint('c# · python · javascript · sql · html/css · dart', 't-out');
-    termPrint('.net · react · next.js · flutter · tailwind', 't-out');
+    termPrint('c# · python · javascript · php · ruby · sql · html/css · dart', 't-out');
+    termPrint('.net · react · next.js · rails · flutter · tailwind', 't-out');
     termPrint('mysql · postgresql · oracle · git · linux', 't-out');
   },
   proyectos: function(){
@@ -1432,7 +1471,7 @@ const COMMANDS = {
     termPrint('  ██  ▀▀  ▀▀  ██  host: portfolio 2026', 't-out');
     termPrint('  ▀█▄        ▄█▀  shell: gsap-sh 4.1', 't-out');
     termPrint('    ▀▀▀▀▀▀▀      uptime: 2° año y contando', 't-out');
-    termPrint('                 temas: ia · ciencia · historia', 't-out');
+    termPrint('                 temas: ia · tech · open source', 't-out');
     termPrint('                 memory: curiosidad ilimitada', 't-out');
   },
   theme: function(){
@@ -1699,31 +1738,7 @@ if(finePointer && !reduced && window.gsap){
   });
 }
 
-/* awesome-wm style system widgets (battery is real when available) */
-(function sysbar(){
-  const ram = document.getElementById('sysRam');
-  const cpu = document.getElementById('sysCpu');
-  const temp = document.getElementById('sysTemp');
-  const batt = document.getElementById('sysBatt');
-  let r = 42, c = 14, t = 52;
-  function tick(){
-    r = Math.max(28, Math.min(71, r + (Math.random() * 8 - 4)));
-    c = Math.max(6, Math.min(48, c + (Math.random() * 10 - 5)));
-    t = Math.max(44, Math.min(67, t + (Math.random() * 4 - 2)));
-    if(ram) ram.textContent = Math.round(r) + '%';
-    if(cpu) cpu.textContent = Math.round(c) + '%';
-    if(temp) temp.textContent = Math.round(t) + '°';
-  }
-  tick();
-  setInterval(tick, 2200);
-  if(navigator.getBattery){
-    navigator.getBattery().then(function(b){
-      function up(){ if(batt) batt.textContent = Math.round(b.level * 100) + '%'; }
-      up();
-      b.addEventListener('levelchange', up);
-    }).catch(function(){});
-  }
-})();
+/* awesome-wm style system widgets — purely decorative */
 
 /* ============ copy email ============ */
 const copyBtn = document.getElementById('copyEmail');
