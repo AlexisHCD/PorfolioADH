@@ -127,14 +127,24 @@ button{font:inherit;background:none;border:none;color:inherit;cursor:pointer}
 .nav-links a:hover{color:var(--text)}
 .nav-right{display:flex;gap:10px;align-items:center}
 .theme-btn{
-  font-family:var(--mono);font-size:12px;width:38px;height:38px;border-radius:9px;
-  border:1px solid var(--line);color:var(--muted);display:grid;place-items:center;
-  transition:border-color .25s,color .25s,transform .25s;
+  display:inline-flex;align-items:center;gap:10px;height:38px;padding:0 15px 0 7px;border-radius:99px;
+  border:1px solid var(--accent-line);background:var(--accent-soft);cursor:pointer;
+  font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);
+  transition:box-shadow .35s,border-color .35s,color .35s;
 }
-.theme-btn:hover{border-color:var(--accent-line);color:var(--accent)}
-.theme-btn .icon-sun{display:none}
-:root[data-theme="light"] .theme-btn .icon-moon{display:none}
-:root[data-theme="light"] .theme-btn .icon-sun{display:block}
+.theme-btn:hover{border-color:var(--accent);box-shadow:0 0 24px var(--accent-glow)}
+.theme-btn .icon-moon,.theme-btn .icon-sun{
+  width:25px;height:25px;border-radius:50%;display:none;place-items:center;font-size:13px;line-height:1;
+  background:var(--accent);color:var(--accent-contrast);box-shadow:0 0 14px var(--accent-glow);
+}
+/* show the DESTINATION mode: sun+"día" in dark, moon+"noche" in light */
+:root[data-theme="dark"] .theme-btn .icon-sun{display:grid;animation:tbspin .55s cubic-bezier(.2,.8,.2,1)}
+:root[data-theme="light"] .theme-btn .icon-moon{display:grid;animation:tbspin .55s cubic-bezier(.2,.8,.2,1)}
+@keyframes tbspin{from{transform:rotate(-130deg) scale(.3);opacity:0}to{transform:none;opacity:1}}
+.theme-btn .tb-label{transform:translateY(.5px)}
+.theme-btn .tb-l-noche{display:none}
+:root[data-theme="light"] .theme-btn .tb-l-noche{display:inline}
+:root[data-theme="light"] .theme-btn .tb-l-dia{display:none}
 .nav-cta{
   font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--accent);
   padding:10px 17px;border-radius:9px;position:relative;isolation:isolate;overflow:hidden;
@@ -635,6 +645,7 @@ footer .p{color:var(--accent)}
 /* ============ reduced motion ============ */
 @media(prefers-reduced-motion:reduce){
   .grain,.marquee-track,.scroll-hint .arrow,.caret,.chart-end-pulse,.term-status,.nav-cta::before{animation:none!important}
+  .theme-btn .icon-sun,.theme-btn .icon-moon{animation:none!important}
   *{transition-duration:.01ms!important}
 }
 </style>
@@ -668,6 +679,7 @@ footer .p{color:var(--accent)}
   <div class="nav-right">
     <button class="theme-btn" id="themeBtn" data-hover data-magnetic aria-label="cambiar tema día/noche" title="prender la luz / apagarla">
       <span class="icon-moon">☾</span><span class="icon-sun">☀</span>
+      <span class="tb-label tb-l-dia">día</span><span class="tb-label tb-l-noche">noche</span>
     </button>
     <a class="nav-cta" href="cv-alexis-hernandez.pdf" download="CV-Alexis-Hernandez.pdf" data-hover data-magnetic>cv.pdf ↓</a>
   </div>
@@ -1078,7 +1090,7 @@ footer .p{color:var(--accent)}
           <span class="badge-seal"></span>
           <svg class="badge-arc" viewBox="0 0 120 120" aria-hidden="true">
             <defs><path id="arc-aiep" d="M60 60 m-45 0 a45 45 0 1 1 90 0" fill="none"/></defs>
-            <text class="arc-text"><textPath href="#arc-aiep" startOffset="50%" text-anchor="middle">· CERTIFICADO VERIFICADO ·</textPath></text>
+            <text class="arc-text"><textPath href="#arc-aiep" startOffset="50%" text-anchor="middle" textLength="138" lengthAdjust="spacingAndGlyphs">· CERTIFICADO × AIEP ·</textPath></text>
           </svg>
           <span class="badge-core">
             <span class="g">✦</span>
@@ -1094,7 +1106,7 @@ footer .p{color:var(--accent)}
           <span class="badge-seal"></span>
           <svg class="badge-arc" viewBox="0 0 120 120" aria-hidden="true">
             <defs><path id="arc-coursera" d="M60 60 m-45 0 a45 45 0 1 1 90 0" fill="none"/></defs>
-            <text class="arc-text"><textPath href="#arc-coursera" startOffset="50%" text-anchor="middle">· COURSERA × GOOGLE ·</textPath></text>
+            <text class="arc-text"><textPath href="#arc-coursera" startOffset="50%" text-anchor="middle" textLength="138" lengthAdjust="spacingAndGlyphs">· COURSERA × GOOGLE ·</textPath></text>
           </svg>
           <span class="badge-core">
             <span class="g">◈</span>
