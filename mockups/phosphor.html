@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ALEXIS HCD — v2.0 // PHOSPHOR (mockup)</title>
-<script>/* apply saved theme before paint */try{var t=localStorage.getItem('phosphor-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<title>ALEXIS HCD — v2.0 // ALEXDEV_OS</title>
+<script>/* apply saved theme before paint */try{var t=localStorage.getItem('alexdevos-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -96,18 +96,12 @@ button{font:inherit;background:none;border:none;color:inherit;cursor:pointer}
 .term-body,.term-input,input{
   cursor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><path d='M7.5,2.5H16.5V4.5H13.3V19.5H16.5V21.5H7.5V19.5H10.7V4.5H7.5Z' fill='%2300ff9c' stroke='rgba(3,20,12,.7)' stroke-width='1.1' stroke-linejoin='round'/></svg>") 12 12, text;
 }
-.mockup-tag{
-  position:fixed;left:16px;bottom:16px;z-index:9991;font-family:var(--mono);font-size:10px;
-  letter-spacing:.12em;color:var(--muted);border:1px solid var(--line);padding:6px 10px;border-radius:6px;
-  background:var(--glass);backdrop-filter:blur(6px);
-}
-.mockup-tag b{color:var(--accent);font-weight:500}
 
-/* phosphor scroll progress — hairline beam at the very top */
+/* AlexDev_OS scroll progress — hairline beam at the very top */
 .scroll-progress{position:fixed;left:0;top:0;height:2px;width:0%;z-index:9500;
   background:var(--accent);box-shadow:0 0 12px var(--accent-glow);pointer-events:none}
 
-/* konami overdrive — full-screen phosphor surge */
+/* konami overdrive — full-screen system surge */
 .overdrive-flash{position:fixed;inset:0;z-index:9490;pointer-events:none;opacity:0;
   background:radial-gradient(ellipse at center,transparent 34%,var(--glow1) 78%,rgba(0,255,156,.22) 100%)}
 :root[data-theme="light"] .overdrive-flash{
@@ -701,11 +695,10 @@ footer .p{color:var(--accent)}
 <div class="scanlines"></div>
 <div class="overdrive-flash" id="odFlash"></div>
 <div class="scroll-progress" id="scrollProgress"></div>
-<div class="mockup-tag">MOCKUP <b>//</b> datos demo — contenido se actualiza luego</div>
 
 <div id="loader">
   <div class="loader-inner">
-    <div class="loader-tag">// PORTFOLIO v2.0 — PHOSPHOR</div>
+    <div class="loader-tag">// PORTFOLIO v2.0 — ALEXDEV_OS</div>
     <div class="loader-name"><span id="loaderScramble">ALEXIS_HCD</span><span class="tick">_</span></div>
   </div>
   <div class="loader-count"><span id="loaderPct">000</span></div>
@@ -748,7 +741,7 @@ footer .p{color:var(--accent)}
     <div class="f-glow f-g3"></div>
     <div class="f-glow f-g4"></div>
   </div>
-  <div class="hero-side">PHOSPHOR · v2.0 — AHC · 2026</div>
+  <div class="hero-side">ALEXDEV_OS · v2.0 — AHC · 2026</div>
 
   <div class="hero-grid">
     <div class="hero-intro">
@@ -1039,7 +1032,7 @@ footer .p{color:var(--accent)}
       <a class="proj" href="#top" data-reveal data-hover>
         <span class="proj-ghost">05</span>
         <div class="proj-index">// 05 — EN CONSTRUCCIÓN</div>
-        <div class="proj-title">Portfolio v2.0 · Phosphor</div>
+        <div class="proj-title">Portfolio v2.0 · AlexDev_OS</div>
         <p class="proj-desc">Este sitio: rework completo de mi portfolio con React, GSAP y Lenis — tipografía cinética, terminal interactiva, charts monocromáticos y scroll narrativo.</p>
         <div class="chips"><span class="chip">React</span><span class="chip">GSAP</span><span class="chip">Tailwind</span></div>
         <div class="proj-meta"><span class="proj-repo">v2.0 · 2026</span><span class="proj-arrow">↗</span></div>
@@ -1198,7 +1191,7 @@ footer .p{color:var(--accent)}
 <footer>
   <span>© 2026 ALEXIS HERNÁNDEZ CAMUS — SAN ANTONIO, CL</span>
   <span>hecho a mano <span class="p">//</span> gsap + lenis + terminal · DOOM © id software, puerto <a href="https://github.com/raz0red/webprboom" target="_blank" rel="noopener" style="color:inherit">webprboom</a> (GPL)</span>
-  <span>v2.0 · mockup-04 · phosphor</span>
+  <span>v2.0 · build-04 · alexdev_os</span>
 </footer>
 
 <!-- doom easter egg — macOS window with native wasm doom inside -->
@@ -1273,7 +1266,7 @@ function themeSound(toLight){
     o2.connect(g2).connect(audioCtx.destination); o2.start(t); o2.stop(t + .06);
   }catch(_){}
 }
-function applyTheme(next){ root.dataset.theme = next; try{ localStorage.setItem('phosphor-theme', next); }catch(_){} }
+function applyTheme(next){ root.dataset.theme = next; try{ localStorage.setItem('alexdevos-theme', next); }catch(_){} }
 function toggleTheme(){
   const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
   themeSound(next === 'light');
@@ -1330,7 +1323,7 @@ const loader = document.getElementById('loader');
 const pctEl = document.getElementById('loaderPct');
 const barEl = document.getElementById('loaderBar');
 const scrambleEl = document.getElementById('loaderScramble');
-const words = ['ALEXIS_HCD', 'PHOSPHOR_OS', 'INIT_MODULES', 'ALEXIS_HCD'];
+const words = ['ALEXIS_HCD', 'ALEXDEV_OS', 'INIT_MODULES', 'ALEXIS_HCD'];
 let wi = 0, loaded = false;
 const wordTimer = setInterval(function(){ scramble(scrambleEl, words[wi = (wi + 1) % words.length], 420); }, 520);
 /* counter driven by a self-correcting interval (not rAF): even if the main
@@ -1610,9 +1603,9 @@ const COMMANDS = {
     termPrint('click en las chapas de la sección <span class="t-p">stack</span> para verlas', 't-out');
   },
   neofetch: function(){
-    termPrint('    ▄▄▄▄▄▄▄      <span class="t-p">alex@phosphor</span>', 't-out');
+    termPrint('    ▄▄▄▄▄▄▄      <span class="t-p">alex@alexdev</span>', 't-out');
     termPrint('  ▄█▀        ▀█▄  ─────────────────', 't-out');
-    termPrint('  ██  ▄▄  ▄▄  ██  os: phosphor os v2.0', 't-out');
+    termPrint('  ██  ▄▄  ▄▄  ██  os: alexdev os v2.0', 't-out');
     termPrint('  ██  ▀▀  ▀▀  ██  host: portfolio 2026', 't-out');
     termPrint('  ▀█▄        ▄█▀  shell: gsap-sh 4.1', 't-out');
     termPrint('    ▀▀▀▀▀▀▀      uptime: 2° año y contando', 't-out');
@@ -1621,7 +1614,7 @@ const COMMANDS = {
   },
   theme: function(){
     toggleTheme();
-    termPrint('tema alternado — ' + (root.dataset.theme === 'dark' ? 'noche phosphor' : 'día azul'), 't-ok');
+    termPrint('tema alternado — ' + (root.dataset.theme === 'dark' ? 'noche AlexDev_OS' : 'día azul'), 't-ok');
   },
   clear: function(){ termLines.innerHTML = ''; },
   ls: function(){ termPrint('proyectos/  intereses/  cv.pdf  <span class="t-ok">doom.exe*</span>', 't-out'); },
@@ -1980,11 +1973,11 @@ window.addEventListener('keydown', function(e){
   kIdx = (k === KONAMI[kIdx]) ? kIdx + 1 : (k === KONAMI[0] ? 1 : 0);
   if(kIdx === KONAMI.length){
     kIdx = 0;
-    phosphorOverdrive();
+    overdriveSurge();
   }
 });
 let overdriveTweens = [];
-function phosphorOverdrive(){
+function overdriveSurge(){
   themeSound(true);
   overdriveTweens.forEach(function(t){ t.kill(); });
   const odFlash = document.getElementById('odFlash');
