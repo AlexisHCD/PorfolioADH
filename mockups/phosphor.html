@@ -14,6 +14,7 @@
   --display:'Space Grotesk',sans-serif;
   --body:'Inter',sans-serif;
   --mono:'JetBrains Mono',monospace;
+  --beam-speed:1; /* overdrive multiplier: beams run at base/speed */
 }
 :root[data-theme="dark"]{
   --ink:#0a0a0b;--ink-2:#101012;--ink-3:#17171b;
@@ -102,6 +103,10 @@ button{font:inherit;background:none;border:none;color:inherit;cursor:pointer}
 }
 .mockup-tag b{color:var(--accent);font-weight:500}
 
+/* phosphor scroll progress — hairline beam at the very top */
+.scroll-progress{position:fixed;left:0;top:0;height:2px;width:0%;z-index:9500;
+  background:var(--accent);box-shadow:0 0 12px var(--accent-glow);pointer-events:none}
+
 /* ============ loader ============ */
 #loader{position:fixed;inset:0;z-index:10000;background:#0a0a0b;display:flex;align-items:center;justify-content:center;color:#e8e8e3}
 .loader-inner{text-align:center;font-family:var(--mono)}
@@ -154,7 +159,7 @@ button{font:inherit;background:none;border:none;color:inherit;cursor:pointer}
 .nav-cta::before{
   content:'';position:absolute;inset:-120%;z-index:-2;
   background:conic-gradient(from 0deg,transparent 0 78%,var(--accent) 90%,#b4ffe1 95%,transparent 100%);
-  animation:beam 3.2s linear infinite;
+  animation:beam calc(3.2s / var(--beam-speed,1)) linear infinite;
 }
 .nav-cta::after{
   content:'';position:absolute;inset:2px;border-radius:7px;background:var(--ink-2);z-index:-1;
@@ -455,7 +460,7 @@ button{font:inherit;background:none;border:none;color:inherit;cursor:pointer}
   background:conic-gradient(from 0deg,transparent 0 72%,var(--accent) 88%,#b4ffe1 94%,transparent 100%);
   -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2.5px));
   mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2.5px));
-  animation:beam 7s linear infinite;
+  animation:beam calc(7s / var(--beam-speed,1)) linear infinite;
 }
 .cert-badge:hover .badge-beam{animation-duration:1.6s}
 /* curved seal text */
@@ -644,9 +649,10 @@ footer .p{color:var(--accent)}
 
 /* ============ reduced motion ============ */
 @media(prefers-reduced-motion:reduce){
-  .grain,.marquee-track,.scroll-hint .arrow,.caret,.chart-end-pulse,.term-status,.nav-cta::before{animation:none!important}
+  .grain,.marquee-track,.scroll-hint .arrow,.caret,.chart-end-pulse,.term-status,.nav-cta::before,.badge-beam{animation:none!important}
   .theme-btn .icon-sun,.theme-btn .icon-moon{animation:none!important}
   *{transition-duration:.01ms!important}
+  .scroll-progress{transition:none!important}
 }
 </style>
 </head>
@@ -654,6 +660,7 @@ footer .p{color:var(--accent)}
 
 <div class="grain"></div>
 <div class="scanlines"></div>
+<div class="scroll-progress" id="scrollProgress"></div>
 <div class="mockup-tag">MOCKUP <b>//</b> datos demo — contenido se actualiza luego</div>
 
 <div id="loader">
@@ -1330,7 +1337,14 @@ if(window.gsap){
   });
 }
 const nav = document.getElementById('nav');
-window.addEventListener('scroll', function(){ nav.classList.toggle('is-scrolled', window.scrollY > 40); }, { passive: true });
+const scrollProgress = document.getElementById('scrollProgress');
+function onScrollFx(){
+  nav.classList.toggle('is-scrolled', window.scrollY > 40);
+  const max = document.documentElement.scrollHeight - innerHeight;
+  scrollProgress.style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + '%';
+}
+window.addEventListener('scroll', onScrollFx, { passive: true });
+onScrollFx();
 
 const track = document.getElementById('marqueeTrack');
 track.innerHTML += track.innerHTML;
@@ -1539,6 +1553,10 @@ const COMMANDS = {
   ls: function(){ termPrint('proyectos/  intereses/  cv.pdf  <span class="t-ok">doom.exe*</span>', 't-out'); },
   date: function(){ termPrint(new Date().toLocaleString('es-CL'), 't-out'); },
   sudo: function(){ termPrint('<span class="t-err">permiso denegado:</span> aquí manda alexis.', 't-out'); }
+  ,matrix: function(){
+    termPrint('entrando a la <span class="t-ok">matrix</span>...', 't-ok');
+    setTimeout(matrixRain, 350);
+  }
 };
 
 async function runCommand(raw){
@@ -1553,6 +1571,10 @@ async function runCommand(raw){
     return;
   }
   if(cmd === 'echo'){ termPrint(esc(args.join(' ')) || '', 't-out'); return; }
+  if(cmd === 'rm' && args.join(' ').replace(/\s+/g,' ').trim() === '-rf /'){
+    termPrint('<span class="t-err">jajaja no.</span> este sistema es inmune a dedos traviesos.', 't-out');
+    return;
+  }
   if(typeof COMMANDS[cmd] === 'function'){ COMMANDS[cmd](); return; }
   termPrint('comando no encontrado: ' + esc(cmd) + ' — prueba <span class="t-p">help</span>', 't-err');
 }
@@ -1797,6 +1819,112 @@ if(finePointer && !reduced && window.gsap){
 
 /* awesome-wm style system widgets — purely decorative */
 
+/* ============ konami overdrive easter egg ============ */
+const KONAMI = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+let kIdx = 0;
+window.addEventListener('keydown', function(e){
+  if(doomOpen || certOpen) return;
+  const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+  kIdx = (k === KONAMI[kIdx]) ? kIdx + 1 : (k === KONAMI[0] ? 1 : 0);
+  if(kIdx === KONAMI.length){
+    kIdx = 0;
+    phosphorOverdrive();
+  }
+});
+let overdriveTweens = [];
+function phosphorOverdrive(){
+  themeSound(true);
+  overdriveTweens.forEach(function(t){ t.kill(); });
+  /* beams spin up ~6x, hold, then decay back to normal */
+  const tl = gsap.timeline();
+  tl.fromTo(root, { '--beam-speed': 1 }, { '--beam-speed': 6, duration: .9, ease: 'power3.out' })
+    .to(root, { '--beam-speed': 6, duration: 2.6 })
+    .to(root, { '--beam-speed': 1, duration: 2.2, ease: 'power2.in' });
+  overdriveTweens.push(tl);
+  overdriveTweens.push(gsap.to('.glow', {
+    duration: .7, filter: 'blur(22px)', yoyo: true, repeat: 7, ease: 'sine.inOut'
+  }));
+  gsap.delayedCall(6, function(){
+    overdriveTweens.forEach(function(t){ t.kill(); });
+    overdriveTweens = [];
+  });
+}
+
+/* ============ matrix rain in the terminal ============ */
+function matrixRain(){
+  const glyphs = 'アイウエオカキクケコサシスセソタチツテトナニヌネノ01<>/\\|=+*#';
+  let active = true;
+  const iv = setInterval(function(){
+    if(!active){ clearInterval(iv); return; }
+    for(let i = 0; i < 3; i++){
+      const line = Array.from({length: 46}, () => Math.random() < .28 ?
+        '<span class="t-ok">' + glyphs[Math.floor(Math.random()*glyphs.length)] + '</span>' :
+        glyphs[Math.floor(Math.random()*glyphs.length)]).join('');
+      termPrint(line, 't-out');
+    }
+  }, 90);
+  termPrint('<span class="t-ok">wake up, guest...</span>', 't-out');
+  setTimeout(function(){ active = false; }, 5200);
+}
+
+/* ============ skidrow-style console nfo ============ */
+(function consoleNfo(){
+  const NFO = [
+  "  ▄▄▄   ▄▄▄  ▄     ▄ ▄        ▄▄▄▖ ▄▄▖   ▄▄▖ ",
+  "  ▓ ▒█ ▓▒▒█ ▀▓▄ ▄▓▀ ▓        ▐▓ ▌▐▓▒▌ ▄▓▒▞ ",
+  "  ▚▄▄▘ ▙▄▟▘   ▀▓▀   ▚▄▄▖     ▐▓ ▌▐▓▒▌ ▀▓▒▚▖",
+  "  ─── p o r t f o l i o   v 2 . 0 ── t h e   s c e n e   e d i t i o n ───",
+  "",
+  "┌───────────────────────────────────────────────────────┬──────────────────────┐",
+  "│                    @@@        @*#                     │                      │",
+  "│                  @@@  @  @@@@@                        │                      │",
+  "│                  @     @@    @@@                      │   a l e x i s        │",
+  "│                 @@             @@@@@@@@               │   h e r n a n d e z  │",
+  "│         @@@@@@@@@                       @@@           │   c a m u s          │",
+  "│         *                                 @@          │   ════════════════   │",
+  "│                                            @@         │                      │",
+  "│         #@                                  @@        │   handle . guest@ar  │",
+  "│           @@                                 @@@      │   os ..... ph0sph0r  │",
+  "│         @@@@                                   @@@    │   role ... fullstack │",
+  "│       @@@                     :       :          @@@* │   base ... san anton │",
+  "│      +@   *        :     = :===    ' =    **@   @   +=│   org .... aiep s4/5 │",
+  "│        ##@          :== ===  = :    :==:  * @   @@*=  │   mood .. build>sleep│",
+  "│           @#       ' =      ::          *@  *   @  +  │                      │",
+  "│          @@          .      '             @  +  @     │   [phosphor divisio  │",
+  "│         @@                            @   +  #  @     │   [est.2026 . chile] │",
+  "│        @@                          #@# @@    @  @     │   [guest access only]│",
+  "│       @@           *+ *      #*    @    *+ @@ @ @     │                      │",
+  "│      @@            *  +      @ +  @@      #@    @     │                      │",
+  "│      @            *   ++    ## +  @@      +#    #     │                      │",
+  "│      @  @@@        @   *    @  +  @  *  =+  +   +     │                      │",
+  "│      @ @  @        @    *   @  +  @  **++   *#  =     │                      │",
+  "│       @   @ @@@     @   *   @  * @           #        │                      │",
+  "│               @     @@  #   @  + #       ::   @       │                      │",
+  "│               @      @  @@  @    *        ::  #       │                      │",
+  "│                @     @   @  @             '   #       │                      │",
+  "│                @@    @@  @  @                 @@      │                      │",
+  "│                 @@  @@   @   @                 @#     │                      │",
+  "│                 @   @    @@  @                  *++   │                      │",
+  "│                 @   @     @   @              ##   +++ │                      │",
+  "│                @@  @      @*  ##+=:         #@      +=│                      │",
+  "│                @   @@      *       :        @  =++  : │                      │",
+  "│                @    @@@    @+  @@    @@*+  @@    +*++=│                      │",
+  "│                @      @@@@@ :  @ @@@@    @@@          │                      │",
+  "└───────────────────────────────────────────────────────┴──────────────────────┘",
+  "",
+  "  greetings fly out to ....... gorillaz · id software · arch linux",
+  "                              kitty · gruvbox · awesome-wm · the demoscene",
+  "  supply ..................... cafe + curiosity (unlimited)",
+  "  contact .................... adhcamus@proton.me · gh:AlexisHCD",
+  "",
+  "  if you are reading this, open the terminal on the page and type: help",
+  "                                ── signed,  g u e s t @ a r c h  ·  2026 ──"
+  ];
+  try{
+    console.log('%c' + NFO.join('\n'), 'color:#00ff9c;font-family:monospace;font-size:10px;line-height:1.15');
+  }catch(_){}
+})();
+
 /* ============ copy email ============ */
 const copyBtn = document.getElementById('copyEmail');
 const copyLabel = document.getElementById('copyLabel');
@@ -1813,6 +1941,12 @@ copyBtn.addEventListener('click', async function(){
     copyBtn.classList.remove('copied');
     copyLabel.textContent = email;
   }, 2200);
+});
+
+/* ============ living tab title ============ */
+const TAB_TITLE = document.title;
+document.addEventListener('visibilitychange', function(){
+  document.title = document.hidden ? '>_ la terminal te extraña...' : TAB_TITLE;
 });
 })();
 </script>
