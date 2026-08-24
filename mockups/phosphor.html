@@ -45,6 +45,7 @@
 html.lenis,html.lenis body{height:auto}
 .lenis.lenis-smooth{scroll-behavior:auto!important}
 body{
+  position:relative;
   background:var(--ink);color:var(--text);font-family:var(--body);
   overflow-x:hidden;-webkit-font-smoothing:antialiased;
   transition:background-color .45s ease,color .45s ease;
@@ -155,7 +156,7 @@ button{font:inherit;background:none;border:none;color:inherit;cursor:pointer}
 @media(max-width:860px){.nav-links{display:none}}
 
 /* ============ hero ============ */
-.hero{position:relative;min-height:100svh;display:flex;align-items:center;padding:130px clamp(20px,5vw,64px) 100px;overflow:hidden}
+.hero{position:relative;min-height:100svh;display:flex;align-items:center;padding:130px clamp(20px,5vw,64px) 100px;overflow:hidden;background:var(--ink);transition:background-color .45s ease}
 /* asymmetric halftone instead of the generic grid */
 .bg-halftone{
   position:absolute;inset:0;pointer-events:none;
@@ -172,6 +173,36 @@ button{font:inherit;background:none;border:none;color:inherit;cursor:pointer}
     repeating-linear-gradient(to bottom,var(--tick) 0 1px,transparent 1px 12px) 18px 0/1px 100% no-repeat,
     repeating-linear-gradient(to bottom,var(--tick) 0 1px,transparent 1px 60px) 10px 0/1px 100% no-repeat;
 }
+/* full-page ambient field: the hero's language (halftone + ruler + glow)
+   continues along the whole scroll so sections don't float on flat black */
+.bg-field{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.bg-field .f-halftone{
+  position:absolute;inset:0;
+  background-image:radial-gradient(var(--halftone) 1px,transparent 1.3px);
+  background-size:5px 5px;opacity:.32;
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 9%,rgba(0,0,0,.55) 34%,rgba(0,0,0,.26) 62%,rgba(0,0,0,.5) 87%,#000);
+  mask-image:linear-gradient(180deg,transparent 0,#000 9%,rgba(0,0,0,.55) 34%,rgba(0,0,0,.26) 62%,rgba(0,0,0,.5) 87%,#000);
+}
+.bg-field .f-ruler{
+  position:absolute;left:0;top:0;bottom:0;width:26px;opacity:.55;
+  background:
+    repeating-linear-gradient(to bottom,var(--tick) 0 1px,transparent 1px 12px) 18px 0/1px 100% no-repeat,
+    repeating-linear-gradient(to bottom,var(--tick) 0 1px,transparent 1px 60px) 10px 0/1px 100% no-repeat;
+}
+.bg-field .f-ruler.r{left:auto;right:0;
+  background:
+    repeating-linear-gradient(to bottom,var(--tick) 0 1px,transparent 1px 12px) 8px 0/1px 100% no-repeat,
+    repeating-linear-gradient(to bottom,var(--tick) 0 1px,transparent 1px 60px) 16px 0/1px 100% no-repeat;
+}
+.bg-field .f-glow{position:absolute;border-radius:50%;filter:blur(10px)}
+.f-g1{width:min(52vw,680px);height:min(52vw,680px);top:92vh;right:-12%;
+  background:radial-gradient(closest-side,var(--glow1),transparent 72%)}
+.f-g2{width:min(36vw,470px);height:min(36vw,470px);top:165vh;left:-14%;
+  background:radial-gradient(closest-side,var(--glow2),transparent 70%)}
+.f-g3{width:min(46vw,600px);height:min(46vw,600px);top:270vh;right:-16%;
+  background:radial-gradient(closest-side,var(--glow1),transparent 74%)}
+.f-g4{width:min(38vw,500px);height:min(38vw,500px);bottom:-8%;left:-10%;
+  background:radial-gradient(closest-side,var(--glow2),transparent 70%)}
 /* print registration marks */
 .regmark{
   position:absolute;width:18px;height:18px;pointer-events:none;opacity:.35;
@@ -329,6 +360,10 @@ button{font:inherit;background:none;border:none;color:inherit;cursor:pointer}
 
 /* ============ sections ============ */
 .section{padding:clamp(90px,12vh,150px) clamp(20px,5vw,64px);max-width:1240px;margin:0 auto;position:relative}
+/* technical-document seam between sections */
+.section::before{content:'';position:absolute;left:clamp(20px,5vw,64px);right:clamp(20px,5vw,64px);top:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--line-soft) 30%,var(--line-soft) 70%,transparent)}
+#sobre-mi::before,.contact::before{content:none}
 .sec-head{display:flex;align-items:baseline;gap:20px;margin-bottom:14px}
 .sec-tag{font-family:var(--mono);font-size:12px;letter-spacing:.2em;color:var(--accent);white-space:nowrap}
 .sec-title{font-family:var(--display);font-weight:700;font-size:clamp(2rem,5vw,3.4rem);letter-spacing:-.02em;text-transform:uppercase}
@@ -594,6 +629,7 @@ footer .p{color:var(--accent)}
   .act-grid{grid-template-columns:1fr}
   .hero-side{display:none}
   .bg-ruler{display:none}
+  .bg-field .f-ruler{display:none}
 }
 
 /* ============ reduced motion ============ */
@@ -644,6 +680,15 @@ footer .p{color:var(--accent)}
   <span class="regmark reg-br"></span>
   <div class="glow glow-1"></div>
   <div class="glow glow-2"></div>
+  <div class="bg-field" aria-hidden="true">
+    <div class="f-halftone"></div>
+    <div class="f-ruler"></div>
+    <div class="f-ruler r"></div>
+    <div class="f-glow f-g1"></div>
+    <div class="f-glow f-g2"></div>
+    <div class="f-glow f-g3"></div>
+    <div class="f-glow f-g4"></div>
+  </div>
   <div class="hero-side">PHOSPHOR · v2.0 — AHC · 2026</div>
 
   <div class="hero-grid">
