@@ -264,6 +264,7 @@ button{font:inherit;background:none;border:none;color:inherit;cursor:pointer}
   font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:.06em;
   padding:14px 24px;border-radius:9px;display:inline-flex;align-items:center;gap:10px;will-change:transform;
 }
+.btn svg{width:15px;height:15px;flex-shrink:0}
 .btn-primary{background:var(--accent);color:var(--accent-contrast);transition:box-shadow .3s}
 .btn-primary:hover{box-shadow:0 0 38px var(--accent-glow)}
 .btn-ghost{border:1px solid var(--line);color:var(--text);transition:border-color .25s,color .25s}
@@ -764,7 +765,12 @@ footer .p{color:var(--accent)}
       </div>
       <div class="hero-ctas">
         <a class="btn btn-primary" href="#proyectos" data-hover data-magnetic>ver proyectos ↓</a>
-        <a class="btn btn-ghost" href="https://github.com/AlexisHCD" target="_blank" rel="noopener" data-hover data-magnetic>github ↗</a>
+        <a class="btn btn-ghost" href="https://github.com/AlexisHCD" target="_blank" rel="noopener" data-hover data-magnetic>
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>github ↗
+        </a>
+        <a class="btn btn-ghost" href="https://www.linkedin.com/in/alexis-hern%C3%A1ndez-2b3017367" target="_blank" rel="noopener" data-hover data-magnetic>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.55V9h3.57v11.45z"/></svg>linkedin ↗
+        </a>
       </div>
     </div>
 
@@ -1329,13 +1335,14 @@ let wi = 0, loaded = false;
 const wordTimer = setInterval(function(){ scramble(scrambleEl, words[wi = (wi + 1) % words.length], 420); }, 520);
 const t0 = performance.now();
 (function count(now){
-  const p = Math.min((now - t0) / 1400, 1);
+  const p = Math.min((now - t0) / 2400, 1);
   const v = Math.floor(p * 100);
   pctEl.textContent = String(v).padStart(3, '0');
   barEl.style.width = v + '%';
   if(p < 1 && !loaded){ requestAnimationFrame(count); }
 })(t0);
-setTimeout(function(){ if(!loaded) hideLoader(); }, 4000);
+setTimeout(hideLoader, 2400);
+setTimeout(function(){ if(!loaded) hideLoader(); }, 4500);
 function hideLoader(){
   if(loaded) return;
   loaded = true;
@@ -1464,16 +1471,25 @@ document.querySelectorAll('.bar-fill').forEach(function(el){
   } else { el.style.transform = 'scaleX(' + el.dataset.w / 100 + ')'; }
 });
 const tlProgress = document.getElementById('tlProgress');
+/* fill exactly up to the center of node 4 (current semester), then stop */
+function tlTargetFrac(){
+  const nodes = document.querySelectorAll('#timeline .tl-node');
+  const line = tlProgress.parentElement;
+  if(nodes.length < 4 || !line) return .75;
+  const lr = line.getBoundingClientRect();
+  const nr = nodes[3].getBoundingClientRect();
+  return Math.max(.2, Math.min(((nr.top + nr.height / 2) - lr.top) / Math.max(lr.height, 1), 1));
+}
 if(window.gsap && !reduced){
   /* progress indicator, not scroll-linked: fills once up to the current
-     semester (node 4 of 5 = 75%) and stays put */
-  gsap.fromTo(tlProgress, { scaleY: 0 }, { scaleY: .75, duration: 1.6, ease: 'power3.inOut',
+     semester and stays put */
+  gsap.fromTo(tlProgress, { scaleY: 0 }, { scaleY: tlTargetFrac(), duration: 1.6, ease: 'power3.inOut',
     scrollTrigger: { trigger: '#timeline', start: 'top 78%', once: true } });
   gsap.utils.toArray('[data-tl]').forEach(function(el){
     gsap.from(el, { x: -34, autoAlpha: 0, duration: .9, ease: 'power3.out',
       scrollTrigger: { trigger: el, start: 'top 85%' } });
   });
-} else { tlProgress.style.transform = 'scaleY(1)'; }
+} else { tlProgress.style.transform = 'scaleY(' + tlTargetFrac() + ')'; }
 
 /* magnetic */
 if(finePointer && !reduced && window.gsap){
@@ -1658,6 +1674,8 @@ const doomWin = document.getElementById('doomWin');
 const doomQuit = document.getElementById('doomQuit');
 let doomOpen = false, doomFrame = null;
 const doomPointerPill = document.getElementById('doomPointer');
+const DOOM_VOLUME = .4; /* default master volume for the emulator */
+let doomWatched = false;
 
 async function doomSequence(){
   termPrint('montando D:\\DOOM ................. ok', 't-out');
@@ -1692,6 +1710,33 @@ function openDoom(){
     /* pointer capture UX: report lock state + recapture on canvas click */
     try{
       const iwin = frame.contentWindow;
+      /* default game volume: route every audio context through a master gain */
+      try{
+        ['AudioContext','webkitAudioContext'].forEach(function(k){
+          const AC = iwin[k];
+          if(!AC || AC.__volPatched) return;
+          const desc = Object.getOwnPropertyDescriptor(AC.prototype, 'destination');
+          if(!desc || !desc.get) return;
+          Object.defineProperty(AC.prototype, 'destination', {
+            get: function(){
+              if(!this.__master){
+                const real = desc.get.call(this);
+                const g = this.createGain();
+                g.gain.value = DOOM_VOLUME;
+                g.connect(real);
+                this.__master = g;
+              }
+              return this.__master;
+            },
+            configurable: true
+          });
+          AC.__volPatched = true;
+        });
+      }catch(_){}
+      /* auto-close the arch window when the game exits itself (in-game QUIT) */
+      try{
+        if(iw_Module_ready(iwin)){ doomWatched = true; hookExit(iwin); }
+      }catch(_){}
       iwin.document.addEventListener('pointerlockchange', function(){
         doomPointerPill.classList.toggle('locked', !!iwin.document.pointerLockElement);
       });
@@ -1734,6 +1779,32 @@ function hideQuit(){
   doomQuit.hidden = true;
   if(doomFrame){ try{ doomFrame.contentWindow.focus(); }catch(_){} }
 }
+function iw_Module_ready(iwin){
+  return !!(iwin && iwin.Module && iwin.Module.calledRun);
+}
+function hookExit(iwin){
+  try{
+    iw_Module_onExit(iwin);
+    iwin.addEventListener && iwin.addEventListener('exit', function(){
+      setTimeout(function(){ try{ closeDoom(); }catch(_){}}, 80);
+    });
+  }catch(_){}
+}
+function iw_Module_onExit(iwin){
+  iwin.Module.onExit = function(){
+    /* the game ended itself (QUIT from the menu) — close the window */
+    setTimeout(function(){ try{ closeDoom(); }catch(_){}}, 80);
+  };
+}
+/* belt & suspenders: the wasm runtime may finish booting after the iframe
+   load event — keep checking until we can hook the exit path */
+setInterval(function(){
+  if(!doomOpen || !doomFrame) return;
+  try{
+    const iwin = doomFrame.contentWindow;
+    if(iw_Module_ready(iwin) && !doomWatched){ doomWatched = true; hookExit(iwin); }
+  }catch(_){}
+}, 600);
 document.getElementById('doomCloseX').addEventListener('click', showQuit);
 document.getElementById('quitYes').addEventListener('click', closeDoom);
 document.getElementById('quitNo').addEventListener('click', hideQuit);
