@@ -349,6 +349,13 @@ button{font:inherit;background:none;border:none;color:inherit;cursor:pointer}
 .doom-esc{font-family:var(--mono);font-size:9.5px;color:#928374;letter-spacing:.08em;pointer-events:none;margin-right:10px}
 .doom-body{flex:1;position:relative;min-height:0;background:#000}
 .doom-body iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
+.doom-pointer{
+  position:absolute;left:50%;top:14px;transform:translateX(-50%);z-index:5;pointer-events:none;
+  font-family:var(--mono);font-size:10px;letter-spacing:.12em;padding:7px 13px;border-radius:99px;
+  background:rgba(29,32,33,.88);border:1px solid #504945;color:#ebdbb2;
+  transition:opacity .4s;
+}
+.doom-pointer.locked{opacity:0}
 /* quit confirm popup */
 .doom-quit{position:absolute;inset:0;z-index:3;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.55)}
 .doom-quit[hidden]{display:none}
@@ -1138,7 +1145,7 @@ footer .p{color:var(--accent)}
           <span class="badge-seal"></span>
           <svg class="badge-arc" viewBox="0 0 120 120" aria-hidden="true">
             <defs><path id="arc-aiep" d="M60 60 m-45 0 a45 45 0 1 1 90 0" fill="none"/></defs>
-            <text class="arc-text"><textPath href="#arc-aiep" startOffset="50%" text-anchor="middle" textLength="138" lengthAdjust="spacingAndGlyphs">· CERTIFICADO × AIEP ·</textPath></text>
+            <text class="arc-text"><textPath href="#arc-aiep" startOffset="50%" text-anchor="middle" textLength="138" lengthAdjust="spacingAndGlyphs">· ASHOKA × AIEP ·</textPath></text>
           </svg>
           <span class="badge-core">
             <span class="g">✦</span>
@@ -1146,7 +1153,7 @@ footer .p{color:var(--accent)}
             <span class="y">2026</span>
           </span>
         </button>
-        <span class="badge-label">// herramientas para la innovación</span>
+        <span class="badge-label">// Herramientas para la Innovación</span>
       </div>
       <div class="cert-badge-wrap" data-reveal>
         <button class="cert-badge" data-cert="coursera" data-hover aria-label="ver certificado Coursera — Introduction to AI">
@@ -1162,7 +1169,7 @@ footer .p{color:var(--accent)}
             <span class="y">2026</span>
           </span>
         </button>
-        <span class="badge-label">// introduction to ai — coursera</span>
+        <span class="badge-label">// Introducción a la IA - Google</span>
       </div>
     </div>
   </section>
@@ -1171,8 +1178,8 @@ footer .p{color:var(--accent)}
   <section class="section contact" id="contacto">
     <h2 class="contact-title" data-reveal>¿Hablamos<span class="p">?</span></h2>
     <p class="contact-sub" data-reveal>Abierto a prácticas profesionales, proyectos y colaboraciones. Escríbeme y conversamos.</p>
-    <button class="copy-btn" id="copyEmail" data-hover data-magnetic data-email="adhcamus@proton.me">
-      <span id="copyLabel">adhcamus@proton.me</span><span>⧉</span>
+    <button class="copy-btn" id="copyEmail" data-hover data-magnetic data-email="adhcamus@gmail.com">
+      <span id="copyLabel">adhcamus@gmail.com</span><span>⧉</span>
     </button>
     <div class="contact-links" data-reveal>
       <a href="https://github.com/AlexisHCD" target="_blank" rel="noopener" data-hover>github ↗</a>
@@ -1197,7 +1204,9 @@ footer .p{color:var(--accent)}
       <span class="doom-esc">esc: menú</span>
       <button class="arch-x" id="doomCloseX" data-hover aria-label="cerrar doom">[×]</button>
     </div>
-    <div class="doom-body" id="dosFrameWrap"></div>
+    <div class="doom-body" id="dosFrameWrap">
+      <span class="doom-pointer" id="doomPointer">click en el juego = capturar mouse · esc = liberar</span>
+    </div>
     <div class="doom-quit" id="doomQuit" hidden>
       <div class="quit-card">
         <p class="quit-title">¿Salir del juego?</p>
@@ -1456,8 +1465,10 @@ document.querySelectorAll('.bar-fill').forEach(function(el){
 });
 const tlProgress = document.getElementById('tlProgress');
 if(window.gsap && !reduced){
-  gsap.to(tlProgress, { scaleY: 1, ease: 'none',
-    scrollTrigger: { trigger: '#timeline', start: 'top 75%', end: 'bottom 55%', scrub: .6 } });
+  /* progress indicator, not scroll-linked: fills once up to the current
+     semester (node 4 of 5 = 75%) and stays put */
+  gsap.fromTo(tlProgress, { scaleY: 0 }, { scaleY: .75, duration: 1.6, ease: 'power3.inOut',
+    scrollTrigger: { trigger: '#timeline', start: 'top 78%', once: true } });
   gsap.utils.toArray('[data-tl]').forEach(function(el){
     gsap.from(el, { x: -34, autoAlpha: 0, duration: .9, ease: 'power3.out',
       scrollTrigger: { trigger: el, start: 'top 85%' } });
@@ -1568,7 +1579,7 @@ const COMMANDS = {
     termPrint('progreso de carrera: 3/5 semestres — ≈70%', 't-ok');
   },
   contacto: function(){
-    termPrint('email: adhcamus@proton.me · github: @AlexisHCD', 't-out');
+    termPrint('email: adhcamus@gmail.com · github: @AlexisHCD', 't-out');
     termPrint('linkedin: /in/alexis-hernández · x: @Mkeled', 't-out');
   },
   certificados: function(){
@@ -1646,6 +1657,7 @@ const dosFrameWrap = document.getElementById('dosFrameWrap');
 const doomWin = document.getElementById('doomWin');
 const doomQuit = document.getElementById('doomQuit');
 let doomOpen = false, doomFrame = null;
+const doomPointerPill = document.getElementById('doomPointer');
 
 async function doomSequence(){
   termPrint('montando D:\\DOOM ................. ok', 't-out');
@@ -1673,8 +1685,22 @@ function openDoom(){
       const doc = frame.contentDocument;
       const st = doc.createElement('style');
       st.textContent = 'a[href="http://emscripten.org"]{display:none!important}' +
-        '#controls{opacity:.45;font-size:10px}#controls:hover{opacity:1}';
+        '#controls{opacity:.45;font-size:10px}#controls:hover{opacity:1}' +
+        '#output{display:none!important}body{overflow:hidden}.emscripten{cursor:crosshair}';
       doc.head.appendChild(st);
+    }catch(_){}
+    /* pointer capture UX: report lock state + recapture on canvas click */
+    try{
+      const iwin = frame.contentWindow;
+      iwin.document.addEventListener('pointerlockchange', function(){
+        doomPointerPill.classList.toggle('locked', !!iwin.document.pointerLockElement);
+      });
+      iwin.document.addEventListener('click', function(ev){
+        if(iwin.document.pointerLockElement) return;
+        if(ev.target.closest && ev.target.closest('#controls')) return;
+        const c = iwin.document.getElementById('canvas');
+        if(c && c.requestPointerLock){ try{ c.requestPointerLock(); }catch(_){}}
+      });
     }catch(_){}
     try{ frame.contentWindow.focus(); }catch(_){}
   });
@@ -1685,6 +1711,7 @@ function openDoom(){
 function closeDoom(){
   if(!doomOpen) return;
   doomOpen = false;
+  doomPointerPill.classList.remove('locked');
   doomQuit.hidden = true;
   dosOverlay.hidden = true;
   dosFrameWrap.innerHTML = '';
@@ -1696,6 +1723,13 @@ function showQuit(){
   doomQuit.hidden = false;
   document.getElementById('quitNo').focus();
 }
+/* clicking anywhere in the overlay (window chrome or backdrop) hands
+   focus back to the game so keys/mouse never strand on the parent page */
+dosOverlay.addEventListener('pointerdown', function(e){
+  if(!doomOpen) return;
+  if(e.target.closest('.arch-x') || e.target.closest('.doom-quit')) return;
+  try{ doomFrame.contentWindow.focus(); }catch(_){ }
+});
 function hideQuit(){
   doomQuit.hidden = true;
   if(doomFrame){ try{ doomFrame.contentWindow.focus(); }catch(_){} }
