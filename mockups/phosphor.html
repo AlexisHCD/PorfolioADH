@@ -1333,18 +1333,24 @@ const scrambleEl = document.getElementById('loaderScramble');
 const words = ['ALEXIS_HCD', 'PHOSPHOR_OS', 'INIT_MODULES', 'ALEXIS_HCD'];
 let wi = 0, loaded = false;
 const wordTimer = setInterval(function(){ scramble(scrambleEl, words[wi = (wi + 1) % words.length], 420); }, 520);
+/* counter driven by a self-correcting interval (not rAF): even if the main
+   thread stalls while assets load, it always lands on 100 before hiding */
+let counterDone = false;
 const t0 = performance.now();
-(function count(now){
-  const p = Math.min((now - t0) / 2400, 1);
+const LOADER_MS = 2000;
+const countTimer = setInterval(function(){
+  const p = Math.min((performance.now() - t0) / LOADER_MS, 1);
   const v = Math.floor(p * 100);
   pctEl.textContent = String(v).padStart(3, '0');
   barEl.style.width = v + '%';
-  if(p < 1 && !loaded){ requestAnimationFrame(count); }
-})(t0);
-setTimeout(hideLoader, 2400);
-setTimeout(function(){ if(!loaded) hideLoader(); }, 4500);
+  if(p >= 1){ counterDone = true; clearInterval(countTimer); }
+}, 33);
+setTimeout(hideLoader, LOADER_MS + 60);
+setTimeout(function(){ if(!loaded){ counterDone = true; hideLoader(); } }, 6000);
 function hideLoader(){
   if(loaded) return;
+  /* never cut the count short — wait for 100 unless the failsafe fired */
+  if(!counterDone){ setTimeout(hideLoader, 50); return; }
   loaded = true;
   clearInterval(wordTimer);
   /* CSS-driven so it completes even if rAF is throttled (background tab) */
