@@ -107,6 +107,12 @@ button{font:inherit;background:none;border:none;color:inherit;cursor:pointer}
 .scroll-progress{position:fixed;left:0;top:0;height:2px;width:0%;z-index:9500;
   background:var(--accent);box-shadow:0 0 12px var(--accent-glow);pointer-events:none}
 
+/* konami overdrive — full-screen phosphor surge */
+.overdrive-flash{position:fixed;inset:0;z-index:9490;pointer-events:none;opacity:0;
+  background:radial-gradient(ellipse at center,transparent 34%,var(--glow1) 78%,rgba(0,255,156,.22) 100%)}
+:root[data-theme="light"] .overdrive-flash{
+  background:radial-gradient(ellipse at center,transparent 34%,var(--glow1) 78%,rgba(29,110,242,.20) 100%)}
+
 /* ============ loader ============ */
 #loader{position:fixed;inset:0;z-index:10000;background:#0a0a0b;display:flex;align-items:center;justify-content:center;color:#e8e8e3}
 .loader-inner{text-align:center;font-family:var(--mono)}
@@ -387,6 +393,30 @@ button{font:inherit;background:none;border:none;color:inherit;cursor:pointer}
 
 /* ============ about ============ */
 .about-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:clamp(32px,5vw,72px);margin-top:54px;align-items:start}
+.about-id{display:flex;gap:18px;align-items:center;margin-bottom:26px;padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--ink-2)}
+.id-photo{
+  width:86px;height:86px;flex-shrink:0;border-radius:12px;object-fit:cover;display:block;
+  filter:grayscale(1) contrast(1.25) brightness(.92);
+  mix-blend-mode:luminosity;
+  background:linear-gradient(160deg,rgba(0,255,156,.22),rgba(0,255,156,.05));
+  border:1px solid var(--accent-line);
+}
+:root[data-theme="light"] .about-id{background:#ffffff}
+:root[data-theme="light"] .id-photo{mix-blend-mode:normal;filter:grayscale(1) contrast(1.08)}
+.id-meta{min-width:0}
+.id-name{font-family:var(--display);font-weight:700;font-size:17px;letter-spacing:.02em;text-transform:uppercase;line-height:1.15}
+.id-role{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;color:var(--accent);margin-top:4px}
+.id-sub{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--muted);margin-top:7px}
+.about-id{position:relative;overflow:hidden}
+.id-scan{
+  position:absolute;left:0;right:0;top:-45%;height:36%;pointer-events:none;
+  background:linear-gradient(180deg,transparent,rgba(0,255,156,.05) 42%,rgba(0,255,156,.13) 50%,rgba(0,255,156,.05) 58%,transparent);
+  animation:idscan 6s linear infinite;
+}
+:root[data-theme="light"] .id-scan{
+  background:linear-gradient(180deg,transparent,rgba(29,110,242,.04) 42%,rgba(29,110,242,.10) 50%,rgba(29,110,242,.04) 58%,transparent);
+}
+@keyframes idscan{to{top:135%}}
 .about-text h3{font-family:var(--display);font-size:clamp(1.4rem,2.6vw,1.9rem);font-weight:500;letter-spacing:-.01em;line-height:1.25}
 .about-text h3 em{font-style:normal;color:var(--accent)}
 .about-text p{color:var(--muted);line-height:1.8;font-size:15px;margin-top:22px}
@@ -653,6 +683,7 @@ footer .p{color:var(--accent)}
   .theme-btn .icon-sun,.theme-btn .icon-moon{animation:none!important}
   *{transition-duration:.01ms!important}
   .scroll-progress{transition:none!important}
+  .id-scan{animation:none!important}
 }
 </style>
 </head>
@@ -660,6 +691,7 @@ footer .p{color:var(--accent)}
 
 <div class="grain"></div>
 <div class="scanlines"></div>
+<div class="overdrive-flash" id="odFlash"></div>
 <div class="scroll-progress" id="scrollProgress"></div>
 <div class="mockup-tag">MOCKUP <b>//</b> datos demo — contenido se actualiza luego</div>
 
@@ -790,6 +822,15 @@ footer .p{color:var(--accent)}
       <h2 class="sec-title">Sobre mí</h2>
       <span class="sec-line"></span>
     </div>
+      <div class="about-id" data-reveal>
+        <img class="id-photo" src="img/whoami.jpg" alt="retrato placeholder de Alexis Hernández — personaje 2-D de Gorillaz" width="86" height="86">
+        <div class="id-meta">
+          <div class="id-name">Alexis Hernández Camus</div>
+          <div class="id-role">// futuro analista programador</div>
+          <div class="id-sub">foto temporal · la real llega pronto</div>
+        </div>
+        <span class="id-scan"></span>
+      </div>
     <div class="about-grid">
       <div class="about-text">
         <h3 data-reveal>Hola, soy Alexis — estudiante y futuro <em>analista programador</em>.</h3>
@@ -1835,14 +1876,22 @@ let overdriveTweens = [];
 function phosphorOverdrive(){
   themeSound(true);
   overdriveTweens.forEach(function(t){ t.kill(); });
+  const odFlash = document.getElementById('odFlash');
+  /* screen-wide surge: vignette flashes in, breathes, fades */
+  overdriveTweens.push(gsap.timeline()
+    .to(odFlash, { opacity: .95, duration: .35, ease: 'power2.out' })
+    .to(odFlash, { opacity: .45, duration: .55, yoyo: true, repeat: 5, ease: 'sine.inOut' })
+    .to(odFlash, { opacity: 0, duration: 1.1, ease: 'power2.in' }));
   /* beams spin up ~6x, hold, then decay back to normal */
   const tl = gsap.timeline();
   tl.fromTo(root, { '--beam-speed': 1 }, { '--beam-speed': 6, duration: .9, ease: 'power3.out' })
     .to(root, { '--beam-speed': 6, duration: 2.6 })
     .to(root, { '--beam-speed': 1, duration: 2.2, ease: 'power2.in' });
   overdriveTweens.push(tl);
+  /* glows visibly breathe: scale + brightness together */
   overdriveTweens.push(gsap.to('.glow', {
-    duration: .7, filter: 'blur(22px)', yoyo: true, repeat: 7, ease: 'sine.inOut'
+    scale: 1.28, filter: 'blur(26px) brightness(2.6)', transformOrigin: 'center',
+    duration: .75, yoyo: true, repeat: 7, ease: 'sine.inOut'
   }));
   gsap.delayedCall(6, function(){
     overdriveTweens.forEach(function(t){ t.kill(); });
@@ -1943,11 +1992,6 @@ copyBtn.addEventListener('click', async function(){
   }, 2200);
 });
 
-/* ============ living tab title ============ */
-const TAB_TITLE = document.title;
-document.addEventListener('visibilitychange', function(){
-  document.title = document.hidden ? '>_ la terminal te extraña...' : TAB_TITLE;
-});
 })();
 </script>
 </body>
