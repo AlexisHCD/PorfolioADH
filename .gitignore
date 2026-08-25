@@ -15,3 +15,6 @@ mockups/doom-web/
 
 # OS junk
 .DS_Store
+
+# transient agent task briefs
+.hermes/tasks/

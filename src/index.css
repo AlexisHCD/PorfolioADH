@@ -85,3 +85,40 @@ body {
   background: var(--accent);
   color: var(--accent-contrast);
 }
+
+/* duotone ID card scanline sweep (About) */
+.id-scan {
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(0, 255, 156, 0.05) 42%,
+    rgba(0, 255, 156, 0.13) 50%,
+    rgba(0, 255, 156, 0.05) 58%,
+    transparent
+  );
+  animation: idscan 6s linear infinite;
+}
+
+:root[data-theme='light'] .id-scan {
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(29, 110, 242, 0.04) 42%,
+    rgba(29, 110, 242, 0.1) 50%,
+    rgba(29, 110, 242, 0.04) 58%,
+    transparent
+  );
+}
+
+@keyframes idscan {
+  to {
+    top: 135%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .id-scan {
+    animation: none;
+  }
+}
