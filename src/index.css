@@ -19,6 +19,9 @@
   --accent-line: rgba(0, 255, 156, 0.35);
   --accent-contrast: #04120b;
   --accent-glow: rgba(0, 255, 156, 0.4);
+  --stroke-outline: rgba(232, 232, 227, 0.55);
+  --halftone-dot: rgba(232, 232, 227, 0.2);
+  --tick-line: rgba(232, 232, 227, 0.14);
 }
 
 :root[data-theme='light'] {
@@ -34,6 +37,9 @@
   --accent-line: rgba(29, 110, 242, 0.35);
   --accent-contrast: #f5f9ff;
   --accent-glow: rgba(29, 110, 242, 0.32);
+  --stroke-outline: rgba(15, 26, 40, 0.45);
+  --halftone-dot: rgba(15, 26, 40, 0.22);
+  --tick-line: rgba(15, 26, 40, 0.18);
 }
 
 /* gruvbox window chrome constants (theme-independent) */

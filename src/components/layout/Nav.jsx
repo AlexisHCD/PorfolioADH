@@ -1,7 +1,8 @@
 import { identity } from '../../data/profile';
+import ThemeToggle from '../ui/ThemeToggle';
 
 /** Fixed top navigation — brand prompt, section links, theme toggle, CV CTA. */
-export default function Nav() {
+export default function Nav({ theme, onToggle }) {
   return (
     <nav className="fixed inset-x-0 top-0 z-[9000] flex items-center justify-between border-b border-transparent px-6 py-4 transition-colors md:px-11">
       <a href="#top" data-hover className="font-mono text-[15.5px] font-bold hover:text-accent">
@@ -26,7 +27,7 @@ export default function Nav() {
       </div>
 
       <div className="flex items-center gap-2.5">
-        {/* ThemeToggle is injected by App to keep this component stateless */}
+        <ThemeToggle theme={theme} onToggle={onToggle} />
         <a
           href={identity.cvHref ?? '#'}
           data-hover

@@ -11,11 +11,7 @@ export default function App() {
   return (
     <div className="relative min-h-screen">
       <AmbientField />
-      <Nav />
-      {/* the toggle lives in the nav's right slot; Nav stays stateless */}
-      <div className="fixed top-4 right-6 z-[9100] md:right-11">
-        <ThemeToggle theme={theme} onToggle={toggle} />
-      </div>
+      <Nav theme={theme} onToggle={toggle} />
       <main className="relative z-[1]">
         <Hero />
         {/* Phase 3 sections mount here: About, Stack, Activity, Projects,
