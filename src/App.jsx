@@ -1,7 +1,6 @@
 import Nav from './components/layout/Nav';
 import Footer from './components/layout/Footer';
 import AmbientField from './components/layout/AmbientField';
-import ThemeToggle from './components/ui/ThemeToggle';
 import Hero from './components/sections/Hero';
 import { useTheme } from './hooks/useTheme';
 
