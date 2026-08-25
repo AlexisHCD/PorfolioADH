@@ -20,10 +20,12 @@ const LinkedinIcon = () => (
 );
 
 /**
- * Hero section — kinetic name, mission chips, CTAs and the interactive
- * terminal placeholder slot (Terminal mounts here in Phase 3).
+ * Hero section — kinetic name, mission chips, CTAs and the interactive terminal.
+ *
+ * @param {object} props
+ * @param {() => void} [props.onLaunchDoom] - Fired by the terminal's `doom.exe`.
  */
-export default function Hero() {
+export default function Hero({ onLaunchDoom = () => {} }) {
   return (
     <header id="top" className="relative flex min-h-svh items-center overflow-hidden px-6 pt-32 pb-24 md:px-12">
       <div className="grid w-full items-center gap-10 lg:grid-cols-[1.02fr_.98fr]">
@@ -88,7 +90,7 @@ export default function Hero() {
         </div>
 
         {/* interactive terminal (Phase 3) */}
-        <Terminal />
+        <Terminal onLaunchDoom={onLaunchDoom} />
       </div>
     </header>
   );
