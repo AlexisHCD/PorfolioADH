@@ -12,8 +12,8 @@ Deploy: Vercel (static). Site content in **Spanish**; code, comments, docs and c
 - **Hermes (ox-alpha)** = architect/orchestrator/reviewer: plans, reviews every diff, runs builds/tests itself, proposes atomic commits. Pushes only with user approval.
 - **OpenCode CLI (Zen FREE tier)** = builder/documenter. Invoke from repo root:
   `opencode run "$(cat /tmp/task.md)" --model opencode/<model>`
-  - VERIFIED WORKING defaults: `opencode/hy3-free`, `opencode/nemotron-3-ultra-free`.
-  - KNOWN BROKEN: `opencode/ox-alpha-free` → HTTP 500 server-side (user is investigating; retry later); provider `opencode-go/*` → insufficient balance (dead subscription, never use).
+  - VERIFIED WORKING defaults: `opencode/hy3-free` (primary), `opencode/nemotron-3-ultra-free` (backup).
+  - KNOWN BROKEN/FLAKY: `opencode/ox-alpha-free` → HTTP 500 server-side (user investigating); `opencode/x-preview-f-free` → upstream endpoint down most of the time (~1/4 success; retry occasionally); provider `opencode-go/*` → insufficient balance (dead subscription, never use).
   - Always smoke-test first: `opencode run 'Respond with exactly: SMOKE_OK' --model <id>`.
   - Task briefs must be self-contained: absolute paths, conventions, acceptance criteria, what NOT to touch; attach context with `-f`.
 
