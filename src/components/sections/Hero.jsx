@@ -1,4 +1,5 @@
 import { identity, social } from '../../data/profile';
+import Terminal from '../ui/Terminal';
 
 const GithubIcon = () => (
   <svg viewBox="0 0 16 16" aria-hidden="true">
@@ -86,10 +87,8 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Phase 3: <Terminal /> mounts inside this slot */}
-        <div id="terminal-slot" className="min-h-[320px] rounded-xl border border-line bg-ink-2 p-4">
-          <p className="font-mono text-[11px] text-muted">{'// terminal interactiva — fase 3'}</p>
-        </div>
+        {/* interactive terminal (Phase 3) */}
+        <Terminal />
       </div>
     </header>
   );
