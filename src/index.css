@@ -1,0 +1,81 @@
+@import 'tailwindcss';
+
+/*
+ * AlexDev_OS design tokens — ported from the approved mockup
+ * (mockups/phosphor.html). Dark ink night theme (default) and blue day theme
+ * via [data-theme] on <html>.
+ */
+:root,
+:root[data-theme='dark'] {
+  --ink: #0a0a0b;
+  --ink-2: #101012;
+  --ink-3: #17171b;
+  --line: rgba(232, 232, 227, 0.09);
+  --line-soft: rgba(232, 232, 227, 0.05);
+  --text: #e8e8e3;
+  --muted: #8b8b85;
+  --accent: #00ff9c;
+  --accent-soft: rgba(0, 255, 156, 0.13);
+  --accent-line: rgba(0, 255, 156, 0.35);
+  --accent-contrast: #04120b;
+  --accent-glow: rgba(0, 255, 156, 0.4);
+}
+
+:root[data-theme='light'] {
+  --ink: #f2f5f8;
+  --ink-2: #ffffff;
+  --ink-3: #e8eef3;
+  --line: rgba(16, 24, 40, 0.13);
+  --line-soft: rgba(16, 24, 40, 0.07);
+  --text: #0f1a28;
+  --muted: #5a6a7a;
+  --accent: #1d6ef2;
+  --accent-soft: rgba(29, 110, 242, 0.1);
+  --accent-line: rgba(29, 110, 242, 0.35);
+  --accent-contrast: #f5f9ff;
+  --accent-glow: rgba(29, 110, 242, 0.32);
+}
+
+/* gruvbox window chrome constants (theme-independent) */
+:root {
+  --gruv-bg: #1d2021;
+  --gruv-bar: #3c3836;
+  --gruv-fg: #ebdbb2;
+  --gruv-green: #b8bb26;
+  --gruv-teal: #83a598;
+  --gruv-purple: #d3869b;
+  --gruv-yellow: #fabd2f;
+  --gruv-orange: #fe8019;
+  --gruv-red: #fb4934;
+}
+
+@theme inline {
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-line: var(--line);
+  --color-line-soft: var(--line-soft);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-line: var(--accent-line);
+  --color-accent-contrast: var(--accent-contrast);
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+body {
+  background: var(--ink);
+  color: var(--text);
+  font-family: var(--font-body);
+  transition:
+    background-color 0.45s ease,
+    color 0.45s ease;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}

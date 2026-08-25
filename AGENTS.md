@@ -50,6 +50,8 @@ Deploy: Vercel (static). Site content in **Spanish**; code, comments, docs and c
 - Mobile/touch plan: build **Dwasm** (github.com/GMH-Code/Dwasm) for the real app. webprboom is desktop-only.
 
 ## Gotchas
+- **Node ≥26 ships an experimental global `localStorage`** that shadows jsdom's inside Vitest (`undefined` methods, tests crash). All test scripts must set `NODE_OPTIONS=--no-experimental-webstorage` (already wired into package.json).
+- The user's shell exports `NODE_ENV=production`, which makes npm silently skip devDependencies. Always install/run tooling with `NODE_ENV=` emptied.
 - Mockup server: `python3 -m http.server 4173` from repo root (`/mockups/phosphor.html`).
 - Validate mockup inline JS: `awk '/^<script>$/{f=1;next} /^<\/script>$/{f=0} f' mockups/phosphor.html > /tmp/c.js && node --check /tmp/c.js`
 - Old v1 data: https://github.com/AlexisHCD/Portfolio_Proyecto_AIEP (outdated; superseded by current content).
