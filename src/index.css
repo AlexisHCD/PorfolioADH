@@ -822,3 +822,8 @@ footer .p{color:var(--accent)}
   .scroll-progress{transition:none!important}
   .id-scan{animation:none!important}
 }
+
+/* anchor jumps clear the fixed nav */
+section[id] {
+  scroll-margin-top: 88px;
+}

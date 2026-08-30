@@ -81,7 +81,7 @@ export default function Roadmap() {
       id="roadmap"
       ref={sectionRef}
       data-reveal
-      className="mx-auto max-w-6xl px-6 py-20 md:px-12"
+      className="mx-auto max-w-[1240px] px-6 py-[clamp(90px,12vh,150px)] md:px-12"
     >
       <SectionHead num="05" title="Roadmap" />
       <p className="mt-4 text-muted">

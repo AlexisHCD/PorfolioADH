@@ -6,7 +6,7 @@ import { identity, social } from '../../data/profile';
  */
 export default function Contact() {
   return (
-    <section id="contacto" data-reveal className="contact mx-auto max-w-4xl px-6 py-24 text-center md:px-12">
+    <section id="contacto" data-reveal className="contact mx-auto max-w-4xl px-6 py-[clamp(110px,14vh,140px)] text-center md:px-12">
       <h2 data-reveal className="contact-title font-display font-bold leading-none tracking-tight text-[clamp(3rem,11vw,9rem)]">
         ¿Hablamos<span className="p">?</span>
       </h2>

@@ -75,7 +75,7 @@ export default function Projects() {
   const rest = projects.filter((p) => p !== featured);
 
   return (
-    <section id="proyectos" className="mx-auto max-w-6xl px-6 py-20 md:px-12">
+    <section id="proyectos" className="mx-auto max-w-[1240px] px-6 py-[clamp(90px,12vh,150px)] md:px-12">
       <SectionHead num="04" title="Proyectos" />
 
       <div className="mt-10 grid gap-4 md:grid-cols-2">
