@@ -15,25 +15,25 @@ it('renders exactly two badges', () => {
   expect(screen.getAllByRole('button', { name: /ver certificado/ })).toHaveLength(2);
 });
 
-it('clicking the first badge opens the viewer', () => {
+it('clicking the first badge opens the viewer and types the ledger', async () => {
   render(<Certificates />);
   const first = screen.getAllByRole('button', { name: /ver certificado/ })[0];
   fireEvent.click(first);
-  expect(
-    screen.getAllByText(certificates[0].course, { exact: false }).length,
-  ).toBeGreaterThan(0);
+  // the ledger types character by character — wait for the course line
+  const matches = await screen.findAllByText(certificates[0].course, { exact: false }, {
+    timeout: 6000,
+  });
+  expect(matches.length).toBeGreaterThan(0);
 });
 
 it('close button hides the viewer', () => {
   render(<Certificates />);
   const first = screen.getAllByRole('button', { name: /ver certificado/ })[0];
   fireEvent.click(first);
-  // viewer-only marker: its title bar
-  expect(screen.getByText(/visor de certificados/)).toBeInTheDocument();
+  // viewer-only marker: the arch dialog with its accessible name
+  expect(screen.getByRole('dialog', { name: 'visor de certificados' })).toBeInTheDocument();
 
   fireEvent.click(screen.getByRole('button', { name: 'cerrar visor' }));
-  // the badge label still exists (it contains the course name), so assert on
-  // the viewer-specific markers instead of the raw course string
-  expect(screen.queryByText(/visor de certificados/)).not.toBeInTheDocument();
+  expect(screen.queryByRole('dialog', { name: 'visor de certificados' })).not.toBeInTheDocument();
   expect(screen.queryByRole('button', { name: 'cerrar visor' })).not.toBeInTheDocument();
 });

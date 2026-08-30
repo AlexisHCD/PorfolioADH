@@ -4,8 +4,7 @@ import { GithubIcon, LinkedinIcon } from './Hero';
 import SectionHead from '../ui/SectionHead';
 import { useReveal } from '../../hooks/useReveal';
 
-const cardBase =
-  'rounded-[18px] border border-line bg-ink-2 p-6 transition-transform duration-300 hover:-translate-y-1';
+const cardBase = 'card';
 
 const cardTag = (label, suffix) => (
   <div className="mb-3 flex items-center justify-between font-mono text-[10px] tracking-[0.18em]">
@@ -76,7 +75,7 @@ export default function About() {
             {cardTag('// ESTUDIO', 'en curso')}
             <p className="font-display text-lg font-bold">{identity.school}</p>
             <p className="mt-1 text-sm text-muted">
-              {`${roadmap.career} — San Antonio · ${roadmap.sct} SCT`}
+              {`${roadmap.careerShort} — San Antonio · ${roadmap.sct} SCT`}
             </p>
             <div className="mt-4 h-[5px] w-full rounded bg-[var(--line)]">
               <span
@@ -93,10 +92,10 @@ export default function About() {
 
           {/* REDES */}
           <div className={cardBase} data-reveal>
-            {cardTag('// REDES', 'social')}
+            {cardTag('// REDES', 'conecta')}
             {[
-              { icon: <GithubIcon />, label: social.githubUser, href: social.github },
-              { icon: <LinkedinIcon />, label: 'linkedin', href: social.linkedin },
+              { icon: <GithubIcon />, label: 'github.com/AlexisHCD', href: social.github },
+              { icon: <LinkedinIcon />, label: 'in/alexis-hernández', href: social.linkedin },
             ].map((s) => (
               <a
                 key={s.label}
@@ -135,7 +134,7 @@ export default function About() {
 
           {/* BASE */}
           <div className={cardBase} data-reveal>
-            {cardTag('// BASE', 'ubicación')}
+            {cardTag('// BASE')}
             <p className="font-display text-lg font-bold">
               {`${identity.location.city}, ${identity.location.code}`}
             </p>
@@ -146,17 +145,10 @@ export default function About() {
 
           {/* INTERESES */}
           <div className={cardBase} data-reveal>
-            {cardTag('// INTERESES', 'tags')}
-            <div className="flex flex-wrap gap-2">
-              {['Informática', 'IA', 'Tech', 'Open Source', 'Linux'].map((chip) => (
-                <span
-                  key={chip}
-                  className="rounded-full border border-line px-3 py-1 font-mono text-[11px] text-muted"
-                >
-                  {chip}
-                </span>
-              ))}
-            </div>
+            {cardTag('// INTERESES')}
+            <p className="text-sm text-muted">
+              Informática · IA · Tech · Open Source · Linux
+            </p>
           </div>
         </div>
       </div>

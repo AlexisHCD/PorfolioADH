@@ -1,60 +1,87 @@
+import { useEffect, useRef } from 'react';
+import { isFinePointer, mountGsap, prefersReducedMotion } from '../../lib/motion';
+
 /**
  * CertificateBadge — round rotating seal button for a single certificate.
  *
- * Layers: rotating conic beam ring, dashed inner seal, curved SVG seal text
- * and a centered core column. Clicking the badge asks the parent to open the
- * arch-frame viewer via `onSelect`.
+ * Visuals come from the ported mockup CSS (.cert-badge / .badge-beam /
+ * .badge-seal / .badge-arc / .badge-core): the beam ring spins via a CSS
+ * animation that honors `--beam-speed` (Konami surge) and accelerates on
+ * hover, the dashed seal rotates 135°, and arc/core colors shift to the
+ * accent. A GSAP 3D tilt (desktop, motion-safe) is layered on top with an
+ * elastic return.
  *
  * @param {object} props
  * @param {object} props.cert - Certificate record from profile.js.
- * @param {(cert: object) => void} props.onSelect - Opens the viewer for `cert`.
+ * @param {(cert: object, origin?: Element) => void} props.onSelect - Opens the
+ *   viewer for `cert`; receives the badge element so the viewer can reveal
+ *   with a circle expand from it.
  * @returns {JSX.Element}
  */
 export default function CertificateBadge({ cert, onSelect }) {
+  const ref = useRef(null);
+
+  // 3D tilt tracking the cursor, elastic snap-back on leave (mockup parity).
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !isFinePointer() || prefersReducedMotion()) return undefined;
+
+    let cleanup = () => {};
+    mountGsap().then(({ gsap }) => {
+      if (!gsap) return;
+
+      const onMove = (e) => {
+        const r = el.getBoundingClientRect();
+        const dx = (e.clientX - r.left) / r.width - 0.5;
+        const dy = (e.clientY - r.top) / r.height - 0.5;
+        gsap.to(el, {
+          rotateY: dx * 16,
+          rotateX: -dy * 16,
+          transformPerspective: 520,
+          duration: 0.35,
+          ease: 'power2.out',
+        });
+      };
+      const onLeave = () => {
+        gsap.to(el, { rotateX: 0, rotateY: 0, duration: 1, ease: 'elastic.out(1, 0.4)' });
+      };
+
+      el.addEventListener('mousemove', onMove);
+      el.addEventListener('mouseleave', onLeave);
+      cleanup = () => {
+        el.removeEventListener('mousemove', onMove);
+        el.removeEventListener('mouseleave', onLeave);
+      };
+    });
+
+    return () => cleanup();
+  }, [ref]);
+
   return (
     <button
       type="button"
+      ref={ref}
       aria-label={`ver certificado ${cert.course}`}
       data-hover
-      onClick={() => onSelect(cert)}
-      className="group relative size-[176px] cursor-pointer rounded-full border border-line bg-ink-2 grid place-items-center transition-shadow will-change-transform hover:shadow-[0_0_44px_var(--accent-glow)]"
+      onClick={(e) => onSelect(cert, e.currentTarget)}
+      className="cert-badge"
     >
-      {/* a) rotating conic beam ring, masked to a thin outer ring */}
-      <span
-        className="animate-spin absolute -inset-[1.5px] rounded-full pointer-events-none group-hover:[animation-duration:1.6s]"
-        style={{
-          background:
-            'conic-gradient(from 0deg, transparent 0 72%, var(--accent) 88%, #b4ffe1 94%, transparent 100%)',
-          animationDuration: '7s',
-          WebkitMaskImage:
-            'radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2.5px))',
-          maskImage:
-            'radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2.5px))',
-        }}
-      />
+      {/* rotating conic beam ring, masked to a thin outer ring */}
+      <span className="badge-beam" />
 
-      {/* b) dashed inner seal */}
-      <span className="absolute inset-2 rounded-full border border-dashed border-line transition-transform duration-[1400ms] group-hover:rotate-[135deg] group-hover:border-accent-line" />
+      {/* dashed inner seal */}
+      <span className="badge-seal" />
 
-      {/* c) curved seal text around the ring */}
-      <svg
-        viewBox="0 0 120 120"
-        className="absolute inset-0 h-full w-full pointer-events-none"
-      >
+      {/* curved seal text around the ring */}
+      <svg className="badge-arc" viewBox="0 0 120 120" aria-hidden="true">
         <defs>
           <path id={`arc-${cert.id}`} d="M60 60 m-45 0 a45 45 0 1 1 90 0" fill="none" />
         </defs>
-        <text
-          className="arc-seal-text"
-          fill="var(--muted)"
-          fontSize="9"
-          letterSpacing="2"
-          fontFamily="monospace"
-          textAnchor="middle"
-        >
+        <text className="arc-text">
           <textPath
             href={`#arc-${cert.id}`}
             startOffset="50%"
+            textAnchor="middle"
             textLength="138"
             lengthAdjust="spacingAndGlyphs"
           >
@@ -63,13 +90,11 @@ export default function CertificateBadge({ cert, onSelect }) {
         </text>
       </svg>
 
-      {/* d) core column */}
-      <span className="flex flex-col items-center gap-[5px]">
-        <span className="font-mono text-[15px] text-muted">{cert.glyph}</span>
-        <span className="font-mono text-[21px] font-bold tracking-[0.1em] text-text">
-          {cert.issuer}
-        </span>
-        <span className="font-mono text-[9.5px] tracking-[0.34em] text-muted">2026</span>
+      {/* core column */}
+      <span className="badge-core">
+        <span className="g">{cert.glyph}</span>
+        <span className="org">{cert.issuer}</span>
+        <span className="y">2026</span>
       </span>
     </button>
   );

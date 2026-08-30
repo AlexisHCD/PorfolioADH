@@ -18,7 +18,11 @@ export default function Stack() {
       data-reveal
       className="mx-auto max-w-[1240px] px-6 py-[clamp(90px,12vh,150px)] md:px-12"
     >
-      <SectionHead num="02" title="Stack" />
+      <SectionHead num="02" title="Tech Stack" />
+      <p className="mt-4 text-muted">
+        Tecnologías de mi malla en AIEP y de proyectos propios — lo que uso día a día para
+        construir.
+      </p>
 
       <div className="stack-grid mt-10">
         {stack.map((group) => (

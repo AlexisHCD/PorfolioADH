@@ -19,7 +19,8 @@ it('renders every stack item label', () => {
   render(<Stack />);
   stack.forEach((group) => {
     group.items.forEach((item) => {
-      expect(screen.getByText(item)).toBeInTheDocument();
+      // some chips (e.g. "SQL") live in more than one group on purpose
+      expect(screen.getAllByText(item).length).toBeGreaterThan(0);
     });
   });
 });

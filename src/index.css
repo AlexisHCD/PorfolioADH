@@ -674,6 +674,11 @@ button{font:inherit;background:none;border:none;color:inherit;cursor:pointer}
 }
 .cert-badge-wrap:hover .badge-label{color:var(--text)}
 
+/* certificates section — full-size badges (mockup parity) */
+#certificados .certs-row{justify-content:center;margin-top:64px;gap:clamp(40px,6vw,96px)}
+#certificados .cert-badge{width:176px;height:176px}
+#certificados .arc-text{font-size:9px}
+
 /* certificate viewer (arch frame) */
 #certOverlay{
   position:fixed;inset:0;z-index:10002;background:rgba(0,0,0,.55);

@@ -110,6 +110,9 @@ export default function Activity() {
       className="mx-auto max-w-[1240px] px-6 py-[clamp(90px,12vh,150px)] md:px-12"
     >
       <SectionHead num="03" title="Actividad" />
+      <p className="mt-4 text-muted">
+        Desarrollador activo: contribuciones, repositorios y lenguajes — directo desde GitHub.
+      </p>
 
       <div className="mt-10">
         <div className="panel" data-reveal>
@@ -146,10 +149,6 @@ export default function Activity() {
               ))}
             </div>
           </div>
-
-          <p className="mt-6 font-mono text-xs text-muted">
-            182 días · consistencia &gt; intensidad
-          </p>
         </div>
 
         <div className="act-grid">

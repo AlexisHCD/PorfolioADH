@@ -11,14 +11,15 @@ it('renders the school name', () => {
 it('renders github and linkedin hrefs', () => {
   render(<About />);
   expect(screen.getByRole('link', { name: /AlexisHCD/ })).toHaveAttribute('href', social.github);
-  expect(screen.getByRole('link', { name: /linkedin/ })).toHaveAttribute('href', social.linkedin);
+  expect(screen.getByRole('link', { name: /alexis-hern/ })).toHaveAttribute(
+    'href',
+    social.linkedin,
+  );
 });
 
-it('renders five interest chips', () => {
+it('renders the intereses line', () => {
   render(<About />);
-  ['Informática', 'IA', 'Tech', 'Open Source', 'Linux'].forEach((chip) => {
-    expect(screen.getByText(chip)).toBeInTheDocument();
-  });
+  expect(screen.getByText('Informática · IA · Tech · Open Source · Linux')).toBeInTheDocument();
 });
 
 it('renders the signature text', () => {

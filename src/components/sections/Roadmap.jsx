@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { roadmap } from '../../data/profile';
 import SectionHead from '../ui/SectionHead';
 import { useInView } from '../../hooks/useInView';
-import { useReveal } from '../../hooks/useReveal';
+import { useReveal, useRevealGroup } from '../../hooks/useReveal';
 import { prefersReducedMotion } from '../../lib/motion';
 
 const FALLBACK_FRACTION = 0.75;
@@ -11,6 +11,9 @@ const FALLBACK_FRACTION = 0.75;
  * // 05 Roadmap — fixed-progress vertical timeline.
  * The accent fill animates ONCE from scaleY(0) to scaleY(targetFraction) when the
  * timeline enters view, then stays fixed forever (never scroll-linked).
+ * Markup uses the ported mockup classes (.tl / .tl-line / .tl-item / …): nodes
+ * are solid-ink discs so the line never shows through them, the status badge
+ * sits inline after the date and the current node glows + blinks.
  */
 export default function Roadmap() {
   const sectionRef = useRef(null);
@@ -21,6 +24,13 @@ export default function Roadmap() {
   const [targetFraction, setTargetFraction] = useState(null);
 
   useReveal(sectionRef);
+  useRevealGroup(listRef, '.tl-item', {
+    dx: -34,
+    dy: 0,
+    duration: 0.9,
+    ease: 'power3.out',
+    start: 'top 85%',
+  });
 
   // Count-up for the summary percentage (rAF, reduced-motion aware).
   useEffect(() => {
@@ -85,80 +95,57 @@ export default function Roadmap() {
     >
       <SectionHead num="05" title="Roadmap" />
       <p className="mt-4 text-muted">
-        {`${roadmap.career} — ${roadmap.totalSemesters} semestres · ${roadmap.sct} SCT · Instituto Profesional AIEP`}
+        {`${roadmap.career} — ${roadmap.totalSemesters} semestres · ${roadmap.sct} SCT · Instituto Profesional AIEP.`}
       </p>
 
-      <div ref={listRef} className="relative mt-12">
+      <div ref={listRef} className="tl">
         {/* vertical line + animated fixed fill */}
-        <div
-          ref={lineRef}
-          className="absolute left-[12px] top-2 bottom-2 w-[2px] overflow-hidden rounded"
-          style={{ background: 'var(--line)' }}
-        >
+        <div ref={lineRef} className="tl-line">
           <span
-            className="absolute inset-x-0 top-0 w-full rounded bg-accent"
+            className="tl-progress"
             style={{
-              height: '100%',
               transform: `scaleY(${fraction})`,
-              transformOrigin: 'top',
-              transition: 'transform 1600ms ease-out',
+              transition: 'transform 1600ms cubic-bezier(0.65, 0, 0.35, 1)',
             }}
           />
         </div>
 
-        <ul className="flex flex-col">
-          {roadmap.semesters.map((s) => {
-            const isDone = s.status === 'done';
-            const isCurrent = s.status === 'current';
-            const nodeGlyph = isDone ? '✓' : isCurrent ? '●' : '◇';
-            return (
-              <li key={s.n} className="relative pb-12 pl-12 last:pb-0">
-                <span
-                  data-tl-node
-                  className={`absolute left-0 top-1 grid size-6 place-items-center rounded-full border ${
-                    isDone
-                      ? 'border-accent-line text-accent'
-                      : isCurrent
-                        ? 'border-accent bg-accent font-bold text-accent-contrast'
-                        : 'border-line text-muted'
-                  }`}
-                >
-                  {nodeGlyph}
-                </span>
+        {roadmap.semesters.map((s) => {
+          const isDone = s.status === 'done';
+          const isCurrent = s.status === 'current';
+          const nodeGlyph = isDone ? '✓' : isCurrent ? '●' : '◇';
+          return (
+            <div
+              key={s.n}
+              className={`tl-item${isDone ? ' done' : isCurrent ? ' current' : ''}`}
+            >
+              <span className="tl-node" data-tl-node>
+                <i>{nodeGlyph}</i>
+              </span>
 
-                <div className="flex items-center justify-between font-mono text-[10px] tracking-wide">
-                  <span>{`SEMESTRE ${String(s.n).padStart(2, '0')} · ${s.year}`}</span>
-                  {isDone ? (
-                    <span className="rounded-full border border-accent-line px-2.5 py-1 text-[9px] tracking-[0.14em] text-accent">
-                      COMPLETADO
-                    </span>
-                  ) : isCurrent ? (
-                    <span className="rounded-full bg-accent px-2.5 py-1 text-[9px] font-bold tracking-[0.14em] text-accent-contrast">
-                      EN CURSO
-                    </span>
-                  ) : (
-                    <span className="rounded-full border border-line px-2.5 py-1 text-[9px] tracking-[0.14em] text-muted">
-                      PENDIENTE
-                    </span>
-                  )}
-                </div>
+              <div className="tl-when">
+                <span>{`SEMESTRE ${String(s.n).padStart(2, '0')} · ${s.year}`}</span>
+                {isDone ? (
+                  <span className="tl-badge">COMPLETADO</span>
+                ) : isCurrent ? (
+                  <span className="tl-badge">EN CURSO</span>
+                ) : (
+                  <span className="tl-badge">PRÓXIMO PASO</span>
+                )}
+              </div>
 
-                <h3 className="mt-2 font-display text-xl font-bold">{s.title}</h3>
+              <div className="tl-title">{s.title}</div>
 
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {s.courses.map((c) => (
-                    <span
-                      key={c}
-                      className="rounded-full border border-line px-3 py-1 font-mono text-[11px] text-muted"
-                    >
-                      {c}
-                    </span>
-                  ))}
-                </div>
-              </li>
-            );
-          })}
-        </ul>
+              <div className="tl-courses">
+                {s.courses.map((c) => (
+                  <span key={c} className="chip">
+                    {c}
+                  </span>
+                ))}
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       <div className="panel tl-summary" data-reveal>

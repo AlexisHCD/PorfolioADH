@@ -2,13 +2,21 @@ import { useEffect, useRef, useState } from 'react';
 import { certificates } from '../../data/profile';
 import SectionHead from '../ui/SectionHead';
 import CertificateBadge from '../ui/CertificateBadge';
+import { useRevealGroup } from '../../hooks/useReveal';
+import { mountGsap, prefersReducedMotion } from '../../lib/motion';
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const TYPE_CHAR_MS = 13;
+const TYPE_LINE_PAUSE_MS = 150;
 
 /**
  * // 06 Certificados — gruvbox-style badge seals that open an arch-frame viewer.
  *
- * Each badge is a self-contained seal; clicking one opens a centered arch-window
- * overlay that shows a typewriter-style ledger on the left and the certificate
- * image on the right. Escape / backdrop / close button all dismiss it.
+ * Badges reveal on scroll and tilt in 3D on hover; clicking one opens the
+ * arch-window viewer with a clip-path circle reveal expanding from the badge
+ * itself, a typewriter ledger on the left and the certificate image on the
+ * right (hover zoom via CSS). The titlebar is draggable.
+ * Escape / backdrop / close button all dismiss it.
  *
  * @param {object} props
  * @param {(open: boolean) => void} [props.onViewerOpenChange] - Fires when the
@@ -17,7 +25,14 @@ import CertificateBadge from '../ui/CertificateBadge';
  */
 export default function Certificates({ onViewerOpenChange = () => {} }) {
   const [selected, setSelected] = useState(null);
+  const sectionRef = useRef(null);
   const closeRef = useRef(null);
+  const preRef = useRef(null);
+  const winRef = useRef(null);
+  const titlebarRef = useRef(null);
+  const typeToken = useRef(0);
+
+  useRevealGroup(sectionRef, '.cert-badge-wrap', { dy: 38, duration: 1 });
 
   // Close on Escape and focus the close button when the viewer opens.
   useEffect(() => {
@@ -52,80 +67,186 @@ export default function Certificates({ onViewerOpenChange = () => {} }) {
   // Cleanup on unmount: ensure parent knows the viewer is gone.
   useEffect(() => () => onViewerOpenChange(false), [onViewerOpenChange]);
 
-  const ledgerLines = selected
-    ? [
-        `> emisor ......... ${selected.issuer}`,
-        `> curso .......... ${selected.course}`,
-        selected.platform ? `> plataforma ..... ${selected.platform}` : null,
-        `> fecha .......... ${selected.date}`,
-        selected.verifyId ? `> verificación ... ${selected.verifyId}` : null,
-        selected.signedBy ? `> firmado por .... ${selected.signedBy}` : null,
-      ].filter(Boolean)
-    : [];
+  // Typewriter ledger — types the certificate lines into the viewer <pre>
+  // character by character (mockup parity). Writes go straight to the DOM
+  // node (no per-keystroke re-render); bumping the token cancels the run.
+  useEffect(() => {
+    if (!selected) return undefined;
+    const pre = preRef.current;
+    if (!pre) return undefined;
+
+    const token = ++typeToken.current;
+    const lines = selected.cert.ledger ?? [];
+    const reduced = prefersReducedMotion();
+
+    const type = async () => {
+      pre.textContent = '';
+      for (const line of lines) {
+        if (token !== typeToken.current) return;
+        if (reduced) {
+          pre.textContent += `${line}\n`;
+          await sleep(30);
+          continue;
+        }
+        for (const ch of line) {
+          if (token !== typeToken.current) return;
+          pre.textContent += ch;
+          await sleep(TYPE_CHAR_MS);
+        }
+        pre.textContent += '\n';
+        await sleep(TYPE_LINE_PAUSE_MS);
+      }
+      if (token === typeToken.current) {
+        pre.textContent += '\nestado ......... ✓ verificado\n';
+      }
+    };
+    type();
+
+    return () => {
+      typeToken.current += 1;
+    };
+  }, [selected]);
+
+  // Clip-path circle reveal expanding from the clicked badge (mockup parity).
+  // No-op with reduced motion — the overlay simply appears fully revealed.
+  useEffect(() => {
+    if (!selected) return undefined;
+    const win = winRef.current;
+    if (!win) return undefined;
+    if (prefersReducedMotion()) return undefined;
+
+    let killed = false;
+    let tween;
+    mountGsap().then(({ gsap }) => {
+      if (killed || !gsap || !winRef.current) return;
+      const overlay = win.parentElement;
+      const wr = win.getBoundingClientRect();
+      const br = selected.origin ? selected.origin.getBoundingClientRect() : null;
+      const x = br ? br.left + br.width / 2 - wr.left : wr.width / 2;
+      const y = br ? br.top + br.height / 2 - wr.top : wr.height / 2;
+      const r = Math.hypot(Math.max(x, wr.width - x), Math.max(y, wr.height - y)) + 40;
+      win.style.clipPath = `circle(0px at ${x}px ${y}px)`;
+      gsap.fromTo(overlay, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 });
+      tween = gsap.to(win, {
+        clipPath: `circle(${r}px at ${x}px ${y}px)`,
+        duration: 0.75,
+        ease: 'power3.out',
+        onComplete: () => {
+          win.style.clipPath = '';
+        },
+      });
+    });
+
+    return () => {
+      killed = true;
+      if (tween) tween.kill();
+    };
+  }, [selected]);
+
+  // Drag the viewer window by its titlebar (pointer capture, mockup parity).
+  useEffect(() => {
+    if (!selected) return undefined;
+    const bar = titlebarRef.current;
+    const win = winRef.current;
+    if (!bar || !win) return undefined;
+
+    let dragging = false;
+    let sx = 0;
+    let sy = 0;
+    let ox = 0;
+    let oy = 0;
+
+    const onDown = (e) => {
+      if (e.target.closest('.arch-x')) return;
+      dragging = true;
+      const m = /translate\(([-\d.]+)px,\s*([-\d.]+)px\)/.exec(win.style.transform || '');
+      ox = m ? parseFloat(m[1]) : 0;
+      oy = m ? parseFloat(m[2]) : 0;
+      sx = e.clientX;
+      sy = e.clientY;
+      bar.setPointerCapture?.(e.pointerId);
+    };
+    const onMove = (e) => {
+      if (!dragging) return;
+      win.style.transform = `translate(${ox + e.clientX - sx}px, ${oy + e.clientY - sy}px)`;
+    };
+    const onUp = () => {
+      dragging = false;
+    };
+
+    bar.addEventListener('pointerdown', onDown);
+    bar.addEventListener('pointermove', onMove);
+    bar.addEventListener('pointerup', onUp);
+    bar.addEventListener('pointercancel', onUp);
+    return () => {
+      bar.removeEventListener('pointerdown', onDown);
+      bar.removeEventListener('pointermove', onMove);
+      bar.removeEventListener('pointerup', onUp);
+      bar.removeEventListener('pointercancel', onUp);
+      win.style.transform = '';
+    };
+  }, [selected]);
 
   return (
-    <section id="certificados" className="mx-auto max-w-[1240px] px-6 py-[clamp(90px,12vh,150px)] md:px-12">
+    <section
+      id="certificados"
+      ref={sectionRef}
+      className="mx-auto max-w-[1240px] px-6 py-[clamp(90px,12vh,150px)] md:px-12"
+    >
       <SectionHead num="06" title="Certificados" />
       <p className="mt-4 text-muted">
         Formalización de lo aprendido — chapas verificables. Click para inspeccionarlas.
       </p>
 
-      <div className="mt-16 flex flex-wrap justify-center gap-x-[clamp(40px,6vw,96px)] gap-y-10">
+      <div className="certs-row">
         {certificates.map((c) => (
-          <div key={c.id} className="flex flex-col items-center gap-3.5">
-            <CertificateBadge cert={c} onSelect={setSelected} />
-            <span className="font-mono text-[11px] tracking-[0.14em] text-muted">{c.label}</span>
+          <div key={c.id} className="cert-badge-wrap">
+            <CertificateBadge cert={c} onSelect={(cert, origin) => setSelected({ cert, origin })} />
+            <span className="badge-label">{c.label}</span>
           </div>
         ))}
       </div>
 
       {selected && (
         <div
-          className="fixed inset-0 z-[9500] grid place-items-center bg-black/60 p-4 backdrop-blur-sm"
-          onClick={() => setSelected(null)}
+          id="certOverlay"
+          role="dialog"
+          aria-label="visor de certificados"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setSelected(null);
+          }}
         >
-          <div
-            className="relative max-w-4xl overflow-hidden rounded-xl border border-line"
-            style={{ background: 'var(--gruv-bg)' }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* top bar */}
-            <div
-              className="flex items-center gap-3 px-4 py-2.5"
-              style={{ background: 'var(--gruv-bar)' }}
-            >
-              <svg width="14" height="15" viewBox="0 0 16 16" aria-hidden="true">
-                <path d="M8 .6 14.9 15h-4.7L8 10.4 5.8 15H1.1L8 .6z" fill="#83a598" />
+          <div ref={winRef} className="cert-win">
+            {/* arch titlebar — draggable */}
+            <div ref={titlebarRef} className="archbar cert-titlebar">
+              <svg className="arch-logo" viewBox="0 0 16 16" aria-hidden="true">
+                <path fill="#83a598" d="M8 .6 14.9 15h-4.7L8 10.4 5.8 15H1.1L8 .6z" />
               </svg>
-              <span className="font-mono text-xs" style={{ color: '#ebdbb2' }}>
-                {`${selected.course} — visor de certificados`}
+              <span className="arch-title">
+                <b>alex@archlinux</b>: ~/certificados/{selected.cert.image.split('/').pop()} — zathura
               </span>
               <button
                 type="button"
                 ref={closeRef}
+                className="arch-x"
+                data-hover
                 aria-label="cerrar visor"
                 onClick={() => setSelected(null)}
-                className="ml-auto font-mono text-base leading-none text-[#ebdbb2] hover:text-[#fb4934]"
               >
                 [×]
               </button>
             </div>
 
-            {/* body */}
-            <div className="grid md:grid-cols-[300px_1fr]">
-              <div
-                className="whitespace-pre-wrap p-5 font-mono text-[11px] leading-loose"
-                style={{ color: '#ebdbb2' }}
-              >
-                {ledgerLines.map((line, i) => (
-                  <div key={i}>{line}</div>
-                ))}
+            {/* body — typewriter ledger left, certificate image right */}
+            <div className="cert-body">
+              <div className="cert-left">
+                <pre ref={preRef} className="cert-pre" />
               </div>
-              <div className="grid place-items-center bg-black/20 p-4">
+              <div className="cert-right">
                 <img
-                  src={selected.image}
-                  alt={`${selected.course} certificate`}
-                  className="max-h-[420px] w-auto rounded-md shadow-lg transition-transform duration-500 hover:scale-[1.04]"
+                  src={selected.cert.image}
+                  alt={`certificado ${selected.cert.course}`}
+                  draggable="false"
                 />
               </div>
             </div>

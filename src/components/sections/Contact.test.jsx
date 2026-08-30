@@ -25,7 +25,10 @@ it('switches label to copied state on click', async () => {
 
 it('x link has the social.x href', () => {
   render(<Contact />);
-  expect(screen.getByRole('link', { name: 'x ↗' })).toHaveAttribute('href', social.x);
+  expect(screen.getByRole('link', { name: `${social.xUser} ↗` })).toHaveAttribute(
+    'href',
+    social.x,
+  );
 });
 
 it('calls navigator.clipboard.writeText with the email', async () => {

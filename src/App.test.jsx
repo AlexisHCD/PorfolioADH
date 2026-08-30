@@ -6,7 +6,7 @@ describe('App shell', () => {
   it('renders nav, hero and footer', () => {
     render(<App />);
     expect(screen.getByText('Sobre mí')).toBeInTheDocument();
-    expect(screen.getByText(/Sysop@alexdev/i)).toBeInTheDocument();
+    expect(screen.getByText(/ALEXIS HERNÁNDEZ CAMUS — SAN ANTONIO, CL/i)).toBeInTheDocument();
   });
 
   it('exposes the day/night switcher', () => {
