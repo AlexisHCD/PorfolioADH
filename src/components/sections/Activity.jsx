@@ -156,7 +156,7 @@ export default function Activity() {
     >
       <SectionHead num="03" title="Actividad" />
       <p className="mt-4 text-muted">
-        Desarrollador activo: contribuciones, repositorios y lenguajes — directo desde GitHub.
+        Desarrollador: contribuciones, repositorios y lenguajes — directo desde GitHub.
       </p>
 
       <div className="mt-10">

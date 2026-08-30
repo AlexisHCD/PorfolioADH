@@ -95,7 +95,7 @@ export default function About() {
             {cardTag('// REDES', 'conecta')}
             {[
               { icon: <GithubIcon />, label: 'github.com/AlexisHCD', href: social.github },
-              { icon: <LinkedinIcon />, label: 'in/alexis-hernández', href: social.linkedin },
+              { icon: <LinkedinIcon />, label: 'linkedin/alexis-hernández', href: social.linkedin },
             ].map((s) => (
               <a
                 key={s.label}
@@ -122,9 +122,9 @@ export default function About() {
           <div className={cardBase} data-reveal>
             {cardTag('// AHORA', 'live')}
             {[
-              'explorando repos en GitHub',
-              'leyendo sobre IA',
-              'noticias tech internacionales',
+              'Estudiando Testing y QA',
+              'Preparando el TPE',
+              'Estudiando Ciberseguridad',
             ].map((line) => (
               <p key={line} className="flex items-center gap-2 py-1 text-sm text-muted">
                 <span className="text-accent">●</span> {line}
