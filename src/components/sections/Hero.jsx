@@ -116,7 +116,7 @@ export default function Hero({ onLaunchDoom = () => {} }) {
               href="#proyectos"
               data-hover
               data-magnetic
-              className="inline-flex items-center gap-2.5 whitespace-nowrap rounded-lg bg-accent px-6 py-3.5 font-mono text-[13px] font-medium tracking-wide text-accent-contrast shadow-none transition-shadow hover:shadow-[0_0_38px_var(--accent-glow)]"
+              className="inline-flex items-center gap-2.5 whitespace-nowrap rounded-lg bg-[var(--accent-btn)] px-6 py-3.5 font-mono text-[13px] font-medium tracking-wide text-accent-contrast shadow-none transition-shadow hover:shadow-[0_0_38px_var(--accent-glow)]"
             >
               ver proyectos ↓
             </a>

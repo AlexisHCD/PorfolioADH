@@ -29,29 +29,7 @@ export default function About() {
     >
       <SectionHead num="01" title="Sobre mí" />
 
-      {/* a) ID card row */}
-      <div className="relative mb-12 flex items-center gap-4 overflow-hidden rounded-2xl border border-line bg-ink-2 p-3.5">
-        <div
-          className="shrink-0"
-          style={{ background: 'linear-gradient(160deg, var(--accent-soft), transparent 70%)' }}
-        >
-          <img
-            src={identity.photo}
-            alt={identity.photoAlt}
-            width={86}
-            height={86}
-            className="h-[86px] w-[86px] rounded-xl object-cover grayscale contrast-125 brightness-95 mix-blend-luminosity"
-          />
-        </div>
-        <div className="min-w-0">
-          <p className="font-display font-bold uppercase leading-tight">{identity.fullName}</p>
-          <p className="font-mono text-xs text-accent">{`// ${identity.role}`}</p>
-          <p className="font-mono text-[10px] text-muted">foto temporal · la real llega pronto</p>
-        </div>
-        <span className="id-scan pointer-events-none absolute inset-x-0 top-0 h-1/3" />
-      </div>
-
-      {/* b) Main grid */}
+      {/* Main grid */}
       <div className="grid items-start gap-12 lg:grid-cols-[1fr_1.15fr]">
         {/* LEFT: intro */}
         <div>
@@ -75,7 +53,7 @@ export default function About() {
             {cardTag('// ESTUDIO', 'en curso')}
             <p className="font-display text-lg font-bold">{identity.school}</p>
             <p className="mt-1 text-sm text-muted">
-              {`${roadmap.careerShort} — San Antonio · ${roadmap.sct} SCT`}
+              {`${roadmap.careerShort} — San Antonio`}
             </p>
             <div className="mt-4 h-[5px] w-full rounded bg-[var(--line)]">
               <span

@@ -295,7 +295,7 @@ export default function Terminal({ onToggleTheme = () => {}, onLaunchDoom = () =
           <path d="M8 .6 14.9 15h-4.7L8 10.4 5.8 15H1.1L8 .6z" fill="#83a598" />
         </svg>
         <span className="font-mono text-[11px] text-[var(--gruv-fg)]">
-          <b>alex@archlinux</b>: ~/portfolio — kitty
+          <b>alex@archlinux</b>: ~/portfolio
         </span>
         <div className="ml-auto flex items-center gap-2" aria-hidden="true">
           <span className="flex items-center gap-1 text-[var(--gruv-green)]">

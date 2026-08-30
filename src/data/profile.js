@@ -41,12 +41,12 @@ export const mission = [
 ];
 
 export const about = {
-  headingParts: ['Hola, soy Alexis — estudiante y futuro ', 'analista programador', '.'],
+  headingParts: ['Hola, soy Alexis — ', 'Estudiante de Análisis de Sistemas y Programación', '.'],
   paragraphs: [
     'Estudio Programación y Análisis de Sistemas en el Instituto Profesional AIEP. Me apasiona entender cómo funcionan las cosas y construir soluciones que simplifiquen la vida de las personas.',
     'Soy una persona curiosa por naturaleza: siempre leyendo artículos de tecnología, siguiendo el acontecer internacional y explorando GitHub en busca de librerías y proyectos interesantes para probar e inspirarme.',
   ],
-  signature: '$ whoami → dev en construcción ∎',
+  signature: '$ whoami → Desarrollador/Ciberseguridad ∎',
 };
 
 /** // 02 stack — grouped technologies, rendered as the mono-charts bars section. */
@@ -189,7 +189,7 @@ export const roadmap = {
       n: 4,
       year: '2026',
       status: 'current',
-      title: 'Móviles & Calidad',
+      title: 'Preparación del TPE',
       courses: [
         'Taller de Aplicaciones Móviles',
         'Taller de Testing y Calidad de Software',

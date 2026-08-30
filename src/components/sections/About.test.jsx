@@ -24,5 +24,5 @@ it('renders the intereses line', () => {
 
 it('renders the signature text', () => {
   render(<About />);
-  expect(screen.getByText('$ whoami → dev en construcción ∎')).toBeInTheDocument();
+  expect(screen.getByText('$ whoami → Desarrollador/Ciberseguridad ∎')).toBeInTheDocument();
 });

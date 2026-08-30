@@ -95,7 +95,7 @@ export default function Roadmap() {
     >
       <SectionHead num="05" title="Roadmap" />
       <p className="mt-4 text-muted">
-        {`${roadmap.career} — ${roadmap.totalSemesters} semestres · ${roadmap.sct} SCT · Instituto Profesional AIEP.`}
+        {`${roadmap.career} — ${roadmap.totalSemesters} semestres · Instituto Profesional AIEP.`}
       </p>
 
       <div ref={listRef} className="tl">
