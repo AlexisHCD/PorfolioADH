@@ -1,3 +1,7 @@
+node_modules/
+dist/
 mockups/doom.jsdos
 mockups/jsdos/
 public/doom/
+.DS_Store
+*.local
