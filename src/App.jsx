@@ -2,6 +2,9 @@ import { useCallback, useState } from 'react';
 import Nav from './components/layout/Nav';
 import Footer from './components/layout/Footer';
 import AmbientField from './components/layout/AmbientField';
+import { BgField } from './components/layout/BgField';
+import { GrainScanlines } from './components/layout/GrainScanlines';
+import { Marquee } from './components/ui/Marquee';
 import Hero from './components/sections/Hero';
 import About from './components/sections/About';
 import Contact from './components/sections/Contact';
@@ -14,37 +17,49 @@ import { useTheme } from './hooks/useTheme';
 import DoomWindow from './components/ui/DoomWindow';
 import ScrollProgress from './components/ui/ScrollProgress';
 import OverdriveSurge from './components/ui/OverdriveSurge';
+import { Loader } from './components/ui/Loader';
 import { useKonami } from './hooks/useKonami';
+import { useLenis } from './hooks/useLenis';
 import { playSurgeChime } from './lib/sound';
 
 /** Root shell: theme provider (hook), ambient background, nav + sections. */
 export default function App() {
   const { theme, toggle } = useTheme();
   const [doomOpen, setDoomOpen] = useState(false);
+  const [certOpen, setCertOpen] = useState(false);
   const [surgeActive, setSurgeActive] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
-  // Konami code -> phosphor overdrive surge
+  // Smooth scroll (Lenis wired into GSAP ticker).
+  useLenis();
+
+  // Konami code -> phosphor overdrive surge (disabled while DOOM / cert viewer open).
   useKonami({
     onUnlock: useCallback(() => {
-      if (doomOpen) return;
+      if (doomOpen || certOpen) return;
       setSurgeActive(true);
       playSurgeChime();
-    }, [doomOpen]),
+    }, [doomOpen, certOpen]),
   });
   const onSurgeDone = useCallback(() => setSurgeActive(false), []);
+
   return (
     <div className="relative min-h-screen">
-      <ScrollProgress />
+      {!loaded && <Loader onDone={() => setLoaded(true)} />}
+      <GrainScanlines />
+      <BgField />
       <AmbientField />
+      <ScrollProgress />
       <Nav theme={theme} onToggle={toggle} />
       <main className="relative z-[1]">
         <Hero onLaunchDoom={() => setDoomOpen(true)} />
+        <Marquee />
         <About />
         <Stack />
         <Activity />
         <Projects />
         <Roadmap />
-        <Certificates />
+        <Certificates onViewerOpenChange={setCertOpen} />
         <Contact />
       </main>
       <Footer />

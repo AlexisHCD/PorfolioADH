@@ -1,6 +1,8 @@
+import { useRef } from 'react';
 import { identity, about, social, roadmap } from '../../data/profile';
 import { GithubIcon, LinkedinIcon } from './Hero';
 import SectionHead from '../ui/SectionHead';
+import { useReveal } from '../../hooks/useReveal';
 
 const cardBase =
   'rounded-[18px] border border-line bg-ink-2 p-6 transition-transform duration-300 hover:-translate-y-1';
@@ -16,8 +18,16 @@ const cardTag = (label, suffix) => (
  * // 01 Sobre mí — identity card, intro copy and a bento of quick facts.
  */
 export default function About() {
+  const sectionRef = useRef(null);
+  useReveal(sectionRef);
+
   return (
-    <section id="sobre-mi" className="mx-auto max-w-6xl px-6 py-20 md:px-12">
+    <section
+      id="sobre-mi"
+      ref={sectionRef}
+      data-reveal
+      className="mx-auto max-w-6xl px-6 py-20 md:px-12"
+    >
       <SectionHead num="01" title="Sobre mí" />
 
       {/* a) ID card row */}
@@ -62,7 +72,7 @@ export default function About() {
         {/* RIGHT: bento */}
         <div className="grid gap-4 sm:grid-cols-2">
           {/* ESTUDIO */}
-          <div className={`${cardBase} sm:col-span-2`}>
+          <div className={`${cardBase} sm:col-span-2`} data-reveal>
             {cardTag('// ESTUDIO', 'en curso')}
             <p className="font-display text-lg font-bold">{identity.school}</p>
             <p className="mt-1 text-sm text-muted">
@@ -71,6 +81,7 @@ export default function About() {
             <div className="mt-4 h-[5px] w-full rounded bg-[var(--line)]">
               <span
                 className="block h-full rounded bg-accent"
+                data-progress={`${roadmap.progressPercent}`}
                 style={{ width: `${roadmap.progressPercent}%` }}
               />
             </div>
@@ -81,7 +92,7 @@ export default function About() {
           </div>
 
           {/* REDES */}
-          <div className={cardBase}>
+          <div className={cardBase} data-reveal>
             {cardTag('// REDES', 'social')}
             <a
               href={social.github}
@@ -104,7 +115,7 @@ export default function About() {
           </div>
 
           {/* AHORA */}
-          <div className={cardBase}>
+          <div className={cardBase} data-reveal>
             {cardTag('// AHORA', 'live')}
             {[
               'explorando repos en GitHub',
@@ -118,7 +129,7 @@ export default function About() {
           </div>
 
           {/* BASE */}
-          <div className={cardBase}>
+          <div className={cardBase} data-reveal>
             {cardTag('// BASE', 'ubicación')}
             <p className="font-display text-lg font-bold">
               {`${identity.location.city}, ${identity.location.code}`}
@@ -129,7 +140,7 @@ export default function About() {
           </div>
 
           {/* INTERESES */}
-          <div className={cardBase}>
+          <div className={cardBase} data-reveal>
             {cardTag('// INTERESES', 'tags')}
             <div className="flex flex-wrap gap-2">
               {['Informática', 'IA', 'Tech', 'Open Source', 'Linux'].map((chip) => (

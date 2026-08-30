@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { roadmap } from '../../data/profile';
 import SectionHead from '../ui/SectionHead';
 import { useInView } from '../../hooks/useInView';
+import { useReveal } from '../../hooks/useReveal';
+import { prefersReducedMotion } from '../../lib/motion';
 
 const FALLBACK_FRACTION = 0.75;
 
@@ -11,10 +13,35 @@ const FALLBACK_FRACTION = 0.75;
  * timeline enters view, then stays fixed forever (never scroll-linked).
  */
 export default function Roadmap() {
+  const sectionRef = useRef(null);
   const listRef = useRef(null);
   const lineRef = useRef(null);
+  const countRef = useRef(null);
   const inView = useInView(listRef);
   const [targetFraction, setTargetFraction] = useState(null);
+
+  useReveal(sectionRef);
+
+  // Count-up for the summary percentage (rAF, reduced-motion aware).
+  useEffect(() => {
+    const el = countRef.current;
+    if (!el) return undefined;
+    const target = roadmap.progressPercent;
+    if (prefersReducedMotion()) {
+      el.textContent = String(target);
+      return undefined;
+    }
+    let raf;
+    const start = performance.now();
+    const dur = 1100;
+    const tick = (now) => {
+      const t = Math.min(1, (now - start) / dur);
+      el.textContent = String(Math.round(t * target));
+      if (t < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, []);
 
   useEffect(() => {
     const line = lineRef.current;
@@ -50,7 +77,12 @@ export default function Roadmap() {
   const fraction = inView && targetFraction != null ? targetFraction : 0;
 
   return (
-    <section id="roadmap" className="mx-auto max-w-6xl px-6 py-20 md:px-12">
+    <section
+      id="roadmap"
+      ref={sectionRef}
+      data-reveal
+      className="mx-auto max-w-6xl px-6 py-20 md:px-12"
+    >
       <SectionHead num="05" title="Roadmap" />
       <p className="mt-4 text-muted">
         {`${roadmap.career} — ${roadmap.totalSemesters} semestres · ${roadmap.sct} SCT · Instituto Profesional AIEP`}
@@ -127,6 +159,27 @@ export default function Roadmap() {
             );
           })}
         </ul>
+      </div>
+
+      <div className="panel tl-summary" data-reveal>
+        <div className="panel-head">
+          <div className="panel-title">
+            <b>$</b> career --progress
+          </div>
+          <span className="summary-pct">
+            <span ref={countRef} data-count={roadmap.progressPercent}>
+              0
+            </span>
+            %
+          </span>
+        </div>
+        <div className="summary-bar">
+          <span data-progress={roadmap.progressPercent} style={{ width: `${roadmap.progressPercent}%` }} />
+        </div>
+        <div className="progress-label">
+          <span>3/5 SEMESTRES · PRÁCTICA PENDIENTE</span>
+          <b>TÉCNICO EN 2027</b>
+        </div>
       </div>
     </section>
   );

@@ -9,8 +9,13 @@ import CertificateBadge from '../ui/CertificateBadge';
  * Each badge is a self-contained seal; clicking one opens a centered arch-window
  * overlay that shows a typewriter-style ledger on the left and the certificate
  * image on the right. Escape / backdrop / close button all dismiss it.
+ *
+ * @param {object} props
+ * @param {(open: boolean) => void} [props.onViewerOpenChange] - Fires when the
+ *   viewer modal opens (true) or closes (false). Used by the parent to disable
+ *   the Konami overdrive surge while a certificate is being inspected.
  */
-export default function Certificates() {
+export default function Certificates({ onViewerOpenChange = () => {} }) {
   const [selected, setSelected] = useState(null);
   const closeRef = useRef(null);
 
@@ -37,6 +42,15 @@ export default function Certificates() {
       document.body.style.overflow = previous;
     };
   }, [selected]);
+
+  // Notify parent (App) whenever the viewer opens/closes — used to gate
+  // the Konami overdrive surge so it doesn't fire mid-inspection.
+  useEffect(() => {
+    onViewerOpenChange(Boolean(selected));
+  }, [selected, onViewerOpenChange]);
+
+  // Cleanup on unmount: ensure parent knows the viewer is gone.
+  useEffect(() => () => onViewerOpenChange(false), [onViewerOpenChange]);
 
   const ledgerLines = selected
     ? [

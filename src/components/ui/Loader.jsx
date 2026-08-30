@@ -14,6 +14,7 @@ export function Loader({ onDone }) {
   const barRef = useRef(null);
   const pctRef = useRef(null);
   const [wordIdx, setWordIdx] = useState(0);
+  const [hidden, setHidden] = useState(false);
   const scrambleText = useScramble({ text: WORDS[wordIdx], runKey: wordIdx, duration: 480 });
 
   useEffect(() => {
@@ -31,6 +32,7 @@ export function Loader({ onDone }) {
           calledDone.current = true;
           onDone && onDone();
         }
+        setHidden(true);
         return;
       }
       el.style.transition = 'transform 900ms cubic-bezier(.7,0,.2,1)';
@@ -41,6 +43,7 @@ export function Loader({ onDone }) {
           calledDone.current = true;
           onDone && onDone();
         }
+        setHidden(true);
       }, 1000);
     };
 
@@ -77,6 +80,8 @@ export function Loader({ onDone }) {
       clearTimeout(doneTimer);
     };
   }, [onDone]);
+
+  if (hidden) return null;
 
   return (
     <div className="loader" id="loader" ref={loaderRef}>

@@ -1,5 +1,9 @@
+import { useRef } from 'react';
 import { identity, social } from '../../data/profile';
 import Terminal from '../ui/Terminal';
+import { useReveal } from '../../hooks/useReveal';
+import { useMagnetic } from '../../hooks/useMagnetic';
+import { useSplitChars } from '../../hooks/useSplitChars';
 
 const GithubIcon = () => (
   <svg viewBox="0 0 16 16" aria-hidden="true">
@@ -26,17 +30,62 @@ const LinkedinIcon = () => (
  * @param {() => void} [props.onLaunchDoom] - Fired by the terminal's `doom.exe`.
  */
 export default function Hero({ onLaunchDoom = () => {} }) {
+  const headerRef = useRef(null);
+  const ctaA = useRef(null);
+  const ctaB = useRef(null);
+  const ctaC = useRef(null);
+  const splitFirst = useSplitChars(identity.firstName);
+  const splitLast = useSplitChars(identity.lastName);
+
+  // Reveal the hero once on mount (it sits at the very top of the page).
+  useReveal(headerRef, { start: 'top top' });
+  useMagnetic(ctaA);
+  useMagnetic(ctaB);
+  useMagnetic(ctaC);
+
   return (
-    <header id="top" className="relative flex min-h-svh items-center overflow-hidden px-6 pt-32 pb-24 md:px-12">
+    <header
+      id="top"
+      ref={headerRef}
+      data-reveal
+      className="relative flex min-h-svh items-center overflow-hidden px-6 pt-32 pb-24 md:px-12"
+    >
+      {/* inner hero fx layers */}
+      <div className="bg-halftone" aria-hidden="true" />
+      <div className="bg-ruler" aria-hidden="true" />
+      <span className="regmark reg-tl" aria-hidden="true" />
+      <span className="regmark reg-br" aria-hidden="true" />
+      <div className="glow glow-1" aria-hidden="true" />
+      <div className="glow glow-2" aria-hidden="true" />
+      <aside className="hero-side" aria-hidden="true">
+        ALEXDEV_OS · v2.0 — AHC · 2026
+      </aside>
+
       <div className="grid w-full items-center gap-10 lg:grid-cols-[1.02fr_.98fr]">
         <div>
           <p className="mb-6 font-mono text-xs tracking-[0.28em] text-accent">
             {'// AIEP · SAN ANTONIO · CHILE — 2026'}
           </p>
-          <h1 className="font-display leading-[0.94] font-bold tracking-tight uppercase">
-            <span className="block text-[clamp(2.7rem,7.2vw,6.2rem)]">{identity.firstName}</span>
-            <span className="block text-[clamp(2.7rem,7.2vw,6.2rem)] text-transparent [-webkit-text-stroke:1.5px_var(--stroke-outline)]">
-              {identity.lastName}
+          <h1
+            className="font-display leading-[0.94] font-bold tracking-tight uppercase"
+            data-reveal
+          >
+            <span className="block text-[clamp(2.7rem,7.2vw,6.2rem)]" data-split>
+              {splitFirst.map((c) => (
+                <span className="ch-wrap" key={c.key}>
+                  <span className="ch">{c.ch}</span>
+                </span>
+              ))}
+            </span>
+            <span
+              className="block text-[clamp(2.7rem,7.2vw,6.2rem)] text-transparent [-webkit-text-stroke:1.5px_var(--stroke-outline)]"
+              data-split
+            >
+              {splitLast.map((c) => (
+                <span className="ch-wrap" key={c.key}>
+                  <span className="ch">{c.ch}</span>
+                </span>
+              ))}
             </span>
           </h1>
           <p className="mt-7 font-mono text-sm text-muted md:text-[15.5px]">
@@ -62,31 +111,41 @@ export default function Hero({ onLaunchDoom = () => {} }) {
 
           <div className="mt-9 flex flex-wrap gap-3.5">
             <a
+              ref={ctaA}
               href="#proyectos"
               data-hover
+              data-magnetic
               className="inline-flex items-center gap-2.5 rounded-lg bg-accent px-6 py-3.5 font-mono text-[13px] font-medium tracking-wide text-accent-contrast shadow-none transition-shadow hover:shadow-[0_0_38px_var(--accent-glow)]"
             >
               ver proyectos ↓
             </a>
             <a
+              ref={ctaB}
               href={social.github}
               target="_blank"
               rel="noopener noreferrer"
               data-hover
+              data-magnetic
               className="btn-ghost inline-flex items-center gap-2.5 rounded-lg border border-line px-6 py-3.5 font-mono text-[13px] font-medium tracking-wide transition-colors hover:border-accent-line hover:text-accent"
             >
               <GithubIcon /> github ↗
             </a>
             <a
+              ref={ctaC}
               href={social.linkedin}
               target="_blank"
               rel="noopener noreferrer"
               data-hover
+              data-magnetic
               className="btn-ghost inline-flex items-center gap-2.5 rounded-lg border border-line px-6 py-3.5 font-mono text-[13px] font-medium tracking-wide transition-colors hover:border-accent-line hover:text-accent"
             >
               <LinkedinIcon /> linkedin ↗
             </a>
           </div>
+
+          <p className="scroll-hint">
+            scroll <span className="arrow">↓</span>
+          </p>
         </div>
 
         {/* interactive terminal (Phase 3) */}
