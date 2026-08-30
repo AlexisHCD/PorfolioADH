@@ -37,8 +37,9 @@ export default function Hero({ onLaunchDoom = () => {} }) {
   const splitFirst = useSplitChars(identity.firstName);
   const splitLast = useSplitChars(identity.lastName);
 
-  // Reveal the hero once on mount (it sits at the very top of the page).
-  useReveal(headerRef, { start: 'top top' });
+  // Reveal the hero right away: it sits inside the initial viewport, so a
+  // scroll trigger satisfied at scroll 0 would never fire (see useReveal).
+  useReveal(headerRef, { immediate: true });
   useMagnetic(ctaA);
   useMagnetic(ctaB);
   useMagnetic(ctaC);
