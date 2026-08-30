@@ -31,7 +31,7 @@ export default function Nav({ theme, onToggle }) {
         <a
           href={identity.cvHref ?? '#'}
           data-hover
-          className="relative overflow-hidden rounded-lg border border-accent-line px-4 py-2.5 font-mono text-[11.5px] tracking-wide text-accent"
+          className="nav-cta inline-flex items-center rounded-lg px-[17px] py-[10px] font-mono text-[11.5px] tracking-widest text-accent"
         >
           cv.pdf ↓
         </a>

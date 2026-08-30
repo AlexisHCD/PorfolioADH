@@ -331,6 +331,24 @@ button{font:inherit;background:none;border:none;color:inherit;cursor:pointer}
 .nav-links a:hover{color:var(--text)}
 .nav-right{display:flex;gap:10px;align-items:center}
 
+/* cv cta with border beam (mockup parity: rotating conic ring, fills on hover) */
+.nav-cta{
+  position:relative;isolation:isolate;overflow:hidden;
+  font-family:var(--font-mono);letter-spacing:.08em;
+  transition:color .3s;
+}
+.nav-cta::before{
+  content:'';position:absolute;inset:-120%;z-index:-2;
+  background:conic-gradient(from 0deg,transparent 0 78%,var(--accent) 90%,#b4ffe1 95%,transparent 100%);
+  animation:beam calc(3.2s / var(--beam-speed,1)) linear infinite;
+}
+.nav-cta::after{
+  content:'';position:absolute;inset:2px;border-radius:calc(0.5rem - 2px);
+  background:var(--ink-2);z-index:-1;transition:background .3s;
+}
+.nav-cta:hover{color:var(--accent-contrast)}
+.nav-cta:hover::after{background:var(--accent)}
+
 /* theme button */
 .theme-btn{
   display:inline-flex;align-items:center;gap:10px;height:38px;padding:0 15px 0 7px;border-radius:99px;
