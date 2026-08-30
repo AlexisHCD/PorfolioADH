@@ -72,17 +72,68 @@ export default function Terminal({ onToggleTheme = () => {}, onLaunchDoom = () =
 
   useEffect(() => {
     mountedRef.current = true;
-    const steps = [
-      { d: 280, html: span('def', 'alexdev os v2.0 — tty1') },
-      { d: 560, html: span('ok', 'montando /dev/portfolio ......... ok') },
-      { d: 560, html: span('ok', 'iniciando shell alexdev ........ ok') },
-      { d: 360, html: '' },
+    // Narrative boot, ported 1:1 from the approved mockup: commands are
+    // typed character by character, outputs print instantly after.
+    const reduced =
+      typeof window !== 'undefined' &&
+      window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const boot = [
+      { cmd: 'whoami' },
+      { out: ['alexis hernández camus — estudiante de programación'] },
+      { cmd: 'cat /etc/perfil' },
+      {
+        out: [
+          '> 2° año · programación y análisis de sistemas · AIEP',
+          '> san antonio, región de valparaíso, chile',
+          '> me gusta entender cómo funcionan las cosas',
+        ],
+      },
+      { cmd: 'ls ~/proyectos' },
+      { out: ['RGIVCodice/  erp-reloj-control/  rb6_lite/'] },
+      { cmd: 'tail -1 ~/.plan' },
+      { out: ['"bienvenido — escribe \'help\' para explorar"'] },
     ];
-    let acc = 0;
-    steps.forEach((step) => {
-      acc += step.d;
-      later(() => pushLine(step.html), acc);
-    });
+
+    const updateLastLine = (html) => {
+      setLines((prev) =>
+        prev.map((line, i) => (i === prev.length - 1 ? { ...line, html } : line))
+      );
+    };
+    const typeCmd = (text, done) => {
+      pushLine(span('ok', ''));
+      if (reduced) {
+        updateLastLine(span('ok', `[guest@arch ~]$ ${text}`));
+        done();
+        return;
+      }
+      let i = 0;
+      const tick = () => {
+        i += 1;
+        updateLastLine(span('ok', `[guest@arch ~]$ ${text.slice(0, i)}`));
+        if (i < text.length) later(tick, 24);
+        else done();
+      };
+      later(tick, 24);
+    };
+
+    let stepIdx = 0;
+    const runStep = () => {
+      if (stepIdx >= boot.length) return;
+      const step = boot[stepIdx];
+      stepIdx += 1;
+      if (step.cmd) {
+        typeCmd(step.cmd, () => later(runStep, 160));
+      } else {
+        step.out.forEach((line, idx) => {
+          later(() => pushLine(span('def', line)), 60 + idx * 95);
+        });
+        later(runStep, 120 + step.out.length * 95);
+      }
+    };
+    later(runStep, 500);
+
     return () => {
       mountedRef.current = false;
       timersRef.current.forEach((id) => {
@@ -296,6 +347,10 @@ export default function Terminal({ onToggleTheme = () => {}, onLaunchDoom = () =
           />
           <span className="h-[15px] w-[9px] animate-pulse bg-[var(--accent)]" />
         </div>
+      </div>
+
+      <div className="border-t border-black/30 bg-[var(--gruv-bar)] px-3.5 py-1.5 font-mono text-[10px] tracking-wider text-[var(--gruv-fg)] opacity-70">
+        tip: escribe <span className="font-bold text-[var(--gruv-green)]">help</span>
       </div>
     </div>
   );
