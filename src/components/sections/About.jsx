@@ -26,7 +26,7 @@ export default function About() {
       id="sobre-mi"
       ref={sectionRef}
       data-reveal
-      className="mx-auto max-w-6xl px-6 py-20 md:px-12"
+      className="mx-auto max-w-[1240px] px-6 py-[clamp(90px,12vh,150px)] md:px-12"
     >
       <SectionHead num="01" title="Sobre mí" />
 
@@ -94,24 +94,29 @@ export default function About() {
           {/* REDES */}
           <div className={cardBase} data-reveal>
             {cardTag('// REDES', 'social')}
-            <a
-              href={social.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 py-1.5 text-sm hover:text-accent"
-            >
-              <GithubIcon /> <span>{social.githubUser}</span>
-              <span className="ml-auto text-muted">↗</span>
-            </a>
-            <a
-              href={social.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 py-1.5 text-sm hover:text-accent"
-            >
-              <LinkedinIcon /> <span>linkedin</span>
-              <span className="ml-auto text-muted">↗</span>
-            </a>
+            {[
+              { icon: <GithubIcon />, label: social.githubUser, href: social.github },
+              { icon: <LinkedinIcon />, label: 'linkedin', href: social.linkedin },
+            ].map((s) => (
+              <a
+                key={s.label}
+                href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-hover
+                className="group flex items-center gap-2.5 border-b border-dashed border-[var(--line)] py-2 font-mono text-xs last:border-b-0"
+              >
+                <span className="h-4 w-4 shrink-0 text-muted transition-colors group-hover:text-accent">
+                  {s.icon}
+                </span>
+                <span className="text-muted transition-colors group-hover:text-accent">
+                  {s.label}
+                </span>
+                <span className="ml-auto text-muted transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-accent">
+                  ↗
+                </span>
+              </a>
+            ))}
           </div>
 
           {/* AHORA */}
