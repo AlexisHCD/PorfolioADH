@@ -51,10 +51,10 @@ export const about = {
 
 /** // 02 stack — grouped technologies, rendered as the mono-charts bars section. */
 export const stack = [
-  { group: 'Lenguajes', items: ['C#', 'Python', 'JavaScript', 'PHP', 'Ruby', 'SQL', 'HTML/CSS', 'Dart'] },
-  { group: 'Frameworks', items: ['.NET', 'React', 'Next.js', 'Ruby on Rails', 'Flutter', 'Tailwind'] },
-  { group: 'Datos', items: ['MySQL', 'PostgreSQL', 'Oracle'] },
-  { group: 'Herramientas', items: ['Git', 'Linux', 'Vercel', 'Figma'] },
+  { group: 'lenguajes', items: ['C#', 'Python', 'JavaScript', 'PHP', 'Ruby', 'SQL', 'HTML/CSS', 'Dart'] },
+  { group: 'frameworks', items: ['.NET', 'React', 'Next.js', 'Ruby on Rails', 'Flutter', 'Tailwind'] },
+  { group: 'datos', items: ['MySQL', 'PostgreSQL', 'Oracle'] },
+  { group: 'herramientas', items: ['Git', 'Linux', 'Vercel', 'Figma'] },
 ];
 
 /** Activity heatmap seed (deterministic pseudo-random walk, no runtime deps). */

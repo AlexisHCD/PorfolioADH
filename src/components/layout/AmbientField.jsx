@@ -34,8 +34,8 @@ export default function AmbientField() {
       ))}
       {/* glows distributed along the scroll */}
       <div className={`${glow} -top-[16%] right-[-14%] size-[min(52vw,680px)] bg-accent/12`} />
-      <div className={`${glow} top-[165vh] left-[-14%] size-[min(36vw,470px)] bg-white/5`} />
-      <div className={`${glow} top-[270vh] right-[-16%] size-[min(46vw,600px)] bg-accent/10`} />
+      <div className={`${glow} top-[165vh] left-[-14%] size-[min(36vw,470px)] bg-white/[0.04]`} />
+      <div className={`${glow} top-[270vh] right-[-16%] size-[min(46vw,600px)] bg-accent/[0.07]`} />
       <div className={`${glow} bottom-[-8%] left-[-10%] size-[min(38vw,500px)] bg-white/4`} />
     </div>
   );
