@@ -7,7 +7,7 @@ export default function ThemeToggle({ theme, onToggle }) {
   return (
     <button
       type="button"
-      onClick={onToggle}
+      onClick={(e) => onToggle(e.currentTarget)}
       aria-label={isDark ? 'cambiar a modo día' : 'cambiar a modo noche'}
       title="prender la luz / apagarla"
       data-hover

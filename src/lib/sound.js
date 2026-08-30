@@ -39,3 +39,48 @@ export function playSurgeChime() {
     /* audio unavailable — silent fallback */
   }
 }
+
+/**
+ * Theme switch feedback: rising chirp when the lights come on (day),
+ * falling when the night returns. Ported from the approved mockup.
+ *
+ * @param {boolean} toLight - true when switching to the day theme.
+ */
+export function playThemeChime(toLight) {
+  try {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    const ctx = new Ctx();
+    const t = ctx.currentTime;
+
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    if (toLight) {
+      osc.frequency.setValueAtTime(420, t);
+      osc.frequency.exponentialRampToValueAtTime(880, t + 0.12);
+    } else {
+      osc.frequency.setValueAtTime(520, t);
+      osc.frequency.exponentialRampToValueAtTime(210, t + 0.15);
+    }
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(0.11, t + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.28);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(t);
+    osc.stop(t + 0.3);
+
+    const blip = ctx.createOscillator();
+    const blipGain = ctx.createGain();
+    blip.type = 'square';
+    blip.frequency.value = toLight ? 1250 : 780;
+    blipGain.gain.setValueAtTime(0.05, t);
+    blipGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.05);
+    blip.connect(blipGain).connect(ctx.destination);
+    blip.start(t);
+    blip.stop(t + 0.06);
+
+    setTimeout(() => ctx.close().catch(() => {}), 400);
+  } catch {
+    /* audio unavailable — silent fallback */
+  }
+}
