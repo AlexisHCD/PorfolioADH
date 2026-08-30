@@ -22,7 +22,7 @@ Deploy: Vercel (static). Site content in **Spanish**; code, comments, docs and c
 - `mockups/observatorio.html` — rejected comparison concept (archive; do not iterate).
 - `mockups/img/whoami.jpg` — placeholder ID photo (Gorillaz 2-D fan art); replace with a real portrait later.
 - `mockups/certs/` — real certificate images (AIEP HPI mar-2026, Coursera×Google Intro to AI jul-2026, verify MLVDDQHX5RF1).
-- `mockups/doom-web/doom1/`, `mockups/jsdos/`, `mockups/doom.jsdos` — DOOM payloads (gitignored).
+- `public/doom/doom1/` — DOOM payload for the real app, served at `/doom/doom1/doom1.html` (gitignored). Legacy `mockups/jsdos/`, `mockups/doom.jsdos` — gitignored, unused.
 - `mockups/cv-alexis-hernandez.pdf` — downloadable CV.
 - `.hermes/plans/` — master phase plan + implementation plans.
 
@@ -43,9 +43,9 @@ Deploy: Vercel (static). Site content in **Spanish**; code, comments, docs and c
 - DOOM window: pointer-lock pill hint (fades when locked), click-to-recapture canvas, overlay clicks refocus iframe, console log `#output` hidden, in-game QUIT auto-closes the arch window (Module.onExit hook), master audio gain 0.4 injected over iframe AudioContext.
 
 ## DOOM easter egg — hard rules
-- ALWAYS same-origin iframe (`mockups/doom-web/doom1/doom1.html`, webprboom WASM, GPL — credit visible in footer). Closing removes the iframe (destroys realm: no zombie audio — real past bug).
+- ALWAYS same-origin iframe (`public/doom/doom1/doom1.html`, webprboom WASM, GPL — credit visible in footer). Closing removes the iframe (destroys realm: no zombie audio — real past bug).
 - Payloads are gitignored. Restore:
-  `for e in html js wasm data; do curl -sL -o mockups/doom-web/doom1/doom1.$e https://raw.githubusercontent.com/raz0red/webprboom/github-pages/doom1/doom1.$e; done`
+  `for e in html js wasm data; do curl -sL -o public/doom/doom1/doom1.$e https://raw.githubusercontent.com/raz0red/webprboom/github-pages/doom1/doom1.$e; done`
 - Verified: no SharedArrayBuffer/COOP-COEP requirements → plain static hosting OK (Vercel fine).
 - Mobile/touch plan: build **Dwasm** (github.com/GMH-Code/Dwasm) for the real app. webprboom is desktop-only.
 

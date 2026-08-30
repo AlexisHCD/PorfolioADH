@@ -1,20 +1,3 @@
-# dependencies / build
-node_modules/
-dist/
-coverage/
-
-# env & logs
-.env
-.env.*
-*.log
-
-# DOOM payloads (~43MB) — restore with the curl loop in README/AGENTS.md
 mockups/doom.jsdos
 mockups/jsdos/
-mockups/doom-web/
-
-# OS junk
-.DS_Store
-
-# transient agent task briefs
-.hermes/tasks/
+public/doom/
