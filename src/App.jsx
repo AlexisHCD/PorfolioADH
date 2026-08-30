@@ -1,7 +1,6 @@
 import { useCallback, useState } from 'react';
 import Nav from './components/layout/Nav';
 import Footer from './components/layout/Footer';
-import AmbientField from './components/layout/AmbientField';
 import { BgField } from './components/layout/BgField';
 import { GrainScanlines } from './components/layout/GrainScanlines';
 import { Marquee } from './components/ui/Marquee';
@@ -48,7 +47,6 @@ export default function App() {
       {!loaded && <Loader onDone={() => setLoaded(true)} />}
       <GrainScanlines />
       <BgField />
-      <AmbientField />
       <ScrollProgress />
       <Nav theme={theme} onToggle={toggle} />
       <main className="relative z-[1]">
