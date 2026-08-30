@@ -20,6 +20,7 @@ export const identity = {
   school: 'Instituto Profesional AIEP',
   email: 'adhcamus@gmail.com',
   photo: '/img/whoami.jpg', // placeholder portrait — replace with a real one
+  cvHref: '/cv-alexis-hernandez.pdf',
   photoAlt:
     'retrato temporal de Alexis Hernández — ilustración del personaje 2-D de Gorillaz',
 };
