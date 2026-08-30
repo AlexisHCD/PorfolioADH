@@ -12,3 +12,9 @@ it('renders the legend ends "menos" and "más"', () => {
   expect(screen.getByText('menos')).toBeInTheDocument();
   expect(screen.getByText('más')).toBeInTheDocument();
 });
+
+it('shows the honest offline line when only the snapshot layer is available', () => {
+  render(<Activity />);
+  expect(screen.getByText(/sin conexión con github/i)).toBeInTheDocument();
+  expect(screen.getByText('◌ local')).toBeInTheDocument();
+});

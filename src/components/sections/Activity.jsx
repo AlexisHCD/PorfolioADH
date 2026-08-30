@@ -3,7 +3,9 @@ import { activitySeed } from '../../data/profile';
 import SectionHead from '../ui/SectionHead';
 import { useReveal } from '../../hooks/useReveal';
 import { useInView } from '../../hooks/useInView';
+import { useGitHubLive } from '../../hooks/useGitHubLive';
 import { mountGsap, prefersReducedMotion } from '../../lib/motion';
+import { chartPath, timeAgo, topLanguages, weeklyCounts } from '../../lib/githubCore';
 
 const LEVEL_COLORS = [0.04, 0.15, 0.28, 0.45, 0.75];
 const LEGEND_ALPHAS = [0.12, 0.28, 0.45, 0.65, 0.9];
@@ -11,17 +13,22 @@ const WEEKS = 26;
 const DAYS = 7;
 const CELL_COUNT = WEEKS * DAYS;
 
-// Language distribution for the "repos --por-lenguaje" panel (hard data).
-const LANG_BARS = [
+// Static fallbacks — exactly the mockup's curated numbers (snapshot source).
+const FALLBACK_LANG_BARS = [
   { name: 'Python', w: 100, val: 3 },
   { name: 'C#', w: 72, val: 2 },
   { name: 'JavaScript', w: 60, val: 2 },
   { name: 'Dart', w: 34, val: 1 },
   { name: 'Java', w: 30, val: 1 },
 ];
+// Static fallback — the mockup's exact curated curve (snapshot source).
+const STATIC_CHART = {
+  line: 'M0,170 C60,150 90,118 140,128 S240,88 290,104 S390,38 440,66 S560,26 600,52',
+  area: 'M0,170 C60,150 90,118 140,128 S240,88 290,104 S390,38 440,66 S560,26 600,52 L600,220 L0,220 Z',
+  end: { x: 600, y: 52 },
+};
 
-/**
- * mulberry32 — tiny deterministic PRNG.
+/** mulberry32 — tiny deterministic PRNG.
  * Given the same seed it always produces the same sequence, so the heatmap is
  * identical across renders and environments (no Math.random at render time).
  *
@@ -34,19 +41,30 @@ function mulberry32(seed) {
     a |= 0;
     a = (a + 0x6d2b79f5) | 0;
     let t = Math.imul(a ^ (a >>> 15), 1 | a);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    t = Math.imul(t ^ (t >>> 7), 61 | t) ^ t;
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
 }
 
+const SOURCE_BADGES = {
+  live: { label: '● live', color: 'var(--accent)' },
+  cache: { label: '◍ cache', color: 'var(--muted)' },
+  snapshot: { label: '◌ local', color: 'var(--muted)' },
+};
+
 /**
- * // 03 Actividad — GitHub-style contribution heatmap + mono-charts, deterministic from seed.
+ * // 03 Actividad — GitHub-style contribution heatmap + mono-charts.
+ * The heatmap stays deterministic from the seed; the curve, language bars,
+ * stats and the `$ commits --live` ledger rehydrate from the live GitHub
+ * payload when the fallback chain (function → direct → cache) delivers it,
+ * falling back to the mockup's curated numbers when it doesn't.
  */
 export default function Activity() {
   const sectionRef = useRef(null);
   const barsRef = useRef(null);
   const lineRef = useRef(null);
   const inView = useInView(sectionRef);
+  const { data, source } = useGitHubLive();
 
   useReveal(sectionRef);
 
@@ -66,6 +84,27 @@ export default function Activity() {
     }
     return out;
   }, []);
+
+  // Live-derived pieces (fall back to the curated mockup numbers).
+  const chart = useMemo(() => {
+    if (data.commits.length >= 2) return chartPath(weeklyCounts(data.commits));
+    return STATIC_CHART;
+  }, [data.commits]);
+
+  const langBars = useMemo(() => {
+    if (data.repos.length > 0) {
+      const langs = topLanguages(data.repos);
+      if (langs.length > 0) {
+        const max = Math.max(...langs.map((l) => l.count), 1);
+        return langs.map((l) => ({ name: l.name, w: Math.max(Math.round((l.count / max) * 100), 8), val: l.count }));
+      }
+    }
+    return FALLBACK_LANG_BARS;
+  }, [data.repos]);
+
+  const statRepos = data.stats.publicRepos != null ? String(data.stats.publicRepos).padStart(2, '0') : '09';
+  const statSince = data.stats.githubSince ?? '2025';
+  const badge = SOURCE_BADGES[source] ?? SOURCE_BADGES.snapshot;
 
   // Animate the bar fills (scaleX 0 -> data-w) and the activity curve (dashoffset)
   // the first time the section enters view. No-op under reduced motion / no GSAP.
@@ -93,7 +132,13 @@ export default function Activity() {
         gsap.fromTo(
           line,
           { strokeDasharray: len, strokeDashoffset: len },
-          { strokeDashoffset: 0, duration: 1.4, ease: 'power2.out' },
+          {
+            strokeDashoffset: 0,
+            duration: 1.4,
+            ease: 'power2.out',
+            // drop the inline dash so a longer live path can't show gaps
+            onComplete: () => gsap.set(line, { clearProps: 'strokeDasharray,strokeDashoffset' }),
+          },
         );
       }
     });
@@ -165,23 +210,18 @@ export default function Activity() {
                   <stop offset="100%" style={{ stopColor: 'var(--accent)', stopOpacity: 0 }} />
                 </linearGradient>
               </defs>
-              <path
-                id="chartArea"
-                d="M0,170 C60,150 90,118 140,128 S240,88 290,104 S390,38 440,66 S560,26 600,52 L600,220 L0,220 Z"
-                fill="url(#areaFill)"
-                opacity="0"
-              />
+              <path id="chartArea" d={chart.area} fill="url(#areaFill)" opacity="0" />
               <path
                 id="chartLine"
                 ref={lineRef}
                 className="chart-line"
                 style={{ stroke: 'var(--accent)' }}
-                d="M0,170 C60,150 90,118 140,128 S240,88 290,104 S390,38 440,66 S560,26 600,52"
+                d={chart.line}
                 strokeWidth="2.5"
                 strokeLinecap="round"
               />
-              <circle className="chart-end-pulse" cx="600" cy="52" r="4" />
-              <circle className="chart-end" cx="600" cy="52" r="4" />
+              <circle className="chart-end-pulse" cx={chart.end.x} cy={chart.end.y} r="4" />
+              <circle className="chart-end" cx={chart.end.x} cy={chart.end.y} r="4" />
             </svg>
           </div>
 
@@ -192,7 +232,7 @@ export default function Activity() {
               </div>
             </div>
             <div ref={barsRef}>
-              {LANG_BARS.map((row) => (
+              {langBars.map((row) => (
                 <div className="bar-row" key={row.name}>
                   <span className="bar-label">{row.name}</span>
                   <span className="bar-track">
@@ -211,11 +251,11 @@ export default function Activity() {
               </div>
             </div>
             <div className="stat-cell">
-              <div className="stat-num">09</div>
+              <div className="stat-num">{statRepos}</div>
               <div className="stat-label">REPOS PÚBLICOS</div>
             </div>
             <div className="stat-cell">
-              <div className="stat-num">2025</div>
+              <div className="stat-num">{statSince}</div>
               <div className="stat-label">EN GITHUB DESDE</div>
             </div>
             <div className="stat-cell">
@@ -225,6 +265,47 @@ export default function Activity() {
               <div className="stat-label">ESTADO</div>
             </div>
           </div>
+        </div>
+
+        <div className="panel mt-[14px]" data-reveal>
+          <div className="panel-head">
+            <div className="panel-title">
+              <b>$</b> commits --live
+            </div>
+            <span
+              className="font-mono text-[10px] tracking-[0.16em]"
+              style={{ color: badge.color }}
+            >
+              {badge.label}
+            </span>
+          </div>
+          {data.commits.length > 0 ? (
+            <div className="flex flex-col">
+              {data.commits.slice(0, 6).map((c) => (
+                <a
+                  key={`${c.repo}-${c.sha}-${c.url}`}
+                  href={c.url ?? '#'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-hover
+                  className="group flex items-baseline gap-3 border-b border-dashed border-[var(--line)] py-2 font-mono text-[11px] last:border-b-0"
+                >
+                  <span className="shrink-0 text-accent transition-transform duration-300 group-hover:translate-x-0.5">
+                    ●
+                  </span>
+                  <b className="shrink-0 text-text transition-colors group-hover:text-accent">
+                    {c.repo}
+                  </b>
+                  <span className="truncate text-muted">{c.message}</span>
+                  <span className="ml-auto shrink-0 text-muted">{timeAgo(c.date)}</span>
+                </a>
+              ))}
+            </div>
+          ) : (
+            <p className="font-mono text-xs text-muted">
+              ◌ sin conexión con github — mostrando datos locales
+            </p>
+          )}
         </div>
       </div>
     </section>
