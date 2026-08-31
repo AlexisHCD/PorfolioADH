@@ -13,12 +13,13 @@ import { GITHUB_USER, pickFeedRepos, reducePayload } from './githubCore';
  * The returned `source` is 'live' (fresh from 1 or 2), 'cache' or 'snapshot'.
  */
 
-const CACHE_KEY = 'alexdevos-github-cache';
-const CACHE_TTL_MS = 15 * 60 * 1000;
 const API = 'https://api.github.com';
 
-/** Shared in-flight request so concurrent hook instances don't multiply calls. */
-let inflight = null;
+const cacheKey = (year) => `alexdevos-github-cache${year ? `:${year}` : ''}`;
+const CACHE_TTL_MS = 15 * 60 * 1000;
+
+/** Shared in-flight requests keyed by year so hooks don't multiply calls. */
+const inflight = new Map();
 
 const offlineInTests = () => import.meta.env?.MODE === 'test';
 
@@ -36,28 +37,30 @@ async function getJson(url, doFetch) {
 }
 
 /** Read the localStorage payload (with freshness flag). Never throws. */
-export function readCache() {
+export function readCache(year) {
   try {
-    const raw = localStorage.getItem(CACHE_KEY);
+    const raw = localStorage.getItem(cacheKey(year));
     if (!raw) return null;
     const { savedAt, data } = JSON.parse(raw);
-    if (!data) return null;
+    // shape check: a malformed/stale cache (e.g. written by an older build)
+    // must fall through to the snapshot instead of crashing consumers
+    if (!data || !data.stats || !Array.isArray(data.commits)) return null;
     return { data, savedAt, fresh: Date.now() - savedAt < CACHE_TTL_MS };
   } catch {
     return null;
   }
 }
 
-function writeCache(data) {
+function writeCache(data, year) {
   try {
-    localStorage.setItem(CACHE_KEY, JSON.stringify({ savedAt: Date.now(), data }));
+    localStorage.setItem(cacheKey(year), JSON.stringify({ savedAt: Date.now(), data }));
   } catch {
     // private mode / quota — cache is best-effort only
   }
 }
 
-async function fetchFromFunction(doFetch) {
-  const res = await doFetch('/api/github');
+async function fetchFromFunction(doFetch, year) {
+  const res = await doFetch(year ? `/api/github?year=${year}` : '/api/github');
   if (!res.ok) throw new Error(`/api/github → ${res.status}`);
   return res.json();
 }
@@ -71,7 +74,7 @@ async function fetchDirect(doFetch) {
   // Events API strips payload.commits — mirror the function's repo-feed fetch
   const feedRepos = pickFeedRepos(repos);
   const feedResponses = await Promise.allSettled(
-    feedRepos.map((full) => getJson(`${API}/repos/${full}/commits?per_page=8`, doFetch)),
+    feedRepos.map((full) => getJson(`${API}/repos/${full}/commits?per_page=30`, doFetch)),
   );
   const repoFeeds = feedResponses.map((r, i) => ({
     repo: feedRepos[i],
@@ -83,35 +86,39 @@ async function fetchDirect(doFetch) {
 /**
  * Resolve the freshest GitHub payload available.
  * `fetchImpl` is injectable for tests; callers without it share one in-flight
- * request so concurrent hook instances don't multiply network calls.
+ * request per year so concurrent hook instances don't multiply network calls.
  */
-export async function fetchLive({ fetchImpl } = {}) {
+export async function fetchLive({ fetchImpl, year } = {}) {
   const run = async () => {
     const doFetch = fetchImpl ?? defaultFetch;
     try {
-      const data = await fetchFromFunction(doFetch);
-      writeCache(data);
+      const data = await fetchFromFunction(doFetch, year);
+      writeCache(data, year);
       return { data, source: 'live' };
     } catch {
       // function unavailable (dev server, cold start, 5xx) — try direct CORS
     }
     try {
       const data = await fetchDirect(doFetch);
-      writeCache(data);
+      writeCache(data, year);
       return { data, source: 'live' };
     } catch {
       // offline or rate-limited — fall through to local layers
     }
-    const cached = readCache();
+    const cached = readCache(year);
     if (cached) return { data: cached.data, source: 'cache' };
     return { data: githubSnapshot, source: 'snapshot' };
   };
 
+  const key = year ?? 'default';
   if (fetchImpl) return run();
-  if (!inflight) {
-    inflight = run().finally(() => {
-      inflight = null;
-    });
+  if (!inflight.has(key)) {
+    inflight.set(
+      key,
+      run().finally(() => {
+        inflight.delete(key);
+      }),
+    );
   }
-  return inflight;
+  return inflight.get(key);
 }

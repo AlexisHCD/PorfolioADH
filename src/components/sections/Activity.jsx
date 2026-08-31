@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { activitySeed } from '../../data/profile';
 import SectionHead from '../ui/SectionHead';
 import { useReveal } from '../../hooks/useReveal';
 import { useInView } from '../../hooks/useInView';
 import { useGitHubLive } from '../../hooks/useGitHubLive';
 import { mountGsap, prefersReducedMotion } from '../../lib/motion';
-import { chartPath, timeAgo, topLanguages, weeklyCounts } from '../../lib/githubCore';
+import { chartPath, calendarGrid, calendarHeatmapLevels, timeAgo, topLanguages, weeklyCounts } from '../../lib/githubCore';
 
 const LEVEL_COLORS = [0.04, 0.15, 0.28, 0.45, 0.75];
 const LEGEND_ALPHAS = [0.12, 0.28, 0.45, 0.65, 0.9];
@@ -52,6 +52,108 @@ const SOURCE_BADGES = {
   snapshot: { label: '◌ local', color: 'var(--muted)' },
 };
 
+const MONTH_ROW_H = 14;
+
+/**
+ * Real GitHub-style contribution calendar (needs the GraphQL calendar from
+ * the payload): month labels, Lun/Mié/Vie rows, per-day tooltips and a year
+ * selector mirroring the profile view.
+ */
+function ContributionCalendar({ calendar, year, total, years, onYear }) {
+  const currentYear = new Date().getFullYear();
+  const grid = useMemo(() => {
+    const start = new Date(`${year}-01-01T00:00:00Z`);
+    const end = year === currentYear ? new Date() : new Date(`${year}-12-31T23:59:59Z`);
+    return calendarGrid(calendar, { start, end });
+  }, [calendar, year, currentYear]);
+
+  const cellStyle = (level) => ({
+    backgroundColor: `rgba(0,255,156,${LEVEL_COLORS[level]})`,
+  });
+
+  return (
+    <>
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+        <span className="font-mono text-[10.5px] tracking-[0.14em] text-muted">
+          {`${total} contribuciones · ${year}`}
+        </span>
+        <span className="flex gap-1.5">
+          {years.map((y) => (
+            <button
+              key={y}
+              type="button"
+              data-hover
+              onClick={() => onYear(y)}
+              aria-pressed={y === year}
+              className={`cursor-pointer rounded-full px-3 py-1 font-mono text-[10px] tracking-[0.12em] transition-colors ${
+                y === year
+                  ? 'bg-accent font-bold text-accent-contrast'
+                  : 'border border-line text-muted hover:text-accent'
+              }`}
+            >
+              {y}
+            </button>
+          ))}
+        </span>
+      </div>
+
+      <div className="mt-3 overflow-x-auto pb-1">
+        <div className="flex gap-[3px]" style={{ width: 'max-content' }}>
+          {/* weekday labels (Sun-start grid: rows 2/4/6 = Lun/Mié/Vie) */}
+          <div
+            className="grid text-[9px] text-muted"
+            style={{ gridTemplateRows: `repeat(7, 11px)`, gap: '3px', marginTop: MONTH_ROW_H + 3, width: 26 }}
+          >
+            <span />
+            <span className="self-center">Lun</span>
+            <span />
+            <span className="self-center">Mié</span>
+            <span />
+            <span className="self-center">Vie</span>
+            <span />
+          </div>
+          <div>
+            {/* month labels */}
+            <div
+              className="grid"
+              style={{ gridTemplateColumns: `repeat(${grid.columns}, 11px)`, gap: '3px', height: MONTH_ROW_H }}
+            >
+              {Array.from({ length: grid.columns }).map((_, col) => {
+                const mark = grid.monthMarks.find((m) => m.column === col);
+                return (
+                  <span key={`m-${col}`} className="font-mono text-[9px] text-muted">
+                    {mark ? mark.label : ''}
+                  </span>
+                );
+              })}
+            </div>
+            {/* day cells — explicit 11px rows: grid-rows-7's 1fr collapses to 0
+                in a height-less container */}
+            <div
+              className="mt-[3px] grid grid-flow-col"
+              style={{
+                gridTemplateRows: 'repeat(7, 11px)',
+                gridAutoColumns: '11px',
+                gap: '3px',
+                width: 'max-content',
+              }}
+            >
+              {grid.cells.map((cell, i) => (
+                <span
+                  key={i}
+                  title={cell.date ? `${cell.count} contribuciones · ${cell.date}` : undefined}
+                  className="rounded-[2px]"
+                  style={cellStyle(cell.level)}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
 /**
  * // 03 Actividad — GitHub-style contribution heatmap + mono-charts.
  * The heatmap stays deterministic from the seed; the curve, language bars,
@@ -64,11 +166,28 @@ export default function Activity() {
   const barsRef = useRef(null);
   const lineRef = useRef(null);
   const inView = useInView(sectionRef);
-  const { data, source } = useGitHubLive();
+  const [year, setYear] = useState(() => new Date().getFullYear());
+  const { data, source } = useGitHubLive({ year });
 
   useReveal(sectionRef);
 
+  const hasCalendar = (data.calendar?.length ?? 0) >= 30;
+  const calendarYears = useMemo(() => {
+    const current = new Date().getFullYear();
+    const since = Number(data.stats?.githubSince) || current - 1;
+    const first = Math.min(Math.max(since, current - 1), current);
+    const out = [];
+    for (let y = current; y >= first; y -= 1) out.push(y);
+    return out;
+  }, [data.stats?.githubSince]);
+
   const cells = useMemo(() => {
+    // real contribution calendar (GraphQL — needs the owner's token) when the
+    // payload carries it; otherwise the deterministic seed keeps the mockup
+    // look offline
+    if (data.calendar?.length >= 30) {
+      return calendarHeatmapLevels(data.calendar).levels;
+    }
     const rand = mulberry32(activitySeed);
     const out = [];
     for (let i = 0; i < CELL_COUNT; i += 1) {
@@ -83,13 +202,14 @@ export default function Activity() {
       out.push(level);
     }
     return out;
-  }, []);
+  }, [data.calendar]);
 
   // Live-derived pieces (fall back to the curated mockup numbers).
   const chart = useMemo(() => {
-    if (data.commits.length >= 2) return chartPath(weeklyCounts(data.commits));
+    if (data.calendar?.length >= 30) return chartPath(weeklyCounts(data.calendar));
+    if ((data.commits?.length ?? 0) >= 2) return chartPath(weeklyCounts(data.commits));
     return STATIC_CHART;
-  }, [data.commits]);
+  }, [data.calendar, data.commits]);
 
   const langBars = useMemo(() => {
     if (data.repos.length > 0) {
@@ -178,22 +298,32 @@ export default function Activity() {
             </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <div
-              className="grid grid-flow-col grid-rows-7 gap-[3px]"
-              style={{ width: 'max-content' }}
-            >
-              {cells.map((level, i) => (
-                <span
-                  key={i}
-                  data-testid="hm-cell"
-                  title={`actividad nivel ${level}`}
-                  className="h-[12px] w-[12px] rounded-[3px]"
-                  style={{ backgroundColor: `rgba(0,255,156,${LEVEL_COLORS[level]})` }}
-                />
-              ))}
+          {hasCalendar ? (
+            <ContributionCalendar
+              calendar={data.calendar}
+              year={data.calendarYear ?? year}
+              total={data.calendarTotal}
+              years={calendarYears}
+              onYear={setYear}
+            />
+          ) : (
+            <div className="overflow-x-auto">
+              <div
+                className="grid grid-flow-col grid-rows-7 gap-[3px]"
+                style={{ width: 'max-content' }}
+              >
+                {cells.map((level, i) => (
+                  <span
+                    key={i}
+                    data-testid="hm-cell"
+                    title={`actividad nivel ${level}`}
+                    className="h-[12px] w-[12px] rounded-[3px]"
+                    style={{ backgroundColor: `rgba(0,255,156,${LEVEL_COLORS[level]})` }}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         <div className="act-grid">

@@ -1,8 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
+  calendarGrid,
   chartPath,
   collectCommits,
   collectRepoFeeds,
+  calendarHeatmapLevels,
+  flattenCalendar,
   reducePayload,
   reduceRepos,
   timeAgo,
@@ -113,6 +116,65 @@ describe('githubCore', () => {
       'old111b', // feed, 07-15
     ]);
     expect(payload.commits).toHaveLength(4);
+  });
+
+  it('calendarGrid builds Sunday-aligned columns with month marks', () => {
+    // Aug 2026: Aug 1 is a Saturday (6 phantom head cells), Aug 31 a Monday
+    const calendar = [
+      { date: '2026-08-03', count: 3 },
+      { date: '2026-08-16', count: 8 },
+    ];
+    const grid = calendarGrid(calendar, {
+      start: new Date('2026-08-01T00:00:00Z'),
+      end: new Date('2026-08-31T00:00:00Z'),
+    });
+    expect(grid.cells[0]).toEqual({ level: 0, date: null, count: null });
+    expect(grid.cells).toHaveLength(37); // 6 pad + 31 days
+    expect(grid.columns).toBe(6);
+    expect(grid.monthMarks).toEqual([{ column: 0, label: 'Ago' }]);
+    // Aug 16 (Sunday) → level 4; find it: pad 6 + day 16 = index 21
+    expect(grid.cells[21]).toMatchObject({ level: 4, date: '2026-08-16', count: 8 });
+  });
+
+  it('flattenCalendar flattens GraphQL weeks chronologically', () => {
+    const weeks = [
+      { contributionDays: [{ date: '2026-08-24', contributionCount: 3 }, { date: '2026-08-25', contributionCount: 0 }] },
+      { contributionDays: [{ date: '2026-08-30', contributionCount: 7 }] },
+    ];
+    expect(flattenCalendar(weeks)).toEqual([
+      { date: '2026-08-24', count: 3 },
+      { date: '2026-08-25', count: 0 },
+      { date: '2026-08-30', count: 7 },
+    ]);
+  });
+
+  it('calendarHeatmapLevels maps counts to 5 buckets and pads to weekday', () => {
+    // 2026-08-30 is a Sunday; build a calendar that ends there
+    const calendar = [
+      { date: '2026-08-30', count: 3 }, // level 2
+      { date: '2026-08-29', count: 9 }, // level 4
+      { date: '2026-08-28', count: 0 }, // level 0
+    ];
+    const { levels } = calendarHeatmapLevels(calendar, NOW);
+    expect(levels.length).toBeGreaterThanOrEqual(182);
+    expect(levels.at(-3)).toBe(0); // 08-28
+    expect(levels.at(-2)).toBe(4); // 08-29
+    expect(levels.at(-1)).toBe(2); // 08-30 (today)
+  });
+
+  it('weeklyCounts weights calendar days by their contribution count', () => {
+    const counts = weeklyCounts(
+      [
+        { date: NOW.toISOString(), count: 5 },
+        { date: NOW.toISOString(), count: 2 },
+      ],
+      NOW,
+      26,
+    );
+    expect(counts[25]).toBe(7);
+    // commit rows (no count) still weigh 1 each
+    const one = weeklyCounts([{ date: NOW.toISOString() }], NOW, 26);
+    expect(one[25]).toBe(1);
   });
 
   it('reducePayload maps stats, repos and commits', () => {

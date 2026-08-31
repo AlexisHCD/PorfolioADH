@@ -90,20 +90,98 @@ export function pickFeedRepos(repos = [], limit = 5) {
 }
 
 /**
- * Weekly commit counts over the last `weeks` buckets (oldest → newest),
+ * Flatten GitHub contribution-calendar weeks (GraphQL) into a chronological
+ * [{ date: 'YYYY-MM-DD', count }] array sorted oldest → newest.
+ */
+export function flattenCalendar(weeks = []) {
+  const out = [];
+  for (const week of Array.isArray(weeks) ? weeks : []) {
+    for (const day of week?.contributionDays ?? []) {
+      out.push({
+        date: String(day.date ?? '').slice(0, 10),
+        count: day.contributionCount ?? 0,
+      });
+    }
+  }
+  return out.sort((a, b) => a.date.localeCompare(b.date));
+}
+
+/**
+ * Build a GitHub-style calendar grid from a chronological [{ date, count }]
+ * array. Returns column-major cells (Sunday-start weeks, phantom head cells
+ * at level 0), month marks per column and the column count — everything the
+ * real profile heatmap shows.
+ *
+ * @param {Array<{date: string, count: number}>} calendar
+ * @param {{start: Date, end: Date}} range - Inclusive UTC date range.
+ */
+export function calendarGrid(calendar, { start, end }) {
+  const byDate = new Map(calendar.map((d) => [d.date, d.count]));
+  const level = (count) => (count <= 0 ? 0 : count <= 2 ? 1 : count <= 4 ? 2 : count <= 7 ? 3 : 4);
+  const MONTHS = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+
+  const cells = [];
+  const monthMarks = [];
+  const head = start.getUTCDay(); // pad so column 0 starts on a Sunday
+  for (let i = 0; i < head; i += 1) cells.push({ level: 0, date: null, count: null });
+
+  let lastMonth = -1;
+  let column = 0;
+  const cursor = new Date(start.getTime());
+  while (cursor.getTime() <= end.getTime()) {
+    const m = cursor.getUTCMonth();
+    if (cursor.getUTCDate() === 1 && m !== lastMonth) {
+      // mark the month at the column that contains its 1st day (GitHub-style)
+      monthMarks.push({ column, label: MONTHS[m] });
+      lastMonth = m;
+    }
+    if (cursor.getUTCDay() === 0) column += 1;
+    const key = cursor.toISOString().slice(0, 10);
+    const count = byDate.get(key) ?? 0;
+    cells.push({ level: level(count), date: key, count });
+    cursor.setUTCDate(cursor.getUTCDate() + 1);
+  }
+  return { cells, monthMarks, columns: column + 1 };
+}
+
+/**
+ * Map the trailing 182 calendar days to heatmap levels 0-4, column-major
+ * (Sunday-start weeks) so they render straight into the grid-flow-col grid.
+ * Days missing from the calendar count as 0.
+ */
+export function calendarHeatmapLevels(calendar = [], now = new Date()) {
+  const DAYS = 182;
+  const byDate = new Map(calendar.map((d) => [d.date, d.count]));
+  const level = (count) => (count <= 0 ? 0 : count <= 2 ? 1 : count <= 4 ? 2 : count <= 7 ? 3 : 4);
+
+  const days = [];
+  for (let i = DAYS - 1; i >= 0; i -= 1) {
+    const d = new Date(now.getTime() - i * 86400000);
+    const key = d.toISOString().slice(0, 10);
+    days.push(level(byDate.get(key) ?? 0));
+  }
+  // pad the head so the first date lands on its real weekday row (the grid
+  // fills column-major, Sunday-start weeks — phantom cells stay at level 0)
+  const firstDow = new Date(now.getTime() - (DAYS - 1) * 86400000).getUTCDay();
+  return { levels: [...new Array(firstDow).fill(0), ...days] };
+}
+
+/**
+ * Weekly sums over `entries` ({ date, count? }) — commit rows count as 1 per
+ * entry, calendar days add their contribution count. Oldest bucket first,
  * matching the "actividad --6-meses" chart window.
  */
-export function weeklyCounts(commits = [], now = new Date(), weeks = CHART_WEEKS) {
+export function weeklyCounts(entries = [], now = new Date(), weeks = CHART_WEEKS) {
   const counts = new Array(weeks).fill(0);
   const weekMs = 7 * 24 * 60 * 60 * 1000;
-  for (const c of commits) {
-    if (!c?.date) continue;
-    const t = new Date(c.date).getTime();
+  for (const entry of entries) {
+    if (!entry?.date) continue;
+    const t = new Date(entry.date).getTime();
     if (!Number.isFinite(t)) continue;
     const ago = now.getTime() - t;
     if (ago < 0) continue;
     const idx = weeks - 1 - Math.floor(ago / weekMs);
-    if (idx >= 0 && idx < weeks) counts[idx] += 1;
+    if (idx >= 0 && idx < weeks) counts[idx] += entry.count ?? 1;
   }
   return counts;
 }
@@ -175,16 +253,29 @@ export function timeAgo(iso, now = new Date()) {
 }
 
 /** Reduce raw GitHub API responses into the single payload the app consumes. */
-export function reducePayload({ user, repos, events, repoFeeds }, now = new Date()) {
+export function reducePayload({
+  user,
+  repos,
+  events,
+  repoFeeds,
+  calendarWeeks,
+  calendarYear = null,
+}) {
+  const calendar = flattenCalendar(calendarWeeks);
   return {
-    fetchedAt: now.toISOString(),
+    fetchedAt: new Date().toISOString(),
     stats: {
       publicRepos: user?.public_repos ?? null,
       githubSince: user?.created_at ? String(user.created_at).slice(0, 4) : null,
     },
     repos: reduceRepos(repos),
-    commits: dedupeCommits([...collectCommits(events), ...collectRepoFeeds(repoFeeds)]).sort(
+    commits: dedupeCommits([...collectCommits(events), ...collectRepoFeeds(repoFeeds, 100)]).sort(
       (a, b) => String(b.date ?? '').localeCompare(String(a.date ?? '')),
     ),
+    // real contribution calendar — only present when the server-side token
+    // belongs to @AlexisHCD (GraphQL viewer/user contributionsCollection)
+    calendar,
+    calendarYear: calendar.length > 0 ? calendarYear : null,
+    calendarTotal: calendar.reduce((sum, d) => sum + d.count, 0),
   };
 }

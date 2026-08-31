@@ -32,6 +32,10 @@ async function getJson(url, token) {
 
 export default async function handler(req, res) {
   const token = process.env.GITHUB_TOKEN || '';
+  // optional ?year=YYYY — a specific contribution year (GraphQL from/to);
+  // without it the API returns the rolling last 365 days
+  const year = Number(req.query?.year);
+  const hasYear = Number.isInteger(year) && year >= 2005 && year <= new Date().getUTCFullYear() + 1;
   try {
     // sort=pushed so the freshest repos are also the commit-feed candidates
     const [user, repos, events] = await Promise.all([
@@ -43,13 +47,58 @@ export default async function handler(req, res) {
     // messages from the top recently-pushed repos' feeds instead
     const feedRepos = pickFeedRepos(repos);
     const feedResponses = await Promise.allSettled(
-      feedRepos.map((full) => getJson(`${API}/repos/${full}/commits?per_page=8`, token)),
+      feedRepos.map((full) => getJson(`${API}/repos/${full}/commits?per_page=30`, token)),
     );
     const repoFeeds = feedResponses.map((r, i) => ({
       repo: feedRepos[i],
       commits: r.status === 'fulfilled' ? r.value : [],
     }));
-    const payload = reducePayload({ user, repos, events, repoFeeds });
+
+    // real contribution calendar (the profile heatmap data) — only when the
+    // token belongs to @AlexisHCD; otherwise the client falls back to its
+    // approximation layers
+    let calendarWeeks = null;
+    try {
+      const now = new Date();
+      const vars = { login: GITHUB_USER };
+      if (hasYear) {
+        vars.from = `${year}-01-01T00:00:00Z`;
+        // cap the range at "now" for the current year
+        vars.to = year < now.getUTCFullYear() ? `${year}-12-31T23:59:59Z` : now.toISOString();
+      }
+      const gql = await fetch(`${API}/graphql`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          query: `query($login: String!, $from: DateTime, $to: DateTime) {
+            user(login: $login) {
+              login
+              contributionsCollection(from: $from, to: $to) {
+                contributionCalendar {
+                  totalContributions
+                  weeks {
+                    contributionDays { date contributionCount }
+                  }
+                }
+              }
+            }
+          }`,
+          variables: vars,
+        }),
+      });
+      const json = await gql.json();
+      const viewer = json?.data?.user;
+      if (gql.ok && viewer?.login === GITHUB_USER) {
+        calendarWeeks = viewer.contributionsCollection?.contributionCalendar?.weeks ?? null;
+      }
+    } catch {
+      // calendar is optional — REST layers already provide a payload
+    }
+
+    const payload = reducePayload({ user, repos, events, repoFeeds, calendarWeeks, calendarYear: hasYear ? year : null });
     res.setHeader('Cache-Control', 's-maxage=900, stale-while-revalidate=86400');
     res.status(200).json(payload);
   } catch {
