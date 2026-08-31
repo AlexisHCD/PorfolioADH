@@ -288,16 +288,25 @@ export default function Activity() {
                   target="_blank"
                   rel="noopener noreferrer"
                   data-hover
-                  className="group flex items-baseline gap-3 border-b border-dashed border-[var(--line)] py-2 font-mono text-[11px] last:border-b-0"
+                  className="group flex flex-col gap-1 border-b border-dashed border-[var(--line)] py-2.5 font-mono text-[11px] last:border-b-0 sm:flex-row sm:items-baseline sm:gap-3"
                 >
-                  <span className="shrink-0 text-accent transition-transform duration-300 group-hover:translate-x-0.5">
-                    ●
+                  <span className="flex items-baseline gap-2.5">
+                    <span className="shrink-0 text-accent transition-transform duration-300 group-hover:translate-x-0.5">
+                      ●
+                    </span>
+                    <b className="text-text transition-colors group-hover:text-accent">
+                      {c.repo}
+                    </b>
+                    <span className="ml-auto shrink-0 text-muted sm:hidden">
+                      {timeAgo(c.date)}
+                    </span>
                   </span>
-                  <b className="shrink-0 text-text transition-colors group-hover:text-accent">
-                    {c.repo}
-                  </b>
-                  <span className="truncate text-muted">{c.message}</span>
-                  <span className="ml-auto shrink-0 text-muted">{timeAgo(c.date)}</span>
+                  <span className="truncate text-muted">
+                    {c.message}
+                    <span className="ml-3 hidden shrink-0 text-muted sm:inline">
+                      {timeAgo(c.date)}
+                    </span>
+                  </span>
                 </a>
               ))}
             </div>

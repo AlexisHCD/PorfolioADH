@@ -249,10 +249,19 @@ export default function Terminal({ onToggleTheme = () => {}, onLaunchDoom = () =
         out.push(span('red', 'permiso denegado: aquí manda alexis.'));
         break;
       case 'doom':
-      case 'doom.exe':
-        out.push(span('ok', 'ejecutando ./doom.exe ...'));
-        onLaunchDoom();
+      case 'doom.exe': {
+        // webprboom is desktop-only (keyboard + mouse); on touch/small screens
+        // refuse gracefully instead of opening an unplayable window
+        const isTouch = window.matchMedia('(pointer: coarse)').matches;
+        const isSmall = window.innerWidth < 768;
+        if (isTouch || isSmall) {
+          out.push(span('err', 'doom.exe: requiere teclado y mouse — disponible solo en desktop'));
+        } else {
+          out.push(span('ok', 'ejecutando ./doom.exe ...'));
+          onLaunchDoom();
+        }
         break;
+      }
       default:
         if (trimmed === 'rm -rf /') {
           out.push(span('red', 'jajaja no. este sistema es inmune a dedos traviesos.'));
@@ -297,7 +306,7 @@ export default function Terminal({ onToggleTheme = () => {}, onLaunchDoom = () =
         <span className="font-mono text-[11px] text-[var(--gruv-fg)]">
           <b>alex@archlinux</b>: ~/portfolio
         </span>
-        <div className="ml-auto flex items-center gap-2" aria-hidden="true">
+        <div className="ml-auto hidden items-center gap-2 sm:flex" aria-hidden="true">
           <span className="flex items-center gap-1 text-[var(--gruv-green)]">
             <svg width="12" height="12" viewBox="0 0 16 16"><rect x="1" y="5" width="12" height="7" rx="1" fill="#b8bb26" /></svg>
             <span className="text-[10px]">100%</span>
