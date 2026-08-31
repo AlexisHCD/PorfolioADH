@@ -84,7 +84,7 @@ export function Loader({ onDone }) {
   if (hidden) return null;
 
   return (
-    <div className="loader" id="loader" ref={loaderRef}>
+    <div className="loader" id="loader" ref={loaderRef} role="status" aria-label="cargando el sitio">
       <div className="loader-inner">
         <div className="loader-tag">{'// PORTFOLIO v2.0 — ALEXDEV_OS'}</div>
         <div className="loader-name">

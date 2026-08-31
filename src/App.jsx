@@ -67,6 +67,13 @@ export default function App() {
   return (
     <BrowserRouter>
       <div className="relative min-h-screen">
+        {/* a11y: keyboard users jump straight past the nav */}
+        <a
+          href="#contenido"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[10050] focus:rounded-lg focus:bg-[var(--accent-btn)] focus:px-4 focus:py-2.5 focus:font-mono focus:text-sm focus:text-accent-contrast"
+        >
+          saltar al contenido
+        </a>
         {!loaded && <Loader onDone={() => setLoaded(true)} />}
         <GrainScanlines />
         <BgField />

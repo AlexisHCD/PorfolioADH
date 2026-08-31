@@ -31,15 +31,24 @@ export default function Certificates({ onViewerOpenChange = () => {} }) {
   const winRef = useRef(null);
   const titlebarRef = useRef(null);
   const typeToken = useRef(0);
+  // the badge that opened the viewer — focus returns to it on close
+  const originRef = useRef(null);
 
   useRevealGroup(sectionRef, '.cert-badge-wrap', { dy: 38, duration: 1 });
+
+  const closeViewer = () => {
+    const origin = originRef.current;
+    setSelected(null);
+    // hand focus back to the opening badge so keyboard flow isn't dropped
+    requestAnimationFrame(() => origin?.focus?.());
+  };
 
   // Close on Escape and focus the close button when the viewer opens.
   useEffect(() => {
     if (!selected) return undefined;
 
     const onKey = (e) => {
-      if (e.key === 'Escape') setSelected(null);
+      if (e.key === 'Escape') closeViewer();
     };
     window.addEventListener('keydown', onKey);
 
@@ -201,7 +210,13 @@ export default function Certificates({ onViewerOpenChange = () => {} }) {
       <div className="certs-row">
         {certificates.map((c) => (
           <div key={c.id} className="cert-badge-wrap">
-            <CertificateBadge cert={c} onSelect={(cert, origin) => setSelected({ cert, origin })} />
+            <CertificateBadge
+              cert={c}
+              onSelect={(cert, origin) => {
+                originRef.current = origin ?? null;
+                setSelected({ cert, origin });
+              }}
+            />
             <span className="badge-label">{c.label}</span>
           </div>
         ))}
@@ -213,7 +228,7 @@ export default function Certificates({ onViewerOpenChange = () => {} }) {
           role="dialog"
           aria-label="visor de certificados"
           onClick={(e) => {
-            if (e.target === e.currentTarget) setSelected(null);
+            if (e.target === e.currentTarget) closeViewer();
           }}
         >
           <div ref={winRef} className="cert-win">
@@ -231,7 +246,7 @@ export default function Certificates({ onViewerOpenChange = () => {} }) {
                 className="arch-x"
                 data-hover
                 aria-label="cerrar visor"
-                onClick={() => setSelected(null)}
+                onClick={closeViewer}
               >
                 [×]
               </button>

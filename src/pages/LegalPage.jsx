@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { legalDocs } from '../data/legal';
 import { useReveal } from '../hooks/useReveal';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 /**
  * Legal route (aviso legal / política de privacidad) — documentation-style
@@ -15,10 +15,17 @@ export default function LegalPage({ doc }) {
   useReveal(sectionRef, { immediate: true });
   const data = legalDocs[doc];
 
+  useEffect(() => {
+    if (data) document.title = `${data.title} | Alexis Hernández`;
+    return () => {
+      document.title = 'Alexis Hernández — Desarrollador & Ciberseguridad | Portafolio';
+    };
+  }, [data]);
+
   if (!data) return null;
 
   return (
-    <main className="relative z-[1]">
+    <main id="contenido" className="relative z-[1]">
       <section
         ref={sectionRef}
         className="mx-auto max-w-3xl px-6 pt-40 pb-28 md:px-12"

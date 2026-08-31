@@ -11,7 +11,7 @@ import { Marquee } from '../components/ui/Marquee';
 /** Home route — the one-page portfolio section flow. */
 export default function HomePage({ onLaunchDoom, onViewerOpenChange }) {
   return (
-    <main className="relative z-[1]">
+    <main id="contenido" className="relative z-[1]">
       <Hero onLaunchDoom={onLaunchDoom} />
       <Marquee />
       <About />
