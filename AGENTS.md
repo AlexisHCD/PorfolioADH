@@ -66,13 +66,17 @@ Full QA lands in Phase 4 — after scaffold, before deploy.
 - Performance: Lighthouse CI with budgets once deploy wiring exists.
 - Proportionality rule: no test theater — each test encodes a real regression risk or acceptance criterion.
 
-## Phase roadmap (details in .hermes/plans/)
+## Phase roadmap (details + session handoff in .hermes/plans/)
+**ENTRY POINT for new agents: `.hermes/plans/2026-08-30_handoff-phase3b-complete.md`**
+(current state, gotchas, QA plan, deploy runbook). Nothing has been pushed yet.
+
 | Phase | Scope | Status |
 |---|---|---|
 | 0 | Concept + mockup | DONE (approved 2026-08-24) |
-| 1 | Repo hygiene: README, AGENTS.md, GitHub remote + push | IN PROGRESS |
-| 2 | Scaffold: Vite+React+Tailwind4+ESLint+Prettier+Vitest, `src/` architecture, `profile.js` data layer | NEXT |
-| 3 | Component port (sections, FX, terminal, DOOM, certs) with per-component tests | PENDING |
-| 4 | Full QA pass: Playwright suite, axe, Lighthouse, mobile matrix | PENDING |
-| 5 | Deploy Vercel + meta/OG/favicon/404/sitemap | PENDING |
-| 6 | Backlog: SEO/JSON-LD, GitHub API live repos+activity (cache+fallback), EN version, Dwasm touch DOOM, real photo, analytics, ⌘K palette | PENDING |
+| 1 | Repo hygiene: README, AGENTS.md, GitHub remote + push | IN PROGRESS (push needs user approval) |
+| 2 | Scaffold: Vite+React+Tailwind4+ESLint+Prettier+Vitest, `src/` architecture, `profile.js` data layer | DONE |
+| 3 | Component port + live GitHub (serverless), contact form, legal pages, mobile pass, a11y, favicon/SEO — 1:1 mockup parity verified | DONE (2026-08-30) |
+| 4 | Full QA pass: Playwright suite, axe, Lighthouse, mobile matrix | NEXT (spec list in handoff doc) |
+| 5 | Deploy Vercel + env tokens (GITHUB_TOKEN, VITE_WEB3FORMS_ACCESS_KEY) — runbook in handoff doc | PENDING |
+| 6 | Backlog: JSON-LD/analytics, EN version, Dwasm touch DOOM, real photo re-integration, ⌘K palette | PENDING |
+
