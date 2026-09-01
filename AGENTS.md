@@ -57,12 +57,18 @@ Deploy: Vercel (static). Site content in **Spanish**; code, comments, docs and c
 - Old v1 data: https://github.com/AlexisHCD/Portfolio_Proyecto_AIEP (outdated; superseded by current content).
 - User rules: warn before delicate/system commands; never work outside this workspace; propose commits atomically, never push without explicit approval.
 
-## QA & testing policy (decided)
-Testing targets the **real app, not the mockup** (the mockup is a throwaway artifact; testing it is waste).
-Full QA lands in Phase 4 — after scaffold, before deploy.
-- Unit/integration: **Vitest** for hooks, utils and the `src/data/profile.js` contract.
-- E2E/smoke: **Playwright** — every section renders + key interactions (theme toggle, terminal boot, cert viewer open/close, DOOM open/quit) across viewports **390×844 / 768×1024 / 1440×900**.
-- Accessibility: **axe-core** in Playwright, zero critical violations gate; keyboard nav pass; reduced-motion variants respected.
+## QA & testing policy (revised 2026-08-30 — lean suite, user decision)
+Testing targets the **real app, not the mockup**. The primary QA layer is **E2E**
+(Playwright, `e2e/`, 22 tests): it owns flows, interactions and regressions.
+Unit tests exist **only for pure logic and data contracts** — component render
+tests were removed (they duplicated e2e coverage and added maintenance noise).
+
+- Unit (Vitest, 5 files / 30 tests): `githubCore` reducers, `github` fallback
+  chain, `profile.js` contract, `useTheme`, `useKonami`. Do not re-add render
+  tests per component.
+- E2E: `npm run test:e2e` — smoke, theme, roadmap fixed-progress, cert viewer,
+  terminal/DOOM, live activity with network fixtures, contact form, axe
+  (wcag2a/2aa) on 3 pages × 3 viewports — zero critical/serious gate.
 - Performance: Lighthouse CI with budgets once deploy wiring exists.
 - Proportionality rule: no test theater — each test encodes a real regression risk or acceptance criterion.
 
