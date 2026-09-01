@@ -9,5 +9,7 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: './src/test/setup.js',
+    // playwright e2e specs live in /e2e and run via `npm run test:e2e`
+    include: ['src/**/*.{test,spec}.{js,jsx}'],
   },
 });
