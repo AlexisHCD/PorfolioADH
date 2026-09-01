@@ -6,3 +6,5 @@ mockups/jsdos/
 public/doom/
 .DS_Store
 *.local
+test-results/
+playwright-report/
