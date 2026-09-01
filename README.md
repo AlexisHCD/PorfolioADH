@@ -12,7 +12,7 @@ La sección de actividad se alimenta en tiempo real desde la API de GitHub media
 
 ## Metodología
 
-El proyecto se desarrolla bajo **SDD (Spec-Driven Development)**: toda implementación está precedida por una especificación verificable. El mockup aprobado (`mockups/phosphor.html`) constituye la especificación visual; la capa de datos (`src/data/`) constituye la especificación de contenido; los tests de contrato validan ambas. No se emplea TDD.
+El proyecto se desarrolla bajo **SDD (Spec-Driven Development)**: toda implementación está precedida por una especificación verificable. El mockup aprobado (`mockups/phosphor.html`) constituye la especificación visual; la capa de datos (`src/data/`) constituye la especificación de contenido; los tests de contrato validan ambas.
 
 ## Stack tecnológico
 

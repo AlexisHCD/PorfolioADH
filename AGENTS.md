@@ -60,7 +60,7 @@ Deploy: Vercel (static). Site content in **Spanish**; code, comments, docs and c
 ## QA & testing policy (revised 2026-08-30 — lean suite, user decision)
 **Methodology: SDD (spec-driven development)** — the approved mockup is the visual
 specification, the data layer (`src/data/`) is the content specification; specs
-precede implementation and contract tests validate them. Not TDD.
+precede implementation and contract tests validate them.
 Testing targets the **real app, not the mockup**. The primary QA layer is **E2E**
 (Playwright, `e2e/`, 22 tests): it owns flows, interactions and regressions.
 Unit tests exist **only for pure logic and data contracts** — component render

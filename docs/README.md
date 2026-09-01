@@ -10,7 +10,7 @@ Portafolio estático construido con Vite y React, con sección de actividad en v
 
 ## Metodología
 
-El proyecto se desarrolla bajo **SDD (Spec-Driven Development)**: toda implementación está precedida por una especificación verificable. El mockup aprobado constituye la especificación visual; la capa de datos constituye la especificación de contenido; los tests de contrato validan ambas. No se emplea TDD.
+El proyecto se desarrolla bajo **SDD (Spec-Driven Development)**: toda implementación está precedida por una especificación verificable. El mockup aprobado constituye la especificación visual; la capa de datos constituye la especificación de contenido; los tests de contrato validan ambas.
 
 ## Índice de documentos
 
