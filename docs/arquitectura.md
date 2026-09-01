@@ -1,66 +1,54 @@
 # Arquitectura
 
-## Stack
+## Stack tecnológico
 
-- **Build**: Vite 7 · React 19 (JavaScript, sin TS) · Tailwind CSS 4
-- **Animación**: GSAP 3.13 (ScrollTrigger) + Lenis (smooth scroll) — ambos gratuitos
-- **Router**: react-router-dom 7 (rutas `/`, `/aviso-legal`, `/politica-de-privacidad`)
-- **Backend**: ninguno. Una única **Vercel Function** (`api/github.js`) hace de proxy
-  cacheado hacia la API de GitHub. El formulario usa Web3Forms (tercero).
+- **Build**: Vite 7 · React 19 (JavaScript, sin TypeScript) · Tailwind CSS 4
+- **Animación**: GSAP 3.13 (ScrollTrigger) + Lenis (scroll suave)
+- **Enrutamiento**: react-router-dom 7 (rutas `/`, `/aviso-legal`, `/politica-de-privacidad`)
+- **Backend**: ninguno. Una única función Vercel (`api/github.js`) actúa como proxy cacheado hacia la API de GitHub. El formulario utiliza Web3Forms como servicio externo.
 
-## Estructura
+## Estructura de directorios
 
 ```
-api/github.js            → función serverless: proxy GitHub + caché edge (15 min)
-public/                  → favicon.svg, apple-touch-icon.png, og.png, robots.txt,
-                           certs/, cv.pdf, doom/ (payload gitignoreado)
+api/github.js            Función serverless: proxy de GitHub con caché edge (15 min)
+public/                  favicon.svg, apple-touch-icon.png, og.png, robots.txt,
+                         certs/, cv.pdf, doom/ (payload excluido del repositorio)
 src/
-  data/                  → ⭐ CAPA SSOT: profile.js (todo el contenido) + legal.js
-  lib/                   → githubCore.js (reductores puros), github.js (fallbacks),
-                           motion.js (GSAP + stubs), sound.js
-  hooks/                 → useTheme, useLenis, useGitHubLive, useReveal(+Group),
-                           useMagnetic, useScramble, useSplitChars, useInView, useKonami
+  data/                  Capa SSOT de contenido: profile.js, legal.js, githubSnapshot.js
+  lib/                   githubCore.js (reductores puros), github.js (cadena de fallbacks),
+                         motion.js (GSAP y stubs), sound.js
+  hooks/                 useTheme, useLenis, useGitHubLive, useReveal (+useRevealGroup),
+                         useMagnetic, useScramble, useSplitChars, useInView, useKonami
   components/
-    layout/              → Nav (con menú móvil), Footer, BgField, GrainScanlines
-    sections/            → Hero+Terminal, About, Stack, Activity, Projects,
-                           Roadmap, Certificates, Contact
-    ui/                  → Terminal, ThemeToggle, CertificateBadge, DoomWindow,
-                           Loader, Marquee, ScrollProgress, OverdriveSurge, SectionHead
-  pages/                 → HomePage, LegalPage (rutas del router)
-e2e/                     → specs Playwright (corren contra el build)
-mockups/phosphor.html    → mockup aprobado (referencia visual histórica)
+    layout/              Nav (con menú móvil), Footer, BgField, GrainScanlines
+    sections/            Hero+Terminal, About, Stack, Activity, Projects,
+                         Roadmap, Certificates, Contact
+    ui/                  Terminal, ThemeToggle, CertificateBadge, DoomWindow, Loader,
+                         Marquee, ScrollProgress, OverdriveSurge, SectionHead
+  pages/                 HomePage, LegalPage (rutas del router)
+e2e/                     Specs de Playwright (se ejecutan contra el build)
+mockups/phosphor.html    Mockup aprobado (especificación visual de referencia)
 ```
 
 ## Principios de diseño
 
-1. **`src/data/` es la única fuente de verdad del contenido.** Los componentes no
-   contienen textos: edita `profile.js` / `legal.js` y todo cambia.
-2. **El mockup es el SSOT visual**: cada sección usa las clases CSS portadas
-   1:1 de `mockups/phosphor.html` (`src/index.css`). No re-estilar con Tailwind lo que
-   ya existe como clase portada.
-3. **Tema día/noche** vía `data-theme` en `<html>` + variables CSS
-   (`--accent`, `--line`, `--ink`…). Todo componente nuevo debe usar solo variables.
-   Persistencia: `localStorage["alexdevos-theme"]` + transición circular + chime.
+1. **Capa de datos como única fuente de verdad del contenido.** Los componentes no contienen textos; estos viven en `src/data/profile.js` y `src/data/legal.js`.
+2. **El mockup es la especificación visual**: cada sección utiliza las clases CSS portadas uno a uno desde `mockups/phosphor.html` hacia `src/index.css`. No se re-estila con utilidades Tailwind lo que ya existe como clase portada.
+3. **Tema día/noche** mediante `data-theme` en `<html>` y variables CSS (`--accent`, `--line`, `--ink`, entre otras). Todo componente nuevo debe emplear exclusivamente variables. Persistencia en `localStorage["alexdevos-theme"]`, con transición circular y síntesis de audio.
+4. **Accesibilidad**: navegación por teclado, foco visible y retorno de foco en modales, soporte de `prefers-reduced-motion` en todas las animaciones.
 
 ## Flujos clave
 
-- **Tema**: `useTheme` → `data-theme` → CSS variables → todo el sitio responde.
-- **Scroll**: Lenis (instancia viva en `lenisStore`, `hooks/useLenis.js`). Las
-  animaciones entran con GSAP+ScrollTrigger (`useReveal`, `useRevealGroup` con
-  `clearProps` para no bloquear `:hover`).
-- **Router + scroll**: `RouteScroll` (App.jsx) salta a `/#seccion` usando Lenis
-  (`immediate: true` si la pestaña está oculta — rAF congelado).
-- **Konami** (`↑↑↓↓←→←→BA`): sobrecarga fósforo + chime. Desactivado con visor o DOOM abiertos.
-- **Terminal**: boot narrativo, comandos `help · whoami · proyectos · roadmap ·
-  contacto · certificados · matrix · rm -rf / · sudo · clear · doom.exe`.
-  `doom.exe` se niega en pantallas táctiles/`<768px` (webprboom es desktop-only).
-- **DOOM**: iframe same-origin a `public/doom/doom1/doom1.html` (webprboom, GPL,
-  crédito en el footer). Cierre destruye el iframe (sin audio zombi). Volumen
-  master inyectado: 0.15.
+- **Tema**: `useTheme` establece `data-theme`; las variables CSS propagan el cambio a todo el sitio.
+- **Scroll**: Lenis (instancia viva expuesta en `lenisStore`, `hooks/useLenis.js`). Las animaciones de entrada usan GSAP con ScrollTrigger (`useReveal`, `useRevealGroup` con `clearProps` para no bloquear transformaciones `:hover`).
+- **Router y scroll**: `RouteScroll` (App.jsx) desplaza a `/#seccion` mediante Lenis, con salto inmediato si la pestaña está oculta (el bucle rAF se congela sin visibilidad).
+- **Terminal**: arranque narrativo y comandos `help`, `whoami`, `stack`, `proyectos`, `roadmap`, `contacto`, `certificados`, `matrix`, `rm -rf /`, `sudo`, `clear`, `doom.exe`. El comando `doom.exe` se deniega en pantallas táctiles o inferiores a 768 px (webprboom requiere teclado y ratón).
+- **DOOM**: iframe de mismo origen a `public/doom/doom1/doom1.html` (webprboom, GPL, crédito visible en el pie de página). El cierre destruye el iframe para no dejar audio residual. Volumen master inyectado: 0.15.
+- **Formulario**: validación en cliente (campos requeridos, formato de correo, longitudes, honeypot) y envío mediante Web3Forms. Ante fallo se muestra error en línea con acción de copiar correo; no existe fallback `mailto:`.
 
-## Easter eggs
+## Elementos ocultos
 
-- Konami → surge fósforo + sonido (6s).
-- `matrix` en la terminal → lluvia katakana 5s.
-- `rm -rf /` → rechazo dramático. `sudo` →denegado con humor.
-- Consola del navegador: NFO estilo SKIDROW al cargar.
+- Código Konami (`↑↑↓↓←→←→BA`): sobrecarga fósforo con síntesis de audio, deshabilitada mientras el visor de certificados o DOOM estén abiertos.
+- `matrix` en la terminal: lluvia de katakana durante cinco segundos.
+- `rm -rf /` y `sudo`: respuestas de denegación con humor.
+- Consola del navegador: bloque NFO estilo escena al cargar.
