@@ -38,7 +38,7 @@ export default function Nav({ theme, onToggle }) {
         Sysop<span className="text-accent">@alexdev</span>:~$
       </Link>
 
-      <div className="hidden items-center gap-6 font-mono text-[11.5px] tracking-widest text-muted lg:flex">
+      <div className="hidden items-center gap-6 font-mono text-[11.5px] tracking-widest text-muted whitespace-nowrap xl:flex">
         {SECTIONS.map(([n, label]) => (
           <Link
             key={label}
@@ -57,7 +57,7 @@ export default function Nav({ theme, onToggle }) {
         <a
           href={identity.cvHref ?? '#'}
           data-hover
-          className="nav-cta inline-flex items-center rounded-lg px-[17px] py-[10px] font-mono text-[11.5px] tracking-widest text-accent"
+          className="nav-cta inline-flex items-center whitespace-nowrap rounded-lg px-[17px] py-[10px] font-mono text-[11.5px] tracking-widest text-accent"
         >
           cv.pdf ↓
         </a>
@@ -67,7 +67,7 @@ export default function Nav({ theme, onToggle }) {
           aria-label={menuOpen ? 'cerrar menú' : 'abrir menú'}
           aria-expanded={menuOpen}
           onClick={() => setMenuOpen((v) => !v)}
-          className="grid size-[38px] cursor-pointer place-items-center rounded-lg border border-line font-mono text-[15px] text-accent transition-colors hover:border-accent-line lg:hidden"
+          className="grid size-[38px] cursor-pointer place-items-center rounded-lg border border-line font-mono text-[15px] text-accent transition-colors hover:border-accent-line xl:hidden"
         >
           {menuOpen ? '[×]' : '[≡]'}
         </button>
@@ -76,7 +76,7 @@ export default function Nav({ theme, onToggle }) {
       {/* mobile section menu — full-screen terminal-style overlay */}
       {menuOpen && (
         <div
-          className="fixed inset-0 z-[9500] flex flex-col px-8 pt-24 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-[9500] flex flex-col px-8 pt-24 backdrop-blur-sm xl:hidden"
           style={{ background: 'color-mix(in srgb, var(--ink) 92%, transparent)' }}
           role="dialog"
           aria-label="menú de secciones"

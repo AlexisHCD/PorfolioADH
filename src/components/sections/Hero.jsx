@@ -71,7 +71,7 @@ export default function Hero({ onLaunchDoom = () => {} }) {
             className="font-display leading-[0.94] font-bold tracking-tight uppercase"
             data-reveal
           >
-            <span className="block text-[clamp(2.7rem,7.2vw,6.2rem)]" data-split>
+            <span className="block text-[clamp(2.1rem,7.2vw,6.2rem)]" data-split>
               {splitFirst.map((c) => (
                 <span className="ch-wrap" key={c.key}>
                   <span className="ch">{c.ch}</span>
@@ -79,7 +79,7 @@ export default function Hero({ onLaunchDoom = () => {} }) {
               ))}
             </span>
             <span
-              className="block text-[clamp(2.7rem,7.2vw,6.2rem)] text-transparent [-webkit-text-stroke:1.5px_var(--stroke-outline)]"
+              className="block text-[clamp(2.1rem,7.2vw,6.2rem)] text-transparent [-webkit-text-stroke:1.5px_var(--stroke-outline)]"
               data-split
             >
               {splitLast.map((c) => (
