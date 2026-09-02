@@ -84,7 +84,11 @@ export default function App() {
           <Route
             path="/"
             element={
-              <HomePage onLaunchDoom={() => setDoomOpen(true)} onViewerOpenChange={setCertOpen} />
+              <HomePage
+                onLaunchDoom={() => setDoomOpen(true)}
+                onViewerOpenChange={setCertOpen}
+                onToggleTheme={toggle}
+              />
             }
           />
           <Route path="/aviso-legal" element={<LegalPage doc="aviso" />} />

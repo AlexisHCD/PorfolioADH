@@ -28,8 +28,10 @@ const LinkedinIcon = () => (
  *
  * @param {object} props
  * @param {() => void} [props.onLaunchDoom] - Fired by the terminal's `doom.exe`.
+ * @param {() => void} [props.onOpenStack] - Fired by the terminal's `stack`.
+ * @param {() => void} [props.onToggleTheme] - Fired by the terminal's `theme`.
  */
-export default function Hero({ onLaunchDoom = () => {} }) {
+export default function Hero({ onLaunchDoom = () => {}, onOpenStack = () => {}, onToggleTheme = () => {} }) {
   const headerRef = useRef(null);
   const ctaA = useRef(null);
   const ctaB = useRef(null);
@@ -150,7 +152,7 @@ export default function Hero({ onLaunchDoom = () => {} }) {
         </div>
 
         {/* interactive terminal (Phase 3) */}
-        <Terminal onLaunchDoom={onLaunchDoom} />
+        <Terminal onLaunchDoom={onLaunchDoom} onOpenStack={onOpenStack} onToggleTheme={onToggleTheme} />
       </div>
     </header>
   );

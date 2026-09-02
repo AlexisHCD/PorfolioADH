@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { identity, social, stack, projects, roadmap, certificates } from '../../data/profile';
+import { identity, social, projects, roadmap, certificates } from '../../data/profile';
 
 const COLOR_VAR = {
   ok: 'var(--gruv-green)',
@@ -20,17 +20,6 @@ function span(cls, text) {
   return `<span style="color:${COLOR_VAR[cls] || COLOR_VAR.def}">${escapeHtml(text)}</span>`;
 }
 
-const MATRIX_GLYPHS = 'アイウエオカキクケコサシスセソタチツテトナニヌネノﾊﾋﾌﾍﾎ0123456789';
-
-function randomMatrixLine() {
-  let out = '';
-  const len = 18 + Math.floor(Math.random() * 22);
-  for (let i = 0; i < len; i += 1) {
-    out += MATRIX_GLYPHS.charAt(Math.floor(Math.random() * MATRIX_GLYPHS.length));
-  }
-  return out;
-}
-
 const NEOFETCH_ART = [
   '        /\\',
   '       /  \\',
@@ -48,7 +37,7 @@ const NEOFETCH_ART = [
  * @param {() => void} [props.onLaunchDoom]
  * @returns {JSX.Element}
  */
-export default function Terminal({ onToggleTheme = () => {}, onLaunchDoom = () => {} }) {
+export default function Terminal({ onToggleTheme = () => {}, onLaunchDoom = () => {}, onOpenStack = () => {} }) {
   const [lines, setLines] = useState([]);
   const [input, setInput] = useState('');
   const bodyRef = useRef(null);
@@ -160,47 +149,30 @@ export default function Terminal({ onToggleTheme = () => {}, onLaunchDoom = () =
     historyRef.current.push(trimmed);
     histIdxRef.current = historyRef.current.length;
 
-    if (token === 'matrix') {
-      pushLine(span('ok', 'entrando a la matrix...'));
-      let ticks = 0;
-      const iv = setInterval(() => {
-        if (!mountedRef.current || ticks >= 18) {
-          clearInterval(iv);
-          return;
-        }
-        ticks += 1;
-        pushLine(span('ok', randomMatrixLine()));
-      }, 110);
-      timersRef.current.push(iv);
-      return;
-    }
-
     const out = [];
     switch (token) {
       case 'help':
         out.push(span('accent', 'comandos disponibles:'));
         out.push(span('def', '  help        muestra esta ayuda'));
         out.push(span('def', '  whoami      datos del operador'));
-        out.push(span('def', '  stack       tecnologías que uso'));
+        out.push(span('def', '  stack       abre el readme.md del sistema'));
         out.push(span('def', '  proyectos   mis repositorios'));
         out.push(span('def', '  roadmap     avance de la carrera'));
         out.push(span('def', '  contacto    email y redes'));
         out.push(span('def', '  certificados  certs obtenidos'));
         out.push(span('def', '  neofetch    info del sistema'));
         out.push(span('def', '  theme       alterna el tema'));
-        out.push(span('def', '  ls          lista archivos'));
+        out.push(span('def', '  ls          acceso restringido (root)'));
         out.push(span('def', '  date        fecha y hora'));
         out.push(span('def', '  clear       limpia la terminal'));
         out.push(span('def', '  doom        lanza doom.exe'));
         break;
       case 'whoami':
         out.push(span('accent', identity.fullName));
-        out.push(span('def', `${identity.role} · ${identity.location.city}`));
         break;
       case 'stack':
-        stack.forEach((g) => {
-          out.push(span('def', `${g.group}: ${g.items.join(' · ')}`));
-        });
+        out.push(span('ok', 'abriendo ~/stack — readme.md ...'));
+        onOpenStack();
         break;
       case 'proyectos':
         projects.forEach((p) => {
@@ -240,13 +212,24 @@ export default function Terminal({ onToggleTheme = () => {}, onLaunchDoom = () =
         setLines([]);
         return;
       case 'ls':
-        out.push(span('def', 'proyectos/  intereses/  cv.pdf  doom.exe*'));
+        out.push(span('red', 'ls: permiso denegado — este directorio pertenece a root'));
+        out.push(span('def', 'prueba "sudo ls" para autenticarte'));
         break;
+      case 'sudo': {
+        const arg = trimmed.split(/\s+/).slice(1).join(' ');
+        if (!arg) {
+          out.push(span('red', 'permiso denegado: aquí manda alexis.'));
+          break;
+        }
+        out.push(span('def', `[sudo] password for guest:`));
+        later(() => {
+          if (!mountedRef.current) return;
+          pushLine(span('red', 'sudo: authentication failure — este incidente será reportado'));
+        }, 900);
+        break;
+      }
       case 'date':
         out.push(span('def', new Date().toLocaleString('es-CL')));
-        break;
-      case 'sudo':
-        out.push(span('red', 'permiso denegado: aquí manda alexis.'));
         break;
       case 'doom':
       case 'doom.exe': {
@@ -353,7 +336,7 @@ export default function Terminal({ onToggleTheme = () => {}, onLaunchDoom = () =
             aria-label="entrada de comandos de la terminal"
             spellCheck={false}
             autoComplete="off"
-            className="flex-1 bg-transparent font-mono text-[var(--gruv-fg)] outline-none"
+            className="term-input flex-1 bg-transparent font-mono text-[var(--gruv-fg)] outline-none"
           />
           <span className="h-[15px] w-[9px] animate-pulse bg-[var(--accent)]" />
         </div>

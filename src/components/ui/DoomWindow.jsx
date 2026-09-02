@@ -135,12 +135,15 @@ export default function DoomWindow({ open = true, onClose }) {
         }
       });
 
-      win.Module = win.Module || {};
-      win.Module.onExit = () => onCloseRef.current?.();
-      win.addEventListener('exit', () => onCloseRef.current?.());
-    } catch {
-      /* cross-origin safety */
-    }
+        win.Module = win.Module || {};
+        win.Module.onExit = () => onCloseRef.current?.();
+        win.addEventListener('exit', () => onCloseRef.current?.());
+        // hand keyboard focus to the game so controls respond immediately
+        frame.focus?.();
+        win.focus?.();
+      } catch {
+        /* cross-origin safety */
+      }
   };
 
   useEffect(() => {

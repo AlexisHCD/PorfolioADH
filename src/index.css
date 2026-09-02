@@ -852,3 +852,6 @@ footer .p{color:var(--accent)}
 section[id] {
   scroll-margin-top: 88px;
 }
+
+/* terminal input: caret only — no focus rectangle */
+.term-input:focus-visible{outline:none}
