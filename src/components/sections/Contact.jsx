@@ -244,9 +244,6 @@ export default function Contact() {
         >
           linkedin ↗
         </a>
-        <a href={social.x} target="_blank" rel="noopener noreferrer" className="hover:text-accent">
-          {social.xUser} ↗
-        </a>
       </div>
     </section>
   );

@@ -10,7 +10,7 @@ export const identity = {
   handle: 'guest@arch',
   brand: 'AlexDev_OS',
   role: 'futuro analista programador',
-  tagline: 'programación & análisis de sistemas',
+  tagline: 'Programación & Análisis de Sistemas',
   location: {
     city: 'San Antonio',
     region: 'Región de Valparaíso',
@@ -29,8 +29,6 @@ export const social = {
   github: 'https://github.com/AlexisHCD',
   githubUser: 'AlexisHCD',
   linkedin: 'https://www.linkedin.com/in/alexis-hern%C3%A1ndez-2b3017367',
-  x: 'https://x.com/Mkeled',
-  xUser: '@Mkeled',
 };
 
 /** Hero readout chips. */
@@ -130,7 +128,7 @@ export const projects = [
     description:
       'Este sitio: rework completo de mi portfolio con React, GSAP y Lenis — tipografía cinética, terminal interactiva, charts monocromáticos y scroll narrativo.',
     tech: ['React', 'GSAP', 'Tailwind'],
-    repo: '#top',
+    repo: 'https://github.com/AlexisHCD/PorfolioADH',
     meta: 'v2.0 · 2026',
     featured: false,
   },
@@ -262,7 +260,7 @@ export const certificates = [
 /** Footer + misc strings. */
 export const footerNote = 'v2.0 · build-04 · alexdev_os';
 export const footerCredit =
-  'hecho a mano <span class="p">//</span> gsap + lenis + terminal · DOOM © id software, puerto <a href="https://github.com/raz0red/webprboom" target="_blank" rel="noopener" style="color:inherit">webprboom</a> (GPL)';
+  'desarrollado con <span class="p">react</span> + gsap + lenis · DOOM © id software, puerto <a href="https://github.com/raz0red/webprboom" target="_blank" rel="noopener" style="color:inherit">webprboom</a> (GPL)';
 export const footerCopyright = '© ALEXIS HERNÁNDEZ CAMUS — SAN ANTONIO, CL';
 export const doomCredit =
   'DOOM © id Software · port WASM webprboom (GPL) — ejecutado localmente en tu navegador';
