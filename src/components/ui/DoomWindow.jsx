@@ -139,7 +139,7 @@ export default function DoomWindow({ open = true, onClose }) {
         win.Module.onExit = () => onCloseRef.current?.();
         win.addEventListener('exit', () => onCloseRef.current?.());
         // hand keyboard focus to the game so controls respond immediately
-        frame.focus?.();
+        frameRef.current?.focus?.();
         win.focus?.();
       } catch {
         /* cross-origin safety */
