@@ -2,8 +2,8 @@
  * Day/night switcher — iOS-style toggle. The sliding knob carries a
  * rays-only sun on dark (a filled circle reads as an eye in screenshots)
  * and a crescent moon on light; the label shows the destination mode in
- * small caps. Glow persists while applied; the knob slide + icon scale
- * crossfade add the extra flourish.
+ * small caps. Both states keep the glow; the knob rides an easeOutQuint
+ * curve with an icon scale crossfade, so the slide never feels cut.
  */
 export default function ThemeToggle({ theme, onToggle }) {
   const isDark = theme === 'dark';
@@ -39,33 +39,33 @@ export default function ThemeToggle({ theme, onToggle }) {
       title="dark / white"
       data-hover
       onClick={(e) => onToggle(e.currentTarget)}
-      className={`inline-flex h-[32px] w-[74px] cursor-pointer items-center rounded-full border pl-1 pr-2.5 transition-all duration-300 ${
+      className={`inline-flex h-[34px] w-[78px] cursor-pointer items-center rounded-full border pl-1 pr-2.5 transition-colors duration-300 ${
         isDark
-          ? 'border-line bg-ink-2'
-          : 'border-[var(--accent-line)] bg-accent-soft shadow-[0_0_18px_var(--accent-glow)]'
+          ? 'border-[var(--accent-line)] bg-accent-soft shadow-[0_0_16px_var(--accent-glow)]'
+          : 'border-[var(--accent-line)] bg-accent-soft shadow-[0_0_16px_var(--accent-glow)]'
       }`}
     >
       <span
-        className={`relative grid size-[24px] place-items-center rounded-full text-accent-contrast shadow-[0_0_14px_var(--accent-glow)] transition-transform duration-300 ease-out ${
-          isDark ? 'translate-x-0 bg-accent' : 'translate-x-[34px] bg-accent'
+        className={`relative grid size-[26px] place-items-center rounded-full text-accent-contrast shadow-[0_0_18px_var(--accent-glow)] transition-transform duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          isDark ? 'translate-x-0 bg-accent' : 'translate-x-[36px] bg-accent'
         }`}
       >
         <span
-          className={`absolute transition-transform duration-300 ${
+          className={`absolute transition-transform duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
             isDark ? 'scale-100 rotate-0' : 'scale-0 -rotate-90'
           }`}
         >
           <SunIcon />
         </span>
         <span
-          className={`absolute transition-transform duration-300 ${
+          className={`absolute transition-transform duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
             isDark ? 'scale-0 rotate-90' : 'scale-100 rotate-0'
           }`}
         >
           <MoonIcon />
         </span>
       </span>
-      <span className="ml-auto font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-muted">
+      <span className="ml-auto font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-accent">
         {isDark ? 'white' : 'dark'}
       </span>
     </button>

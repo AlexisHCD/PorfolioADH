@@ -103,4 +103,28 @@ test.describe('terminal + doom', () => {
     if (await quitYes.isVisible().catch(() => false)) await quitYes.click();
     await expect(frame).toBeHidden({ timeout: 10_000 });
   });
+
+  test('whoami, ls and the stack readme window behave as designed', async ({ page }) => {
+    await boot(page);
+    const input = page.getByLabel('entrada de comandos de la terminal');
+    await expect(input).toBeVisible({ timeout: 20_000 });
+    const body = page.getByTestId('terminal-body');
+
+    await input.fill('whoami');
+    await input.press('Enter');
+    await expect(body).toContainText('Alexis Hernández Camus');
+    await expect(body).not.toContainText('futuro');
+
+    await input.fill('ls');
+    await input.press('Enter');
+    await expect(body).toContainText('doom.exe*');
+
+    await input.fill('stack');
+    await input.press('Enter');
+    const dialog = page.getByRole('dialog', { name: 'stack del sistema' });
+    await expect(dialog).toBeVisible();
+    await expect(dialog.locator('.cert-pre')).toContainText('AlexDev_OS', { timeout: 8000 });
+    await page.keyboard.press('Escape');
+    await expect(dialog).toBeHidden();
+  });
 });

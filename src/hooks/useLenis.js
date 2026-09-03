@@ -13,7 +13,7 @@ export const lenisStore = { current: null };
  * into GSAP's ticker so ScrollTrigger stays in sync. Returns a ref holding the
  * Lenis instance (or `null` if Lenis/GSAP are unavailable). Never throws.
  */
-export function useLenis({ duration = 1.15 } = {}) {
+export function useLenis() {
   const lenisRef = useRef(null);
 
   useEffect(() => {
@@ -37,7 +37,7 @@ export function useLenis({ duration = 1.15 } = {}) {
       }
       if (cancelled) return;
 
-      lenis = new Lenis({ duration });
+      lenis = new Lenis({ lerp: 0.09, wheelMultiplier: 1, touchMultiplier: 1.4 });
       lenisRef.current = lenis;
       lenisStore.current = lenis;
       if (motion.ScrollTrigger) {
@@ -58,7 +58,7 @@ export function useLenis({ duration = 1.15 } = {}) {
       lenisRef.current = null;
       lenisStore.current = null;
     };
-  }, [duration]);
+  }, []);
 
   return lenisRef;
 }

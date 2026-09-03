@@ -162,7 +162,7 @@ export default function Terminal({ onToggleTheme = () => {}, onLaunchDoom = () =
         out.push(span('def', '  certificados  certs obtenidos'));
         out.push(span('def', '  neofetch    info del sistema'));
         out.push(span('def', '  theme       alterna el tema'));
-        out.push(span('def', '  ls          acceso restringido (root)'));
+        out.push(span('def', '  ls          lista archivos'));
         out.push(span('def', '  date        fecha y hora'));
         out.push(span('def', '  clear       limpia la terminal'));
         out.push(span('def', '  doom        lanza doom.exe'));
@@ -212,22 +212,8 @@ export default function Terminal({ onToggleTheme = () => {}, onLaunchDoom = () =
         setLines([]);
         return;
       case 'ls':
-        out.push(span('red', 'ls: permiso denegado — este directorio pertenece a root'));
-        out.push(span('def', 'prueba "sudo ls" para autenticarte'));
+        out.push(span('def', 'proyectos/  intereses/  cv.pdf  doom.exe*'));
         break;
-      case 'sudo': {
-        const arg = trimmed.split(/\s+/).slice(1).join(' ');
-        if (!arg) {
-          out.push(span('red', 'permiso denegado: aquí manda alexis.'));
-          break;
-        }
-        out.push(span('def', `[sudo] password for guest:`));
-        later(() => {
-          if (!mountedRef.current) return;
-          pushLine(span('red', 'sudo: authentication failure — este incidente será reportado'));
-        }, 900);
-        break;
-      }
       case 'date':
         out.push(span('def', new Date().toLocaleString('es-CL')));
         break;

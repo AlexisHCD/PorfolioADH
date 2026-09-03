@@ -83,7 +83,7 @@ export default function DoomWindow({ open = true, onClose }) {
         if (!desc || !desc.get) return;
         const realDest = desc.get.call(ctx);
         const master = ctx.createGain();
-        master.gain.value = 0.15;
+        master.gain.value = 0.08;
         master.connect(realDest);
         Object.defineProperty(ctx, 'destination', {
           configurable: true,
