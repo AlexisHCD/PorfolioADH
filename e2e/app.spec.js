@@ -40,12 +40,13 @@ test.describe('smoke', () => {
 test.describe('theme', () => {
   test('day/night toggle persists across reloads', async ({ page }) => {
     await boot(page);
-    await page.getByRole('button', { name: /cambiar a modo día/i }).click();
+    const toggle = page.getByRole('switch', { name: /cambiar a modo/i });
+    await toggle.click();
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
     expect(await page.evaluate(() => localStorage.getItem('alexdevos-theme'))).toBe('light');
     await page.reload();
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
-    await page.getByRole('button', { name: /cambiar a modo noche/i }).click();
+    await page.getByRole('switch', { name: /cambiar a modo/i }).click();
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   });
 });
