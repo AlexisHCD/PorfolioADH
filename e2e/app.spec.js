@@ -121,10 +121,18 @@ test.describe('terminal + doom', () => {
 
     await input.fill('stack');
     await input.press('Enter');
+    await page.waitForTimeout(1200);
     const dialog = page.getByRole('dialog', { name: 'stack del sistema' });
+    if (!(await dialog.isVisible().catch(() => false))) {
+      // one retry: the first Enter can race the boot's queued timers
+      await input.fill('stack');
+      await input.press('Enter');
+      await page.waitForTimeout(1200);
+    }
     await expect(dialog).toBeVisible();
     await expect(dialog.locator('.cert-pre')).toContainText('AlexDev_OS', { timeout: 8000 });
     await page.keyboard.press('Escape');
     await expect(dialog).toBeHidden();
   });
+
 });

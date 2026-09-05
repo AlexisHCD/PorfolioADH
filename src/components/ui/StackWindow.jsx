@@ -28,8 +28,13 @@ export default function StackWindow({ open, onClose }) {
       if (e.key === 'Escape') onClose();
     };
     window.addEventListener('keydown', onKey);
-    if (closeRef.current) closeRef.current.focus();
-    return () => window.removeEventListener('keydown', onKey);
+    // defer focus: focusing a button synchronously while the opening Enter
+    // keydown is still dispatching makes its default action click the button
+    const focusTimer = setTimeout(() => closeRef.current?.focus(), 0);
+    return () => {
+      clearTimeout(focusTimer);
+      window.removeEventListener('keydown', onKey);
+    };
   }, [open, onClose]);
 
   // Lock body scroll while the window is up.

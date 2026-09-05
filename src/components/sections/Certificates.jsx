@@ -52,9 +52,14 @@ export default function Certificates({ onViewerOpenChange = () => {} }) {
     };
     window.addEventListener('keydown', onKey);
 
-    if (closeRef.current) closeRef.current.focus();
+    // defer focus — see StackWindow: synchronous focus would let the opening
+    // Enter keydown's default action click the close button
+    const focusTimer = setTimeout(() => closeRef.current?.focus(), 0);
 
-    return () => window.removeEventListener('keydown', onKey);
+    return () => {
+      clearTimeout(focusTimer);
+      window.removeEventListener('keydown', onKey);
+    };
   }, [selected]);
 
   // Lock body scroll while the viewer is open.
