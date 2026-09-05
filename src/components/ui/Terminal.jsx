@@ -307,6 +307,7 @@ export default function Terminal({ onToggleTheme = () => {}, onLaunchDoom = () =
         ref={bodyRef}
         onClick={focusInput}
         data-testid="terminal-body"
+        data-lenis-prevent="true"
         className="h-[300px] overflow-y-auto bg-transparent p-3.5 font-mono text-[12.5px] leading-relaxed md:h-[340px]"
       >
         {lines.map((line) => (

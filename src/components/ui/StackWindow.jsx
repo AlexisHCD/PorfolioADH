@@ -1,15 +1,15 @@
 import { useEffect, useRef } from 'react';
-import { stack } from '../../data/profile';
 import readmeRaw from '../../../README.md?raw';
 import { prefersReducedMotion } from '../../lib/motion';
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
- * StackWindow — the `stack` terminal command opens this arch window:
- * the technology groups on the left and the project README.md unfolding
- * line by line on the right, in the same live-write style as the
- * certificate viewer ledger. Escape / backdrop / [×] close it.
+ * StackWindow — the `stack` terminal command opens this arch window with the
+ * project README.md unfolding line by line (same live-write style as the
+ * certificate viewer ledger). Reuses the ported .cert-win chrome (capped
+ * height, so the titlebar never slides under the navbar). Escape / backdrop /
+ * [×] close it.
  *
  * @param {object} props
  * @param {boolean} props.open
@@ -21,15 +21,15 @@ export default function StackWindow({ open, onClose }) {
   const closeRef = useRef(null);
   const typeToken = useRef(0);
 
-  // Escape closes; focus lands on the close button while open.
+  // Escape closes; focus lands on the close button while open (deferred —
+  // focusing synchronously during the opening Enter dispatch would let its
+  // default action click the button and close the window instantly).
   useEffect(() => {
     if (!open) return undefined;
     const onKey = (e) => {
       if (e.key === 'Escape') onClose();
     };
     window.addEventListener('keydown', onKey);
-    // defer focus: focusing a button synchronously while the opening Enter
-    // keydown is still dispatching makes its default action click the button
     const focusTimer = setTimeout(() => closeRef.current?.focus(), 0);
     return () => {
       clearTimeout(focusTimer);
@@ -80,53 +80,36 @@ export default function StackWindow({ open, onClose }) {
       className="fixed inset-0 z-[9600] grid place-items-center bg-black/60 p-4 backdrop-blur-sm"
       role="dialog"
       aria-label="stack del sistema"
+      data-lenis-prevent
       onClick={onClose}
     >
       <div
-        className="w-[min(980px,94vw)] overflow-hidden rounded-xl border border-[#504945] bg-[#1d2021] shadow-2xl"
+        className="cert-win flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* arch titlebar */}
-        <div className="flex items-center gap-2.5 bg-[var(--gruv-bar)] px-3.5 py-2">
-          <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
-            <path d="M8 .6 14.9 15h-4.7L8 10.4 5.8 15H1.1L8 .6z" fill="#83a598" />
+        <div className="archbar cert-titlebar">
+          <svg className="arch-logo" viewBox="0 0 16 16" aria-hidden="true">
+            <path fill="#83a598" d="M8 .6 14.9 15h-4.7L8 10.4 5.8 15H1.1L8 .6z" />
           </svg>
-          <span className="font-mono text-xs text-[#ebdbb2]">
+          <span className="arch-title">
             <b>alex@archlinux</b>: ~/stack — readme.md
           </span>
           <button
             type="button"
             ref={closeRef}
-            onClick={onClose}
+            className="arch-x"
+            data-hover
             aria-label="cerrar stack"
-            className="ml-auto font-mono px-2 text-[#ebdbb2] hover:text-[#fb4934]"
+            onClick={onClose}
           >
-            ×
+            [×]
           </button>
         </div>
 
-        {/* stack ledger left · readme.md live-write right */}
-        <div className="grid md:grid-cols-[300px_1fr]">
-          <div
-            className="border-b border-[#3c3836] p-5 font-mono text-[11px] leading-loose md:border-b-0 md:border-r"
-            style={{ color: '#ebdbb2' }}
-          >
-            <p className="mb-3 text-[var(--gruv-green)]">$ cat ~/stack/*</p>
-            {stack.map((group) => (
-              <div key={group.group} className="mb-3">
-                <p className="text-[var(--gruv-teal)]">{`$ ${group.group}`}</p>
-                {group.items.map((item) => (
-                  <p key={item} className="pl-3 text-[#928374]">{`· ${item}`}</p>
-                ))}
-              </div>
-            ))}
-          </div>
-          <div className="bg-black/20 p-4">
-            <pre
-              ref={preRef}
-              className="cert-pre max-h-[52vh] overflow-y-auto whitespace-pre-wrap text-left"
-            />
-          </div>
+        {/* full-width README, mouse-wheel scrollable */}
+        <div className="h-full min-h-0 overflow-y-auto" data-lenis-prevent>
+          <pre ref={preRef} className="cert-pre p-5" />
         </div>
       </div>
     </div>

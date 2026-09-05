@@ -259,7 +259,7 @@ export default function Certificates({ onViewerOpenChange = () => {} }) {
 
             {/* body — typewriter ledger left, certificate image right */}
             <div className="cert-body">
-              <div className="cert-left">
+              <div className="cert-left" data-lenis-prevent="true">
                 <pre ref={preRef} className="cert-pre" />
               </div>
               <div className="cert-right">
