@@ -46,9 +46,20 @@ mockups/phosphor.html    Mockup aprobado (especificación visual de referencia)
 - **DOOM**: iframe de mismo origen a `public/doom/doom1/doom1.html` (webprboom, GPL, crédito visible en el pie de página). El cierre destruye el iframe para no dejar audio residual. Volumen master inyectado: 0.15.
 - **Formulario**: validación en cliente (campos requeridos, formato de correo, longitudes, honeypot) y envío mediante Web3Forms. Ante fallo se muestra error en línea con acción de copiar correo; no existe fallback `mailto:`.
 
-## Elementos ocultos
+## Elementos ocultos (easter eggs)
 
-- Código Konami (`↑↑↓↓←→←→BA`): sobrecarga fósforo con síntesis de audio, deshabilitada mientras el visor de certificados o DOOM estén abiertos.
-- `matrix` en la terminal: lluvia de katakana durante cinco segundos.
-- `rm -rf /` y `sudo`: respuestas de denegación con humor.
-- Consola del navegador: bloque NFO estilo escena al cargar.
+| Easter egg | Dónde | Qué hace |
+|---|---|---|
+| Código Konami (`↑↑↓↓←→←→BA`) | cualquier parte | Sobrecarga fósforo con síntesis de audio; deshabilitada con el visor de certificados o DOOM abiertos |
+| `doom.exe` | terminal | Lanza DOOM 1993 en una ventana arrastrable (solo escritorio) |
+| `hack` | terminal | Secuencia falsa de intrusión que termina en "ACCESO CONCEDIDO — bienvenido al lado verde" |
+| `rm -rf /` | terminal | Rechazo dramático ("este sistema es inmune a dedos traviesos") |
+| `sudo` / `sudo ls` | terminal | "aquí manda alexis" / denegación con humor |
+| Consola del navegador | automático | Bloque NFO estilo escena al cargar |
+
+## Página 404
+
+Las rutas desconocidas muestran una página 404 estilo terminal (`src/pages/NotFoundPage.jsx`):
+la ruta visitada aparece como un comando fallido de shell, con enlaces de vuelta al
+inicio y a contacto. Nota: al ser una SPA estática, la respuesta HTTP es 200 (decisión
+de diseño documentada en la fase de despliegue).

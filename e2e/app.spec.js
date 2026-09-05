@@ -25,6 +25,15 @@ test.describe('smoke', () => {
     await expect(page.locator('#proyectos')).toBeAttached();
   });
 
+  test('unknown routes show the 404 terminal page', async ({ page }) => {
+    await page.goto('/esta-ruta-no-existe');
+    await expect(page.locator('#loader')).toBeHidden({ timeout: 15_000 });
+    await expect(page.getByText(/No existe el archivo o el directorio/i)).toBeVisible();
+    await expect(page.getByText('código de error: 404 — not found')).toBeVisible();
+    await page.getByRole('link', { name: /volver al inicio/ }).click();
+    await expect(page.locator('#roadmap')).toBeAttached();
+  });
+
   test('mobile menu opens, navigates and closes', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await boot(page);

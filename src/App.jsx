@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
-import { BrowserRouter, Route, Routes, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 import Nav from './components/layout/Nav';
 import Footer from './components/layout/Footer';
 import { BgField } from './components/layout/BgField';
 import { GrainScanlines } from './components/layout/GrainScanlines';
 import HomePage from './pages/HomePage';
+import NotFoundPage from './pages/NotFoundPage';
 import LegalPage from './pages/LegalPage';
 import { useTheme } from './hooks/useTheme';
 import DoomWindow from './components/ui/DoomWindow';
@@ -93,7 +94,7 @@ export default function App() {
           />
           <Route path="/aviso-legal" element={<LegalPage doc="aviso" />} />
           <Route path="/politica-de-privacidad" element={<LegalPage doc="privacidad" />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
         <Footer />
         <OverdriveSurge active={surgeActive} onDone={onSurgeDone} />

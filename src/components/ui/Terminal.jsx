@@ -165,6 +165,7 @@ export default function Terminal({ onToggleTheme = () => {}, onLaunchDoom = () =
         out.push(span('def', '  ls          lista archivos'));
         out.push(span('def', '  date        fecha y hora'));
         out.push(span('def', '  clear       limpia la terminal'));
+        out.push(span('def', '  hack        no es lo que piensas'));
         out.push(span('def', '  doom        lanza doom.exe'));
         break;
       case 'whoami':
@@ -217,6 +218,22 @@ export default function Terminal({ onToggleTheme = () => {}, onLaunchDoom = () =
       case 'date':
         out.push(span('def', new Date().toLocaleString('es-CL')));
         break;
+      case 'hack':
+      case 'hack.exe': {
+        const steps = [
+          ['accent', 'iniciando hack_ethical.exe ...'],
+          ['def', 'escaneando puertos ......... [OK]'],
+          ['def', 'inyectando payload .......... [OK]'],
+          ['def', 'bypassing firewalls ......... [OK]'],
+          ['ok', 'ACCESO CONCEDIDO — bienvenido al lado verde'],
+        ];
+        steps.forEach(([cls, line], idx) => {
+          later(() => {
+            if (mountedRef.current) pushLine(span(cls, line));
+          }, idx * 420);
+        });
+        break;
+      }
       case 'doom':
       case 'doom.exe': {
         // webprboom is desktop-only (keyboard + mouse); on touch/small screens
