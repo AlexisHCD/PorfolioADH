@@ -1,5 +1,11 @@
 # Session Handoff — 2026-08-30 (Phase 3b complete, Phase 4 QA next)
 
+> **UPDATE 2026-09-05: SHIPPED.** Production is live at **https://porfolio-adh.vercel.app/**
+> (25+ commits pushed, Vercel project connected to the repo — pushes auto-deploy).
+> `GITHUB_TOKEN` + `VITE_WEB3FORMS_ACCESS_KEY` configured in Vercel: real contribution
+> calendar (GraphQL), live badges and the contact form verified in production.
+> Phase 4 QA suite (Playwright + axe) is committed and green (30 unit + 23 e2e).
+
 Read this first. It supersedes the stale phase table that used to live in AGENTS.md
 (now updated to point here). Companion docs: `2026-08-24_master-phase-plan.md`,
 `2026-08-30_phase-3b-ssot-parity-and-live-features.md`.
