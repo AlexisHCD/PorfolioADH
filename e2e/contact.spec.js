@@ -32,7 +32,11 @@ test.describe('contact form', () => {
     await page.locator("#cf-email").fill('ada@lovelace.cl');
     await page.locator("#cf-message").fill('hola, vi tu portafolio');
     await page.getByRole('button', { name: '$ enviar' }).click();
-    await expect(page.getByText(/✓ mensaje enviado/i)).toBeVisible();
+    const dialog = page.getByRole('dialog', { name: 'mensaje enviado' });
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByText(/mensaje enviado — te respondo pronto/)).toBeVisible();
+    await dialog.getByRole('button', { name: 'OK' }).click();
+    await expect(dialog).toBeHidden();
     expect(bodies[0]).toMatchObject({ name: 'Ada', email: 'ada@lovelace.cl' });
     // honeypot present for bots
     expect(await page.locator('input[name="botcheck"]').count()).toBe(1);
