@@ -22,11 +22,13 @@ El proyecto se desarrolla bajo **SDD (Spec-Driven Development)**: toda implement
 | [deploy.md](deploy.md) | Procedimiento de despliegue en Vercel |
 | [qa.md](qa.md) | Estrategia de pruebas y comandos |
 
-## Estado (2026-08-30)
+## Estado final (2026-09-05)
 
-- Fases 0 a 4 completas (concepto, build, funcionalidades, QA). Siguiente etapa: despliegue en Vercel.
-- Suites en verde: 30 tests unitarios, 22 tests E2E, 9 auditorías de accesibilidad sin violaciones críticas.
-- Pendiente del autor: PAT de GitHub y access key de Web3Forms (ver [deploy.md](deploy.md)).
+- **En producción**: [https://porfolio-adh.vercel.app](https://porfolio-adh.vercel.app) — desplegado en Vercel con tokens configurados.
+- Todas las fases completas: concepto, build, funcionalidades, QA y despliegue.
+- Suites en verde: 30 tests unitarios, 23 tests E2E, 9 auditorías de accesibilidad sin violaciones críticas.
+- Lighthouse en producción: Accesibilidad 100 · Best Practices 100 · SEO 100 (Performance 99 escritorio / 66 móvil, ver [qa.md](qa.md)).
+- Página 404 estilo terminal implementada; actividad 100% en vivo desde GitHub (calendario real con selector de año).
 
 ## Comandos
 

@@ -37,4 +37,18 @@ Nota: los tests unitarios requieren `NODE_OPTIONS=--no-experimental-webstorage` 
 
 - Puerta de accesibilidad: **cero violaciones críticas o serias** (verificado el 2026-08-30 en las nueve combinaciones de página y viewport).
 - `prefers-reduced-motion`: todas las animaciones se degradan correctamente.
-- Lighthouse CI con presupuestos de rendimiento: pendiente de conectar al pipeline después del despliegue.
+
+## Lighthouse — línea base en producción (2026-09-05)
+
+| Categoría | Móvil (throttled) | Escritorio |
+|---|---|---|
+| Performance | 66 | **99** |
+| Accessibility | **100** | **100** |
+| Best Practices | **100** | **100** |
+| SEO | **100** | **100** |
+
+Métricas móviles: FCP 1.9s · LCP 3.0s · TBT 1.0s · CLS 0.0 · SI 5.5s.
+El rendimiento móvil refleja el costo del motor de animaciones (GSAP + Lenis +
+rAF) bajo throttling de CPU; en escritorio el sitio es prácticamente perfecto.
+Optimización futura identificada: code-splitting con `React.lazy` (Terminal,
+StackWindow, DoomWindow) para reducir el bundle inicial (~41 KB aprovechables).

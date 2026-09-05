@@ -85,7 +85,7 @@ tests were removed (they duplicated e2e coverage and added maintenance noise).
 | 1 | Repo hygiene: README, AGENTS.md, GitHub remote + push | IN PROGRESS (push needs user approval) |
 | 2 | Scaffold: Vite+React+Tailwind4+ESLint+Prettier+Vitest, `src/` architecture, `profile.js` data layer | DONE |
 | 3 | Component port + live GitHub (serverless), contact form, legal pages, mobile pass, a11y, favicon/SEO — 1:1 mockup parity verified | DONE (2026-08-30) |
-| 4 | Full QA pass: Playwright suite, axe, Lighthouse, mobile matrix | NEXT (spec list in handoff doc) |
-| 5 | Deploy Vercel + env tokens (GITHUB_TOKEN, VITE_WEB3FORMS_ACCESS_KEY) — runbook in handoff doc | PENDING |
-| 6 | Backlog: JSON-LD/analytics, EN version, Dwasm touch DOOM, real photo re-integration, ⌘K palette | PENDING |
+| 4 | Full QA pass: Playwright suite (23), axe (0 críticas), Lighthouse (a11y/bp/seo 100), mobile matrix | DONE (2026-09-05) |
+| 5 | Deploy Vercel + env tokens — **LIVE**: https://porfolio-adh.vercel.app (doom payload shipped, headers scoped, sitemap/canonical) | DONE (2026-09-05) |
+| 6 | Backlog: JSON-LD/analytics, EN version, Dwasm touch DOOM, real photo re-integration, ⌘K palette, code-splitting (perf móvil) | PENDING |
 
