@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { identity, social } from '../../data/profile';
 
 const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
@@ -30,7 +30,16 @@ function validate(values) {
 function ContactForm() {
   const [values, setValues] = useState({ name: '', email: '', message: '' });
   const [errors, setErrors] = useState({});
-  const [status, setStatus] = useState('idle'); // idle | sending | success | error
+  const [status, setStatus] = useState('idle'); // idle | sending | error
+  const [showSent, setShowSent] = useState(false);
+  const okRef = useRef(null);
+
+  // focus the OK button once the popup is up (deferred — same Enter rationale)
+  useEffect(() => {
+    if (!showSent) return undefined;
+    const t = setTimeout(() => okRef.current?.focus(), 0);
+    return () => clearTimeout(t);
+  }, [showSent]);
   const [copied, setCopied] = useState(false);
 
   const set = (key) => (e) => {
@@ -71,7 +80,8 @@ function ContactForm() {
       });
       const json = await res.json().catch(() => ({}));
       if (res.ok && json.success !== false) {
-        setStatus('success');
+        setStatus('idle');
+        setShowSent(true);
         setValues({ name: '', email: '', message: '' });
       } else {
         setStatus('error');
@@ -175,9 +185,6 @@ function ContactForm() {
         </button>
 
         <p aria-live="polite" className="mt-3 min-h-[1.2em] font-mono text-xs">
-          {status === 'success' && (
-            <span className="text-accent">✓ mensaje enviado — te respondo pronto</span>
-          )}
           {status === 'error' && (
             <span className="text-[#fb4934]">
               ✗ no se pudo enviar —{' '}
@@ -201,6 +208,53 @@ function ContactForm() {
           .
         </p>
       </form>
+
+      {/* confirmación visual del envío */}
+      {showSent && (
+        <div
+          className="fixed inset-0 z-[9700] grid place-items-center bg-black/60 p-4 backdrop-blur-sm"
+          role="dialog"
+          aria-label="mensaje enviado"
+          data-lenis-prevent
+          onClick={() => setShowSent(false)}
+        >
+          <div
+            className="w-[min(440px,92vw)] overflow-hidden rounded-xl border border-[#504945] bg-[#1d2021] shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-2.5 bg-[var(--gruv-bar)] px-3.5 py-2">
+              <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M8 .6 14.9 15h-4.7L8 10.4 5.8 15H1.1L8 .6z" fill="#83a598" />
+              </svg>
+              <span className="font-mono text-xs text-[#ebdbb2]">
+                <b>alex@archlinux</b>: ~/mensaje — enviado
+              </span>
+              <button
+                type="button"
+                aria-label="cerrar confirmación"
+                onClick={() => setShowSent(false)}
+                className="ml-auto font-mono px-2 text-[#ebdbb2] hover:text-[#fb4934]"
+              >
+                ×
+              </button>
+            </div>
+            <div className="px-8 py-8 text-center">
+              <p className="font-mono text-[42px] leading-none text-accent">✓</p>
+              <p className="mt-4 font-mono text-sm text-text">
+                mensaje enviado — te respondo pronto
+              </p>
+              <button
+                type="button"
+                ref={okRef}
+                onClick={() => setShowSent(false)}
+                className="copy-btn mt-6 w-full justify-center"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

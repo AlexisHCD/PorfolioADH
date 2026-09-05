@@ -209,7 +209,7 @@ export default function Certificates({ onViewerOpenChange = () => {} }) {
     >
       <SectionHead num="06" title="Certificados" />
       <p className="mt-4 text-muted">
-        Formalización de lo aprendido — chapas verificables. Click para inspeccionarlas.
+        Formalización de lo aprendido — Click para inspeccionarlas.
       </p>
 
       <div className="certs-row">
